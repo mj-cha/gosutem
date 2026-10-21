@@ -14,7 +14,7 @@ const DEVMAP = "https://claude.ai/artifact/9KQ7bje3a9EXoxYqtPGvA1";
 function Intro() {
   return (
     <aside className="intro" aria-label="서비스 소개">
-      <div className="wordmark">고수템 <small>GOSUTEM · 가칭</small><a className="devmap-chip" href={DEVMAP} target="_blank" rel="noopener">개발맵 ↗</a></div>
+      <div className="wordmark">고수템 <small>GOSUTEM · 가칭</small><a className="devmap-chip" href={DEVMAP} target="_blank" rel="noopener">사업화 맵 ↗</a></div>
       <Promo />
       <Tabs orientation="vertical" className="vtabs" defaultSelectedKey="about">
         <Tabs.ListContainer>
@@ -22,7 +22,7 @@ function Intro() {
             <Tabs.Tab id="about">서비스 소개<Tabs.Indicator /></Tabs.Tab>
             <Tabs.Tab id="labels">라벨 5가지<Tabs.Indicator /></Tabs.Tab>
             <Tabs.Tab id="install">홈 화면 추가<Tabs.Indicator /></Tabs.Tab>
-            <Tabs.Tab id="dev">개발맵<Tabs.Indicator /></Tabs.Tab>
+            <Tabs.Tab id="dev">사업화 맵<Tabs.Indicator /></Tabs.Tab>
           </Tabs.List>
         </Tabs.ListContainer>
         <Tabs.Panel id="about"><h3>고수의 가방을 열어 봐요</h3><p>평범한 고수의 가방을 열어, 물건마다 담을지 말지 하트로 고르고 그대로 담는 서비스예요. 새상품·중고·유사템·나눔 중 어디서 구할 수 있는지 AI가 바로 찾아 줘요.</p></Tabs.Panel>
@@ -33,7 +33,7 @@ function Intro() {
             <div><b className="text-[.82rem]">아이폰</b><ol className="steps"><li>사파리로 열기</li><li>아래 <b>공유</b></li><li><b>홈 화면에 추가</b></li></ol></div>
           </div>
         </Tabs.Panel>
-        <Tabs.Panel id="dev"><h3>개발맵</h3><p>메뉴별 개발 메모, 피드백 로그, 주석을 남기는 곳이에요.</p><a className="button button--sm button--primary mt-2 inline-flex" href={DEVMAP} target="_blank" rel="noopener">개발맵 열기 ↗</a></Tabs.Panel>
+        <Tabs.Panel id="dev"><h3>사업화 맵</h3><p>메뉴별 개발 메모, 피드백 로그, 주석을 남기는 곳이에요.</p><a className="button button--sm button--primary mt-2 inline-flex" href={DEVMAP} target="_blank" rel="noopener">사업화 맵 열기 ↗</a></Tabs.Panel>
       </Tabs>
       <p className="disclaimer">시범 화면입니다. 가방·인물·가격·재고·좋아요 수는 모두 예시이고, 실제 고수의 가방은 촬영을 마친 뒤 공개합니다. 새상품 바로가기는 각 오픈마켓의 검색 결과로, 중고·나눔은 고수템 안의 다른 고수 매물로 연결돼요.</p>
     </aside>
