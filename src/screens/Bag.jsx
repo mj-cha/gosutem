@@ -454,7 +454,7 @@ export default function Bag({ b }) {
             {b.deck ? <p className="hook">{b.hook}</p> : <p className="views num">조회수 {b.views} · 스크랩 {b.scraps.toLocaleString("ko-KR")}회</p>}
             <h1>{b.title}</h1>
             {b.sub && <p className="deck-sub">{b.sub}</p>}
-            <Surface variant="secondary" className="trust"><Icon id="shield" /><span>{b.trust || "이 가방에는 협찬·제휴가 없어요. 전부 고수가 직접 쓰는 물건이에요."} <span className="ex-badge">예시</span></span></Surface>
+            <Surface variant="secondary" className="trust"><Icon id="shield" /><span>{b.trust || "협찬·제휴 표시: 없음. 전부 고수가 직접 사서 쓰는 물건이에요."} <span className="ex-badge">예시</span></span></Surface>
           </Surface>
         </div>
 
