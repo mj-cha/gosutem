@@ -1,6 +1,6 @@
 /* 모든 모달(HeroUI Modal) — 열린 모달은 store 의 modal.type 하나 */
 import { useMemo, useState } from "react";
-import { Button, ListBox, Modal, SearchField, Tabs, Tag, TagGroup } from "@heroui/react";
+import { Alert, Button, ListBox, Modal, SearchField, Tabs, Tag, TagGroup } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { GosuAvatar, TBadge } from "../components/common.jsx";
 import { ART, BAGS, GU, PCATS, CATS, PCH, TORDER } from "../data/data.js";
@@ -10,6 +10,15 @@ import {
 import { useApp } from "../lib/store.jsx";
 
 /* 공통 틀: 폰은 아래에서, PC는 가운데 · 흐린 배경 · 닫기(X) */
+/* 안내 상자 (HeroUI Alert) */
+function Note({ status = "default", title, children }) {
+  return (
+    <Alert status={status}>
+      <Alert.Indicator />
+      <Alert.Content>{title && <Alert.Title>{title}</Alert.Title>}<Alert.Description>{children}</Alert.Description></Alert.Content>
+    </Alert>
+  );
+}
 function Shell({ title, icon, desc, children, footer, size = "sm", className = "" }) {
   const { modal, closeModal } = useApp();
   return (
@@ -50,7 +59,7 @@ function Supply() {
         <li><b>음성 메모 · 5분</b> · "이건 꼭 사, 이건 사지 마"를 말로만. 질문 3개(알짜템·비추천템·후회한 것)에 답하면 돼요</li>
         <li><b>AI 초안 확인 · 3~4분</b> · AI가 사진에서 물건을 찾고, 말한 내용으로 라벨·한 줄 팁을 채워요. 틀린 것만 고치고 공개 여부 결정</li>
       </ol>
-      <p className="m-note">시범 화면이라 신청서는 아직 연결되지 않았어요.</p>
+      <Note status="accent">시범 화면이라 신청서는 아직 연결되지 않았어요.</Note>
     </Shell>
   );
 }
@@ -123,7 +132,7 @@ function Checkout({ b, plan, picks, pickOf }) {
       footer={<><Button variant="tertiary" onPress={copy}>{copied ? "복사했어요" : "목록 복사"}</Button><Button onPress={closeModal}>닫기</Button></>}>
       <div className="co">{secs}</div>
       <div className="co-total"><span>합계</span><b className="num">{won(total)}</b></div>
-      <p className="m-note"><span className="ok-line">전부 새로 사는 것보다 {won(all - total)} 아껴요</span> · 예상 가격이에요. 시범 화면이라 결제·신청은 연결되지 않아요.</p>
+      <Note status="success" title={"전부 새로 사는 것보다 " + won(all - total) + " 아껴요"}>예상 가격이에요. 시범 화면이라 결제·신청은 연결되지 않아요.</Note>
     </Shell>
   );
 }
@@ -148,7 +157,7 @@ function Listing({ b, i, ch, k, region, finalize }) {
       <section className="ld-sec"><h5>가격 비교</h5><div className="ld-cmp"><span>새상품 최저가</span><b className="num">{won(base)}</b></div>{others.length > 0 && <div className="ld-cmp"><span>다른 고수 매물 {others.length}개</span><b className="num">{won(Math.min(...others.map((y) => y.p)))}부터</b></div>}</section>
       <section className="ld-sec"><h5>거래 방식</h5><p>{x.deal === "택배" ? "택배 거래 · 배송비 ₩3,500 (예시) · 고수템 안전결제" : x.deal === "교환" ? "만나서 교환 또는 서로 택배" : "직거래 · " + x.place + " · 만나서 확인하고 거래"}</p></section>
       <section className="ld-sec"><h5>물건 설명</h5><p>{it.tip}</p>{it.note && <p className="ld-warn">{it.note}</p>}</section>
-      <p className="ld-legal">고수 간 거래는 판매 고수에게 책임이 있어요. 고수템은 거래 장소를 이어 주고, 의약품·개봉한 입·눈 화장품은 거래를 막아요.</p>
+      <Note status="warning" title="거래 전에 확인해 주세요">고수 간 거래는 판매 고수에게 책임이 있어요. 고수템은 거래 장소를 이어 주고, 의약품·개봉한 입·눈 화장품은 거래를 막아요.</Note>
     </Shell>
   );
 }
@@ -297,7 +306,7 @@ function Region() {
           {chips(REC, true, "추천 지역")}
         </>
       )}
-      <p className="m-note">지역은 중고 직거래·나눔·스왑에 써요. 고수 가방 글은 어디서나 볼 수 있어요. 이 기기에만 저장돼요.</p>
+      <Note>지역은 중고 직거래·나눔·스왑에 써요. 고수 가방 글은 어디서나 볼 수 있어요. 이 기기에만 저장돼요.</Note>
     </Shell>
   );
 }

@@ -1,6 +1,6 @@
 /* 홈: 통합 내비게이션 바 → 배너 → 가방 피드 → 고수 신청 */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Button, SearchField, Separator, Tabs, Tag, TagGroup, Tooltip } from "@heroui/react";
+import { Accordion, Badge, Button, SearchField, Separator, Tabs, Tag, TagGroup, Tooltip } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { DeckStrip, Pager, Photo, Promo, TBadge, Who } from "../components/common.jsx";
 import { BAGS, POP_FALLBACK, T, TORDER } from "../data/data.js";
@@ -83,9 +83,12 @@ function NavBar() {
         <Button variant="secondary" size="sm" className="nx-btn" aria-label={"지역 선택: " + (region ? region.full : "전국")} onPress={() => openModal("region")}>
           <Icon id="pin" className="icon-sm" /><span className="lbl">{regionLabel(region)}</span>
         </Button>
-        <Button variant="secondary" size="sm" className="nx-btn" aria-label="필터" onPress={() => openModal("filter")}>
-          <Icon id="sliders" className="icon-sm" />{nf > 0 && <span className="ft-n num">{nf}</span>}
-        </Button>
+        <Badge.Anchor>
+          <Button isIconOnly variant="secondary" size="sm" className="nx-btn" aria-label={nf ? "필터 " + nf + "개 적용됨" : "필터"} onPress={() => openModal("filter")}>
+            <Icon id="sliders" className="icon-sm" />
+          </Button>
+          {nf > 0 && <Badge color="accent" size="sm" className="min-w-5 font-semibold tabular-nums">{nf}</Badge>}
+        </Badge.Anchor>
         {pop && <Suggest onPick={(v) => { patchNav({ q: v }); commitSearch(v); setPop(false); }} />}
       </div>
       <div className="nx-tabs">
@@ -215,6 +218,33 @@ export function focusSearch() {
   if (q) { window.scrollTo({ top: 0 }); const s = document.querySelector(".scroller"); if (s) s.scrollTop = 0; q.focus({ preventScroll: true }); }
 }
 
+/* 자주 묻는 질문 (HeroUI Accordion) */
+const FAQ = [
+  ["고수템은 어떤 서비스예요?", "평범한 고수가 실제로 쓰는 가방을 열어 보여 주는 곳이에요. 물건마다 꼭 살 것(알짜템), 중고로 충분한 것(중고템), 나눔으로 받을 것(나눔템), 바꿔 써 볼 것(스왑템), 안 사도 되는 것(비추천템)을 고수가 라벨로 알려 줘요."],
+  ["가격은 어디 기준이에요?", "새상품은 쿠팡·네이버쇼핑·11번가 검색 결과의 가격이고, 중고·나눔은 고수템 안에 다른 고수가 올린 매물이에요. 지금은 시범 화면이라 가격과 매물은 모두 예시예요."],
+  ["중고·나눔은 어떻게 거래해요?", "다른 쇼핑몰로 보내지 않고 고수템 안에서 이어 드려요. 매물을 고르면 판매 고수와 채팅하거나 나눔을 신청해요. 직거래는 내 지역 근처부터 보여 드려요."],
+  ["화장품 중고도 사도 돼요?", "소모품은 유통기한이 적힌 매물만 예산 플랜에 넣어요. 의약품과 개봉한 입·눈 화장품은 거래를 막아요."],
+  ["협찬이나 광고가 있나요?", "고수 가방에는 협찬·제휴 물건을 넣지 않아요. 사지 말라는 비추천템까지 솔직하게 적는 게 원칙이에요."],
+  ["나도 고수가 될 수 있어요?", "네. 사진 1장과 음성 메모 5분이면 AI가 초안을 써 드려요. 고수님은 틀린 것만 고치고 공개 여부를 정하면 돼요."],
+];
+function Faq() {
+  return (
+    <section className="faq" aria-labelledby="h-faq">
+      <h2 id="h-faq">자주 묻는 질문</h2>
+      <Accordion variant="surface">
+        {FAQ.map(([q, a], k) => (
+          <Accordion.Item key={k} id={"faq-" + k}>
+            <Accordion.Heading>
+              <Accordion.Trigger>{q}<Accordion.Indicator /></Accordion.Trigger>
+            </Accordion.Heading>
+            <Accordion.Panel><Accordion.Body>{a}</Accordion.Body></Accordion.Panel>
+          </Accordion.Item>
+        ))}
+      </Accordion>
+    </section>
+  );
+}
+
 export default function Home() {
   const { openModal } = useApp();
   return (
@@ -236,6 +266,7 @@ export default function Home() {
           </ul>
           <Button size="sm" onPress={() => openModal("supply")}>고수로 신청하기</Button>
         </section>
+        <Faq />
         <p className="foot-note">모든 가방·인물·가격·재고·좋아요 수는 예시예요.</p>
       </div>
     </div>

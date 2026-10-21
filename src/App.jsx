@@ -1,8 +1,8 @@
 /* 화면 틀: PC 왼쪽 소개(세로 탭) + 오른쪽 앱(상단 바 · 본문 · 하단 탭) */
 import { useEffect, useRef } from "react";
-import { Tabs, Toast } from "@heroui/react";
+import { Badge, Tabs, Toast } from "@heroui/react";
 import { Icon, Sprite } from "./components/Icon.jsx";
-import { Promo, TBadge } from "./components/common.jsx";
+import { AvatarBadge, Promo, TBadge } from "./components/common.jsx";
 import Home, { HomeTop, focusSearch } from "./screens/Home.jsx";
 import Bag, { BagTop } from "./screens/Bag.jsx";
 import ModalHost from "./modals/Modals.jsx";
@@ -41,7 +41,9 @@ function Intro() {
 }
 
 function TabBar({ active }) {
-  const { go, toast } = useApp();
+  const { go, toast, scrap, chosen } = useApp();
+  const nScrap = Object.values(scrap).filter(Boolean).length;
+  const nChosen = Object.values(chosen).reduce((s, n) => s + n, 0);
   const ref = useRef(null);
   useEffect(() => {
     const el = ref.current; if (!el) return;
@@ -56,7 +58,18 @@ function TabBar({ active }) {
   };
   return (
     <nav className="tabbar" aria-label="주 메뉴" ref={ref}>
-      {tabs.map(([k, ic, n]) => <button key={k} type="button" className="tab" aria-current={active === k ? "page" : undefined} onClick={() => press(k)}><Icon id={ic} />{n}</button>)}
+      {tabs.map(([k, ic, n]) => (
+        <button key={k} type="button" className="tab" aria-current={active === k ? "page" : undefined} onClick={() => press(k)}
+          aria-label={k === "saved" && nScrap ? n + " " + nScrap + "개" : k === "me" && nChosen ? n + " " + nChosen + "개 고름" : undefined}>
+          {k === "me" ? (
+            /* 내 프로필 사진을 아직 안 정했으면 이니셜 자리(Fallback)가 뜸 + 고른 물건 수 배지 */
+            <span className="tab-av"><AvatarBadge av="나" color="#5A6B82" size="sm" variant="primary" n={nChosen} label={"고른 물건 " + nChosen + "개"} /></span>
+          ) : k === "saved" && nScrap ? (
+            <Badge.Anchor><Icon id={ic} /><Badge color="accent" size="sm" variant="primary" className="min-w-5 font-semibold tabular-nums">{nScrap}</Badge></Badge.Anchor>
+          ) : <Icon id={ic} />}
+          {n}
+        </button>
+      ))}
     </nav>
   );
 }

@@ -1,22 +1,33 @@
 /* 여러 화면에서 같이 쓰는 작은 조각들 */
 import { useEffect, useRef, useState } from "react";
-import { Avatar, Pagination } from "@heroui/react";
+import { Avatar, Badge, Pagination } from "@heroui/react";
 import { Icon } from "./Icon.jsx";
 import { PROMOS, T } from "../data/data.js";
 import { useApp } from "../lib/store.jsx";
 
-/* 고수 얼굴: HeroUI Avatar (이니셜 + 고수별 색) */
-export function GosuAvatar({ av, color, size = "sm", className = "" }) {
+/* 고수 얼굴: HeroUI Avatar
+   - 프로필 사진(src)이 있으면 사진, 사진을 안 정했거나 못 불러오면 이니셜(Fallback) + 고수별 색 */
+export function GosuAvatar({ av, color, src, alt = "", size = "sm", className = "" }) {
   return (
     <Avatar size={size} className={"av " + className} style={{ "--av": color }}>
+      {src ? <Avatar.Image src={src} alt={alt} /> : null}
       <Avatar.Fallback>{av}</Avatar.Fallback>
     </Avatar>
+  );
+}
+/* 아바타 + 숫자 배지 (HeroUI Badge.Anchor) — 0이면 배지 없이 아바타만 */
+export function AvatarBadge({ n, label, variant = "soft", ...av }) {
+  return (
+    <Badge.Anchor>
+      <GosuAvatar {...av} />
+      {n > 0 && <Badge className="min-w-5 font-semibold tabular-nums" color="accent" size="sm" variant={variant} aria-label={label}>{n}</Badge>}
+    </Badge.Anchor>
   );
 }
 export function Who({ b, sub, size = "sm" }) {
   return (
     <span className="who sm">
-      <GosuAvatar av={b.av} color={b.avc} size={size} />
+      <GosuAvatar av={b.av} color={b.avc} src={b.photo} alt={b.name} size={size} />
       <span className="who-t"><span className="name">{b.name}</span><span className="meta">{sub ?? b.meta}</span></span>
     </span>
   );

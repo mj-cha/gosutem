@@ -1,7 +1,7 @@
 /* 고수의 가방 상세: 머리 카드 → 물건마다 고르기 → (후회 · 예산 · 한마디 · 이야기) → 담기 바 */
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Button, Disclosure, DisclosureGroup, Label, Popover, Radio, RadioGroup, Separator, Slider,
+  Alert, Button, Disclosure, DisclosureGroup, Label, Popover, Radio, RadioGroup, Separator, Slider,
   Surface, Tabs, Tag, TagGroup, TextArea, ToggleButton, Tooltip,
 } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
@@ -299,7 +299,14 @@ function Talk({ b }) {
   };
   const del = async (c) => { setBusy(true); const ok = await talkDelete(c.uid, c.id); setBusy(false); toast(ok ? "댓글을 지웠어요." : "지우지 못했어요."); };
   let body;
-  if (st.off) body = <li className="talk-empty">댓글은 claude.ai에서 로그인해 열면 보이고 남길 수 있어요.</li>;
+  if (st.off) body = (
+    <li className="talk-empty">
+      <Alert status="default">
+        <Alert.Indicator />
+        <Alert.Content><Alert.Title>댓글은 준비 중이에요</Alert.Title><Alert.Description>지금은 claude.ai에서 로그인해 열었을 때만 보이고 남길 수 있어요.</Alert.Description></Alert.Content>
+      </Alert>
+    </li>
+  );
   else if (!st.talkReady) body = <li className="talk-empty">댓글을 불러오는 중이에요…</li>;
   else if (!items.length) body = <li className="talk-empty">아직 이야기가 없어요. 첫 댓글을 남겨 주세요.</li>;
   else body = view.map((c) => {
@@ -342,7 +349,7 @@ function Talk({ b }) {
 /* ---------- 상세 화면 ---------- */
 export default function Bag({ b }) {
   const app = useApp();
-  const { region, picks: allPicks, setPicks, emp: allEmp, setEmp, openModal, toast } = app;
+  const { region, picks: allPicks, setPicks, emp: allEmp, setEmp, openModal, toast, setChosen } = app;
   const picks = allPicks[b.id], empOn = allEmp[b.id];
   const [tab, setTab] = useState("all");
   const [ch, setCh] = useState(null);
@@ -415,6 +422,7 @@ export default function Bag({ b }) {
   b.items.forEach((it, i) => { all += minNew(it); if (picks[i]) { mine += itemCost(i); n++; } });
   const need = b.items.filter((_, i) => picks[i]).length, done = b.items.filter((_, i) => picks[i] && plan[i] && plan[i] !== "skip").length;
   const rg = b.items[b.regretItem];
+  useEffect(() => { setChosen((s) => (s[b.id] === done ? s : { ...s, [b.id]: done })); }, [done, b.id, setChosen]);
 
   const onCart = () => {
     if (done) { openModal("checkout", { b, plan, picks, pickOf }); return; }

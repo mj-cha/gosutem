@@ -25,6 +25,7 @@ export function AppProvider({ children }) {
   const [react, setReact] = useState({});
   const [scrap, setScrap] = useState({});
   const [follow, setFollow] = useState({});
+  const [chosen, setChosen] = useState({}); /* 가방별로 경로까지 고른 물건 수 (하단 '내 가방' 배지) */
   const [modal, setModal] = useState({ type: null, props: {}, open: false, seq: 0 });
 
   useEffect(() => {
@@ -50,9 +51,9 @@ export function AppProvider({ children }) {
 
   const value = useMemo(() => ({
     route, go, region, setRegion, nav, setNav, patchNav, recent, setRecent, commitSearch,
-    picks, setPicks, emp, setEmp, react, setReact, scrap, setScrap, follow, setFollow,
+    picks, setPicks, emp, setEmp, react, setReact, scrap, setScrap, follow, setFollow, chosen, setChosen,
     modal, openModal, closeModal, toast: (m) => toast(m),
-  }), [route, go, region, setRegion, nav, patchNav, recent, setRecent, commitSearch, picks, emp, react, scrap, follow, modal, openModal, closeModal]);
+  }), [route, go, region, setRegion, nav, patchNav, recent, setRecent, commitSearch, picks, emp, react, scrap, follow, chosen, modal, openModal, closeModal]);
 
   return <Ctx value={value}>{children}</Ctx>;
 }

@@ -25,6 +25,9 @@ Vite 8 + React 19 + **HeroUI v3.2.6** (실제 컴포넌트) + Tailwind CSS v4
 | 카드 · 상자 | Surface, Separator, Avatar |
 | 하트 · 공감 · 스크랩 · 팔로우 | ToggleButton |
 | 알림 | Toast |
+| 안내 상자(댓글 준비 중·거래 주의·절약 금액) | Alert |
+| 자주 묻는 질문 | Accordion |
+| 필터 개수 · 저장 수 · 내 가방(고른 물건 수) | Badge (+ Avatar 사진 없으면 이니셜) |
 
 ## 폴더
 
@@ -80,7 +83,12 @@ Add new site → Import from GitHub → `mj-cha/gosutem`
 - **댓글(파우치 이야기)·인기 검색어**는 claude.ai 아티팩트의 공유 저장소를 써요. 로컬·Netlify에서는 안내 문구로 보이고, 인기 검색어는 예시 목록이 떠요. 나머지 화면은 그대로 동작해요.
 - 다음 단계: 댓글·검색 저장소를 자체 서버(예: Supabase)로 바꾸기
 
+## 여러 AI와 같이 작업
+
+Gemini·GPT에게 화면을 맡길 때는 `docs/AI-COLLAB.md`의 안내문을 그대로 붙여 넣어요. AI마다 브랜치를 따로 쓰고 PR로 합쳐요.
+
 ## 버전
 
+- v41 (2026-10-21) Accordion(FAQ)·Alert·Badge 추가, Avatar 사진/이니셜 자동 전환, 여러 AI 협업 규칙
 - v40 (2026-10-21) Vite + React + HeroUI 이전 (`feature/react`)
 - v39 (2026-10-21) 한 파일 버전 — `legacy/index.html`

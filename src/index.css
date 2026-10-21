@@ -572,3 +572,12 @@ body {
 .emp { height: 28px !important; padding-inline: 10px !important; }
 .heart, .heart[data-selected="true"], .heart:hover { background: transparent !important; }
 .filter-note:empty { display: none; }
+/* FAQ · 배지 */
+.faq { display: grid; gap: 10px; margin-top: 24px; }
+.faq h2 { margin: 0; font-size: 1.02rem; font-weight: 800; }
+.faq .accordion__trigger { font-size: .88rem; font-weight: 700; text-align: left; }
+.faq .accordion__body { font-size: .84rem; color: var(--muted); line-height: 1.6; }
+.tab-av { display: grid; place-items: center; height: 26px; }
+.tab-av .avatar { width: 24px; height: 24px; font-size: .62rem; }
+.tab[aria-current="page"] .tab-av .avatar { box-shadow: 0 0 0 2px var(--accent); }
+.talk-empty .alert { font-size: .84rem; }
