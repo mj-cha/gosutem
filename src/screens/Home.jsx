@@ -177,7 +177,7 @@ export function HomeTop() {
     </>
   );
 }
-/* 고정 글: 고수 신청(펼친 상태) + 자주 묻는 질문 (HeroUI Accordion) */
+/* 홈 맨 아래 안내: 고수 신청(펼친 상태) + 자주 묻는 질문 (HeroUI Accordion) */
 const FAQ = [
   ["고수템은 어떤 곳이에요?", "검색은 짧게, 선택은 똑똑하게. 평범한 고수가 실제로 들고 다니는 가방을 열어, 뭘 사고 뭘 안 사도 되는지, 집에 있는 걸로 대신할 수 있는지 한눈에 보여 줘요. 더 사라고 만들지 않아요. 덜 헤매라고 만들어요."],
   ["가격은 어디 기준이에요?", "새상품은 쿠팡·네이버쇼핑·11번가 검색 가격, 중고·나눔은 고수템 안에서 다른 고수가 올린 매물이에요. 지금은 시범 화면이라 가격과 매물은 모두 예시예요."],
@@ -195,7 +195,7 @@ function Pinned() {
   return (
     <section className="pinned" aria-labelledby="h-pin">
       <div className="pin-head">
-        <span className="pin-chip"><Icon id="tack" className="icon-xs" />고정</span>
+        <span className="pin-chip"><Icon id="spark" className="icon-xs" />안내</span>
         <h2 id="h-pin">고수 데뷔 안내 · 자주 묻는 질문</h2>
       </div>
       <Accordion variant="surface" defaultExpandedKeys={["join"]} allowsMultipleExpanded>
@@ -235,9 +235,9 @@ export default function Home() {
         <h2 className="vh">고수는 이건 사지 마도 알려줘요</h2>
         <Promo />
       </section>
-      <div className="pad" style={{ paddingTop: 16 }}><Pinned /></div>
       <Feed />
-      <div className="pad">
+      <div className="pad" style={{ paddingTop: 28 }}>
+        <Pinned />
         <p className="foot-note">모든 가방·인물·가격·재고·좋아요 수는 예시예요.</p>
       </div>
     </div>
