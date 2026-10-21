@@ -5,6 +5,7 @@ import { Icon, Sprite } from "./components/Icon.jsx";
 import { AvatarBadge, Promo, TBadge } from "./components/common.jsx";
 import Home, { HomeTop } from "./screens/Home.jsx";
 import Bag, { BagTop } from "./screens/Bag.jsx";
+import BagSoon, { BagSoonTop } from "./screens/BagSoon.jsx";
 import ModalHost from "./modals/Modals.jsx";
 import { BAGS, SRC, SRC_DEF, T, TORDER } from "./data/data.js";
 import { AppProvider, useApp } from "./lib/store.jsx";
@@ -80,7 +81,10 @@ function TabBar({ active }) {
 
 function Shell() {
   const { route } = useApp();
-  const b = BAGS.find((x) => x.id === route);
+  /* 가방 주소: #/bag/:id (예전 #id 도 그대로 열림). 데이터가 없는 #/bag/:id 는 빈 자리 화면 */
+  const bagId = route.startsWith("/bag/") ? decodeURIComponent(route.slice(5)) : route;
+  const b = BAGS.find((x) => x.id === bagId);
+  const soon = !b && route.startsWith("/bag/") && bagId ? bagId : null;
   useEffect(() => {
     const s = document.querySelector(".scroller");
     if (s) s.scrollTop = 0;
@@ -90,9 +94,9 @@ function Shell() {
     <div className="stage">
       <Intro />
       <div className="app">
-        <header className="topbar">{b ? <BagTop b={b} /> : <HomeTop />}</header>
-        <div className="scroller"><main>{b ? <Bag key={b.id} b={b} /> : <Home />}</main></div>
-        <TabBar active={b ? null : "home"} />
+        <header className="topbar">{b ? <BagTop b={b} /> : soon ? <BagSoonTop /> : <HomeTop />}</header>
+        <div className="scroller"><main>{b ? <Bag key={b.id} b={b} /> : soon ? <BagSoon id={soon} /> : <Home />}</main></div>
+        <TabBar active={b || soon ? null : "home"} />
       </div>
     </div>
   );

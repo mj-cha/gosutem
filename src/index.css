@@ -627,3 +627,24 @@ body {
 :root.dark .src-tag.src-sponsor, :root.dark .src-tag.src-affiliate { color: var(--t-share); }
 .pc-v.have { font-weight: 600; font-size: .76rem; color: var(--ink); white-space: normal; }
 .pick-chip[data-ch="have"] { background: color-mix(in srgb, var(--t-used) 13%, var(--surface)); color: var(--t-used); }
+/* 홈 '상황별 고수 가방': 상황 탭 + 정지 카드 (영상 없음) */
+.sitbags { display: grid; gap: 10px; padding-top: 22px; }
+.sb-h { margin: 0; font-size: 1.02rem; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+.sb-tabs { min-width: 0; }
+.sb-tabs .tabs__list-container { overflow-x: auto; scrollbar-width: none; }
+.sb-tabs .tabs__list-container::-webkit-scrollbar { display: none; }
+.sb-tabs .tabs__tab { font-size: .86rem; padding-inline: 8px; white-space: nowrap; }
+.sb-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.sb-card { display: flex; align-items: center; gap: 4px; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 4px 6px 4px 4px; }
+.sb-link { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; color: var(--ink); text-decoration: none; }
+.sb-link:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.sb-ic { flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); }
+.sb-ic .icon { width: 26px; height: 26px; }
+.sb-t { min-width: 0; display: grid; gap: 3px; }
+.sb-nick { font-size: .8rem; color: var(--muted); display: flex; align-items: center; gap: 6px; min-width: 0; }
+.sb-line { font-size: 1rem; font-weight: 800; line-height: 1.35; overflow-wrap: anywhere; }
+.sb-meta { font-size: .8rem; color: var(--muted); }
+.sb-zzim { flex: none; color: var(--muted); }
+.sb-zzim[data-selected="true"] { color: var(--accent); }
+.sb-zzim[data-selected="true"] .icon { fill: currentColor; }
+.sb-soon-id { font-size: .78rem !important; }

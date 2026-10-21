@@ -1,6 +1,6 @@
 /* 홈: 통합 내비게이션 바 → 배너 → 가방 피드 → 고수 신청 */
-import { useMemo, useRef } from "react";
-import { Accordion, Badge, Button, Separator, Tabs, Tag, TagGroup } from "@heroui/react";
+import { useMemo, useRef, useState } from "react";
+import { Accordion, Badge, Button, Separator, Tabs, Tag, TagGroup, ToggleButton } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { DeckStrip, Pager, Photo, Promo, TBadge, Who } from "../components/common.jsx";
 import { BAGS, POP_FALLBACK, T, TORDER } from "../data/data.js";
@@ -9,6 +9,30 @@ import { regionLabel, useApp } from "../lib/store.jsx";
 import { topSearches, useHub } from "../lib/claude.js";
 
 const PAGE = 3;
+
+/* 상황 탭 (예시) — data.js의 CATS는 물건 분류라, 상황 탭은 여기 둬요 */
+const SITS = [
+  { k: "office", n: "직장인", ic: "brief" }, { k: "student", n: "대학생", ic: "grad" }, { k: "travel", n: "여행", ic: "plane" },
+  { k: "swim", n: "수영", ic: "wave" }, { k: "run", n: "러닝", ic: "run" }, { k: "golf", n: "골프", ic: "flag" }, { k: "fish", n: "낚시", ic: "fish" },
+];
+/* 상황별 고수 가방 카드 (예시) — id가 BAGS에 있으면 그 가방, 없으면 준비 중 화면(#/bag/:id)
+   nick·meta·n은 BAGS에 없는 카드만 씀. 사람·물건 수 모두 예시 */
+const SIT_BAGS = [
+  { id: "intern", sits: ["office"], line: "첫 출근 앞둔 분 주목" },
+  { id: "run", sits: ["office", "run"], line: "런린이 주목 · 비싼 시계는 나중에" },
+  { id: "uni", sits: ["student"], line: "통학러 주목 · 어깨 가벼워지는 가방" },
+  { id: "swim", sits: ["student", "swim"], line: "수린이 주목 · 물 뚝뚝 방지템" },
+  { id: "bali", sits: ["travel"], line: "한달살기 짐 싸기 전에 보기" },
+  { id: "ex-travel-weekend", sits: ["travel"], nick: "주말여행러 하린", meta: "1박 2일 배낭 3년 차", n: 6, line: "짐이 반으로 줄어요" },
+  { id: "ex-golf-first", sits: ["golf"], nick: "주말골퍼 도윤", meta: "골프 4년 차", n: 7, line: "골린이 주목 · 첫 라운딩 준비" },
+  { id: "ex-golf-save", sits: ["golf"], nick: "연습장 반장 수아", meta: "골프 6년 차", n: 5, line: "공·장갑은 이렇게 아껴요" },
+  { id: "ex-fish-first", sits: ["fish"], nick: "새벽 방파제 태오", meta: "바다낚시 5년 차", n: 8, line: "낚린이 주목 · 첫 출조 준비물" },
+  { id: "ex-fish-small", sits: ["fish"], nick: "민물 붕어 지호", meta: "민물낚시 8년 차", n: 6, line: "채비는 작게 시작해요" },
+];
+const sitCard = (c) => {
+  const b = BAGS.find((x) => x.id === c.id);
+  return b ? { ...c, nick: b.name, meta: b.meta, n: b.items.length } : c;
+};
 
 /* 최근·인기 검색어 (찾기 창 안에서 씀) */
 export function Suggest({ onPick }) {
@@ -130,6 +154,47 @@ function BagCard({ b }) {
   );
 }
 
+/* 상황별 고수 가방: 상황 탭 → 정지 카드 목록 (영상 없이 문구로만). 찜은 '저장' 탭과 같은 스크랩 */
+function SitBags() {
+  const { scrap, setScrap, toast } = useApp();
+  const [sit, setSit] = useState(SITS[0].k);
+  const cur = SITS.find((x) => x.k === sit);
+  const cards = SIT_BAGS.filter((c) => c.sits.includes(sit)).map(sitCard);
+  return (
+    <section className="sitbags pad" aria-labelledby="h-sit">
+      <h2 id="h-sit" className="sb-h">상황별 고수 가방 <span className="ex-badge">예시</span></h2>
+      <Tabs variant="secondary" className="sb-tabs" selectedKey={sit} onSelectionChange={(k) => setSit(String(k))}>
+        <Tabs.ListContainer>
+          <Tabs.List aria-label="상황">
+            {SITS.map((x) => <Tabs.Tab key={x.k} id={x.k}>{x.n}<Tabs.Indicator /></Tabs.Tab>)}
+          </Tabs.List>
+        </Tabs.ListContainer>
+      </Tabs>
+      <ul className="sb-list" aria-label={cur.n + " 고수 가방"}>
+        {cards.map((c) => {
+          const on = !!scrap[c.id];
+          return (
+            <li key={c.id} className="sb-card">
+              <a className="sb-link" href={"#/bag/" + c.id} aria-label={c.nick + " 가방 열기: " + c.line}>
+                <span className="sb-ic" aria-hidden="true"><Icon id={cur.ic} /></span>
+                <span className="sb-t">
+                  <span className="sb-nick">{c.nick}<span className="ex-badge">예시</span></span>
+                  <b className="sb-line">{c.line}</b>
+                  <span className="sb-meta">{c.meta} · 물건 <span className="num">{c.n}</span>개</span>
+                </span>
+              </a>
+              <ToggleButton isIconOnly variant="ghost" size="sm" className="sb-zzim" aria-label={c.nick + " 가방 찜"} isSelected={on}
+                onChange={(v) => { setScrap((s) => ({ ...s, [c.id]: v })); toast(v ? "찜했어요. 저장 탭에 모여요." : "찜을 풀었어요."); }}>
+                <Icon id="heart" />
+              </ToggleButton>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
 function Feed() {
   const { nav, setNav, patchNav, region, openModal, commitSearch } = useApp();
   const feed = useRef(null);
@@ -235,6 +300,7 @@ export default function Home() {
         <h2 className="vh">고수는 이건 사지 마도 알려줘요</h2>
         <Promo />
       </section>
+      <SitBags />
       <Feed />
       <div className="pad" style={{ paddingTop: 28 }}>
         <Pinned />
