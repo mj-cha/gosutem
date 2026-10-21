@@ -221,8 +221,10 @@ function Filter() {
 }
 
 /* 전체 분류: 왼쪽 대분류(세로 탭), 오른쪽 중분류·소분류 */
+/* 이미 홈 화면 앱으로 열었으면(설치됨) 안내를 숨김 */
+const installed = () => { try { return matchMedia("(display-mode: standalone)").matches || navigator.standalone === true; } catch { return false; } };
 function Category() {
-  const { nav, patchNav, closeModal } = useApp();
+  const { nav, patchNav, closeModal, openModal } = useApp();
   const [cur, setCur] = useState((nav.pc || nav.cat || "").split("/")[0] || "work");
   const groups = [...pGroups(), ...prodGroups()];
   const choose = (v) => {
@@ -262,6 +264,13 @@ function Category() {
         </Tabs>
       </div>
       <p className="m-note">파우치 분류는 상황·취미로 가방을 고르고, 물건 종류는 가방 속 물건으로 찾아요. ‘모집 중’은 아직 가방이 없는 곳이에요.</p>
+      {!installed() && (
+        <button type="button" className="install-row" onClick={() => openModal("install")}>
+          <Icon id="addhome" className="icon-sm" />
+          <span className="who-t"><b>홈 화면에 추가하기</b><span className="desc-sm">한 번만 추가하면 앱처럼 바로 열려요</span></span>
+          <Icon id="back" className="icon-sm flip" />
+        </button>
+      )}
     </Shell>
   );
 }

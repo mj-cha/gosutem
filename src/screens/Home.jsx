@@ -1,6 +1,6 @@
 /* 홈: 통합 내비게이션 바 → 배너 → 가방 피드 → 고수 신청 */
 import { useMemo, useRef } from "react";
-import { Accordion, Badge, Button, Separator, Tabs, Tag, TagGroup, Tooltip } from "@heroui/react";
+import { Accordion, Badge, Button, Separator, Tabs, Tag, TagGroup } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { DeckStrip, Pager, Photo, Promo, TBadge, Who } from "../components/common.jsx";
 import { BAGS, POP_FALLBACK, T, TORDER } from "../data/data.js";
@@ -173,19 +173,7 @@ export function HomeTop() {
     <>
       <Button isIconOnly variant="ghost" className="icon-btn" aria-label="전체 분류" onPress={() => openModal("category")}><Icon id="menu" /></Button>
       <div className="logo">고수템<small>가칭</small></div>
-      <InstallBtn />
     </>
-  );
-}
-function InstallBtn() {
-  const { openModal } = useApp();
-  return (
-    <Tooltip delay={300}>
-      <Tooltip.Trigger>
-        <Button isIconOnly variant="ghost" className="icon-btn" aria-label="홈 화면에 추가" onPress={() => openModal("install")}><Icon id="addhome" /></Button>
-      </Tooltip.Trigger>
-      <Tooltip.Content showArrow><Tooltip.Arrow />홈 화면에 추가하면 앱처럼 열려요</Tooltip.Content>
-    </Tooltip>
   );
 }
 /* 자주 묻는 질문 (HeroUI Accordion) */
