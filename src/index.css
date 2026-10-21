@@ -589,3 +589,22 @@ body {
 .install-row .who-t { flex: 1; }
 .install-row:hover { background: var(--surface-3); }
 .install-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+/* 고정 글 (고수 데뷔 + FAQ) */
+.pinned { display: grid; gap: 8px; }
+.pin-head { display: flex; align-items: center; gap: 8px; }
+.pin-head h2 { margin: 0; font-size: .92rem; font-weight: 800; }
+.pin-chip { display: inline-flex; align-items: center; gap: 3px; font-size: .68rem; font-weight: 800; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); border-radius: 999px; padding: 2px 8px 2px 6px; }
+.pin-chip .icon { stroke-width: 2.2; }
+.pinned .accordion__trigger { font-size: .86rem; font-weight: 700; text-align: left; }
+.pinned .accordion__body { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+.join-t { font-size: .95rem; font-weight: 900; color: var(--ink); }
+.faq-q { color: var(--accent); font-weight: 900; margin-right: 6px; }
+.join { display: grid; gap: 12px; color: var(--ink) !important; }
+.join-lead { margin: 0; font-size: .86rem; color: var(--ink); }
+.join-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: st; }
+.join-steps li { counter-increment: st; display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: 10px; align-items: start; background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
+.join-steps li::before { content: counter(st); grid-row: 1 / span 2; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-foreground); font-size: .76rem; font-weight: 900; }
+.join-steps b { font-size: .86rem; color: var(--ink); }
+.join-steps span { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+.join-plus { margin: 0; display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--t-used); font-weight: 700; }
+.join .button { justify-self: start; }

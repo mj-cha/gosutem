@@ -54,12 +54,13 @@ function Install() {
 }
 function Supply() {
   return (
-    <Shell title="고수로 신청하기" icon="spark" desc="총 10분 정도면 돼요. 글은 AI가 먼저 쓰고, 고수님은 고치고 확인만 해 주세요.">
-      <ol className="steps">
-        <li><b>사진 1장 · 1분</b> · 물건을 펼쳐 놓고 폰으로 한 장</li>
-        <li><b>음성 메모 · 5분</b> · "이건 꼭 사, 이건 사지 마"를 말로만. 질문 3개(알짜템·비추천템·후회한 것)에 답하면 돼요</li>
-        <li><b>AI 초안 확인 · 3~4분</b> · AI가 사진에서 물건을 찾고, 말한 내용으로 라벨·한 줄 팁을 채워요. 틀린 것만 고치고 공개 여부 결정</li>
+    <Shell title="10분 만에 고수 데뷔" icon="spark" desc="글은 AI가 쓰고, 고수님은 말만 해 주세요.">
+      <ol className="join-steps">
+        <li><b>찰칵, 1장 · 1분</b><span>가방 속 물건을 펼쳐 놓고 폰으로 한 장. 물건 이름은 AI가 사진에서 찾아요.</span></li>
+        <li><b>수다, 5분</b><span>"이건 꼭 사, 이건 사지 마"를 말로만. 알짜템·비추천템·후회한 것, 질문 3개에 답하면 돼요.</span></li>
+        <li><b>쓱, 확인 · 3분</b><span>AI가 라벨과 한 줄 팁까지 채운 초안을 보여 드려요. 틀린 것만 고치고 공개할지 정해요.</span></li>
       </ol>
+      <p className="join-plus"><Icon id="check" className="icon-xs" />안 쓰는 물건은 그 자리에서 중고·나눔으로 올려 드려요.</p>
       <Note status="accent">시범 화면이라 신청서는 아직 연결되지 않았어요.</Note>
     </Shell>
   );
