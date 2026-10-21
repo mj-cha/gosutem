@@ -581,3 +581,7 @@ body {
 .tab-av .avatar { width: 24px; height: 24px; font-size: .62rem; }
 .tab[aria-current="page"] .tab-av .avatar { box-shadow: 0 0 0 2px var(--accent); }
 .talk-empty .alert { font-size: .84rem; }
+.sg-panel { display: grid; gap: 10px; }
+.nx-row { justify-content: space-between; }
+.nx-hint { flex: 1; min-width: 0; font-size: .72rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nx-row .nx-btn:first-child { max-width: 140px; }

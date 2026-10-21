@@ -1,11 +1,12 @@
 /* 모든 모달(HeroUI Modal) — 열린 모달은 store 의 modal.type 하나 */
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { Suggest } from "../screens/Home.jsx";
 import { Alert, Button, ListBox, Modal, SearchField, Tabs, Tag, TagGroup } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { GosuAvatar, TBadge } from "../components/common.jsx";
 import { ART, BAGS, GU, PCATS, CATS, PCH, TORDER } from "../data/data.js";
 import {
-  allRegions, catCount, filterBags, isPouchPath, listingsOf, minNew, nearestGu, optionsOf, pcCount, pGroups, prodGroups, won,
+  allRegions, catCount, filterBags, normQ, relatedTerms, isPouchPath, listingsOf, minNew, nearestGu, optionsOf, pcCount, pGroups, prodGroups, won,
 } from "../lib/logic.js";
 import { useApp } from "../lib/store.jsx";
 
@@ -311,7 +312,50 @@ function Region() {
   );
 }
 
-const MAP = { install: Install, supply: Supply, profile: Profile, recommend: Recommend, checkout: Checkout, listing: Listing, filter: Filter, category: Category, region: Region };
+/* 찾기 (하단 돋보기에서 열림): 검색어 입력 → 최근·인기 검색어 → 바로 가방 보기 */
+function Search() {
+  const { nav, patchNav, commitSearch, closeModal, go, route } = useApp();
+  const [q, setQ] = useState(nav.q);
+  const tm = useRef(null);
+  const t = q.trim(), res = useMemo(() => filterBags({ ...nav, q }).shown, [nav, q]), rel = t ? relatedTerms(t) : [];
+  const apply = (v = q) => {
+    clearTimeout(tm.current); commitSearch(v); patchNav({ q: v }); closeModal();
+    if (route && route !== "home") go("home");
+  };
+  const open = (id) => { if (t) commitSearch(t); closeModal(); go(id); };
+  const change = (v) => { setQ(v); clearTimeout(tm.current); if (normQ(v).length >= 2) tm.current = setTimeout(() => commitSearch(v), 1500); };
+  return (
+    <Shell title="찾기" icon="search" size="md"
+      footer={<><Button variant="tertiary" onPress={() => { setQ(""); patchNav({ q: "" }); closeModal(); }}>{nav.q ? "검색어 지우기" : "취소"}</Button><Button onPress={() => apply()}>{t ? res.length + "개 가방 보기" : "전체 가방 보기"}</Button></>}>
+      <SearchField aria-label="물건·상황·고수 검색" value={q} onChange={change} onSubmit={(v) => apply(v)} autoFocus fullWidth>
+        <SearchField.Group><SearchField.SearchIcon /><SearchField.Input id="q" placeholder="물건·상황·고수 검색" autoComplete="off" /><SearchField.ClearButton aria-label="검색어 지우기" /></SearchField.Group>
+      </SearchField>
+      {!t ? <Suggest onPick={(v) => apply(v)} /> : (
+        <>
+          <div className="sg-h"><b>가방 {res.length}개</b><span className="sg-basis">눌러서 바로 열기</span></div>
+          {res.length ? (
+            <div className="rg-res">{res.slice(0, 5).map((b) => (
+              <button type="button" key={b.id} className="rg-row flex items-center gap-2" onClick={() => open(b.id)}>
+                <GosuAvatar av={b.av} color={b.avc} src={b.photo} alt={b.name} />
+                <span className="who-t min-w-0"><span className="truncate font-semibold text-[.84rem]">{b.title}</span><span className="desc-sm">{b.name} · {b.meta}</span></span>
+              </button>
+            ))}</div>
+          ) : <p className="sg-empty">‘{t}’이(가) 담긴 가방이 아직 없어요. 다른 말로 찾아보세요.</p>}
+          {rel.length > 0 && (
+            <>
+              <div className="sg-h"><b>연관 검색어</b></div>
+              <TagGroup aria-label="연관 검색어" className="chips" selectionMode="single" selectedKeys={[]} size="sm" onSelectionChange={(k) => { const v = [...k][0]; if (v) change(String(v)); }}>
+                <TagGroup.List>{rel.map((x) => <Tag key={x} id={x} textValue={x}>{x}</Tag>)}</TagGroup.List>
+              </TagGroup>
+            </>
+          )}
+        </>
+      )}
+    </Shell>
+  );
+}
+
+const MAP = { search: Search,  install: Install, supply: Supply, profile: Profile, recommend: Recommend, checkout: Checkout, listing: Listing, filter: Filter, category: Category, region: Region };
 export default function ModalHost() {
   const { modal } = useApp();
   const C = modal.type && MAP[modal.type];

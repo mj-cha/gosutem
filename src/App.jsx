@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { Badge, Tabs, Toast } from "@heroui/react";
 import { Icon, Sprite } from "./components/Icon.jsx";
 import { AvatarBadge, Promo, TBadge } from "./components/common.jsx";
-import Home, { HomeTop, focusSearch } from "./screens/Home.jsx";
+import Home, { HomeTop } from "./screens/Home.jsx";
 import Bag, { BagTop } from "./screens/Bag.jsx";
 import ModalHost from "./modals/Modals.jsx";
 import { BAGS, T, TORDER } from "./data/data.js";
@@ -41,7 +41,8 @@ function Intro() {
 }
 
 function TabBar({ active }) {
-  const { go, toast, scrap, chosen } = useApp();
+  const { go, toast, scrap, chosen, openModal, modal } = useApp();
+  const cur = modal.open && modal.type === "search" ? "search" : active;
   const nScrap = Object.values(scrap).filter(Boolean).length;
   const nChosen = Object.values(chosen).reduce((s, n) => s + n, 0);
   const ref = useRef(null);
@@ -53,13 +54,13 @@ function TabBar({ active }) {
   const tabs = [["home", "home", "홈"], ["search", "search", "찾기"], ["saved", "bookmark", "저장"], ["me", "user", "내 가방"]];
   const press = (k) => {
     if (k === "home") go("home");
-    else if (k === "search") { if (location.hash && location.hash !== "#home") { go("home"); setTimeout(focusSearch, 80); } else focusSearch(); }
+    else if (k === "search") openModal("search");
     else toast(k === "saved" ? "저장한 가방이 여기 모여요. 시범 화면이라 비어 있어요." : "담은 물건이 여기 모여요. 시범 화면이라 비어 있어요.");
   };
   return (
     <nav className="tabbar" aria-label="주 메뉴" ref={ref}>
       {tabs.map(([k, ic, n]) => (
-        <button key={k} type="button" className="tab" aria-current={active === k ? "page" : undefined} onClick={() => press(k)}
+        <button key={k} type="button" className="tab" aria-current={cur === k ? "page" : undefined} onClick={() => press(k)}
           aria-label={k === "saved" && nScrap ? n + " " + nScrap + "개" : k === "me" && nChosen ? n + " " + nChosen + "개 고름" : undefined}>
           {k === "me" ? (
             /* 내 프로필 사진을 아직 안 정했으면 이니셜 자리(Fallback)가 뜸 + 고른 물건 수 배지 */

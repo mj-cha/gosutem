@@ -1,24 +1,24 @@
 /* 홈: 통합 내비게이션 바 → 배너 → 가방 피드 → 고수 신청 */
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Accordion, Badge, Button, SearchField, Separator, Tabs, Tag, TagGroup, Tooltip } from "@heroui/react";
+import { useMemo, useRef } from "react";
+import { Accordion, Badge, Button, Separator, Tabs, Tag, TagGroup, Tooltip } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { DeckStrip, Pager, Photo, Promo, TBadge, Who } from "../components/common.jsx";
 import { BAGS, POP_FALLBACK, T, TORDER } from "../data/data.js";
-import { catName, costOf, countT, filterBags, minNew, normQ, pcCount, pGroups, relatedTerms, won } from "../lib/logic.js";
+import { catName, costOf, countT, filterBags, minNew, pcCount, pGroups, relatedTerms, won } from "../lib/logic.js";
 import { regionLabel, useApp } from "../lib/store.jsx";
 import { topSearches, useHub } from "../lib/claude.js";
 
 const PAGE = 3;
 
-/* 최근·인기 검색어 패널 */
-function Suggest({ onPick }) {
+/* 최근·인기 검색어 (찾기 창 안에서 씀) */
+export function Suggest({ onPick }) {
   const { recent, setRecent, toast } = useApp();
   const st = useHub();
   const top = topSearches(st), live = !!(st.db && top.length);
   const list = live ? top : POP_FALLBACK.map((q) => ({ q }));
   const at = st.searchesAt, stamp = at ? at.getHours() + ":" + String(at.getMinutes()).padStart(2, "0") : "";
   return (
-    <div className="nx-pop" role="region" aria-label="검색어 추천">
+    <div className="sg-panel" role="region" aria-label="검색어 추천">
       <div className="sg-h"><b>최근 검색어</b>{recent.length > 0 && <button type="button" className="link-btn" onClick={() => { setRecent([]); toast("최근 검색어를 모두 지웠어요."); }}>전체 삭제</button>}</div>
       {recent.length ? (
         <TagGroup aria-label="최근 검색어" className="chips" selectionMode="single" selectedKeys={[]} size="sm"
@@ -40,27 +40,13 @@ function Suggest({ onPick }) {
   );
 }
 
-/* 통합 내비게이션 바: 검색 · 지역 · 필터 · 파우치 분류(상황·취미군) · 고른 조건 */
+/* 통합 내비게이션 바: 지역 · 필터 · 파우치 분류(상황·취미군) · 고른 조건
+   검색은 하단 '찾기'(돋보기)에서만 열어요 */
 function NavBar() {
-  const { nav, patchNav, region, openModal, commitSearch } = useApp();
-  const [pop, setPop] = useState(false);
-  const box = useRef(null), tm = useRef(null);
+  const { nav, patchNav, region, openModal } = useApp();
   const top = nav.pc ? nav.pc.split("/")[0] : "";
   const g = top ? pGroups().find((c) => c.k === top) : null;
   const nf = (nav.cat ? 1 : 0) + (nav.gosu ? 1 : 0);
-
-  useEffect(() => {
-    const f = (e) => { if (box.current && !box.current.contains(e.target)) setPop(false); };
-    document.addEventListener("pointerdown", f);
-    return () => document.removeEventListener("pointerdown", f);
-  }, []);
-  useEffect(() => () => clearTimeout(tm.current), []);
-
-  const setQ = (v) => {
-    patchNav({ q: v }); setPop(!v.trim());
-    clearTimeout(tm.current);
-    if (normQ(v).length >= 2) tm.current = setTimeout(() => commitSearch(v), 1500);
-  };
   const chips = [];
   if (nav.q.trim()) chips.push(["q", "‘" + nav.q.trim() + "’"]);
   if (nav.pc) chips.push(["pc", catName(nav.pc)]);
@@ -68,28 +54,18 @@ function NavBar() {
   if (nav.gosu) { const gb = BAGS.find((b) => b.id === nav.gosu); if (gb) chips.push(["gosu", gb.name]); }
 
   return (
-    <nav className="navx" aria-label="가방 찾기" ref={box}>
+    <nav className="navx" aria-label="가방 찾기">
       <div className="nx-row">
-        <SearchField aria-label="검색" value={nav.q} onChange={setQ} variant="secondary" fullWidth
-          onFocus={() => setPop(!nav.q.trim())}
-          onSubmit={(v) => { clearTimeout(tm.current); commitSearch(v); setPop(false); }}
-          onKeyDown={(e) => { if (e.key === "Escape") setPop(false); }}>
-          <SearchField.Group>
-            <SearchField.SearchIcon />
-            <SearchField.Input id="q" placeholder="물건·상황·고수 검색" autoComplete="off" />
-            <SearchField.ClearButton aria-label="검색어 지우기" />
-          </SearchField.Group>
-        </SearchField>
         <Button variant="secondary" size="sm" className="nx-btn" aria-label={"지역 선택: " + (region ? region.full : "전국")} onPress={() => openModal("region")}>
           <Icon id="pin" className="icon-sm" /><span className="lbl">{regionLabel(region)}</span>
         </Button>
+        <span className="nx-hint">{region ? "근처 중고·나눔부터 보여 드려요" : "지역을 고르면 근처 중고·나눔부터 보여요"}</span>
         <Badge.Anchor>
           <Button isIconOnly variant="secondary" size="sm" className="nx-btn" aria-label={nf ? "필터 " + nf + "개 적용됨" : "필터"} onPress={() => openModal("filter")}>
             <Icon id="sliders" className="icon-sm" />
           </Button>
           {nf > 0 && <Badge color="accent" size="sm" className="min-w-5 font-semibold tabular-nums">{nf}</Badge>}
         </Badge.Anchor>
-        {pop && <Suggest onPick={(v) => { patchNav({ q: v }); commitSearch(v); setPop(false); }} />}
       </div>
       <div className="nx-tabs">
         <Tabs variant="secondary" selectedKey={top || "all"} onSelectionChange={(k) => patchNav({ pc: k === "all" ? null : String(k) })}>
@@ -198,7 +174,6 @@ export function HomeTop() {
       <Button isIconOnly variant="ghost" className="icon-btn" aria-label="전체 분류" onPress={() => openModal("category")}><Icon id="menu" /></Button>
       <div className="logo">고수템<small>가칭</small></div>
       <InstallBtn />
-      <Button isIconOnly variant="ghost" className="icon-btn" aria-label="찾기" onPress={focusSearch}><Icon id="search" /></Button>
     </>
   );
 }
@@ -213,11 +188,6 @@ function InstallBtn() {
     </Tooltip>
   );
 }
-export function focusSearch() {
-  const q = document.getElementById("q");
-  if (q) { window.scrollTo({ top: 0 }); const s = document.querySelector(".scroller"); if (s) s.scrollTop = 0; q.focus({ preventScroll: true }); }
-}
-
 /* 자주 묻는 질문 (HeroUI Accordion) */
 const FAQ = [
   ["고수템은 어떤 서비스예요?", "평범한 고수가 실제로 쓰는 가방을 열어 보여 주는 곳이에요. 물건마다 꼭 살 것(알짜템), 중고로 충분한 것(중고템), 나눔으로 받을 것(나눔템), 바꿔 써 볼 것(스왑템), 안 사도 되는 것(비추천템)을 고수가 라벨로 알려 줘요."],
