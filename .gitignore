@@ -1,0 +1,9 @@
+# 빌드 결과물 (tools/build.py 로 다시 만듦)
+dist/
+# 에디터·OS
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+# 파이썬
+__pycache__/
