@@ -1,0 +1,3 @@
+# Netlify: 사이트에 공개하지 않을 경로 (Claude 스킬·작업 규칙)
+/.claude/*  /404.html  404!
+/CLAUDE.md  /404.html  404!
