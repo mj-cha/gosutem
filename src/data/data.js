@@ -55,7 +55,6 @@ export const BAGS = [
   title:"캐리어 절반은 비워가세요, 짱구(Canggu) 서퍼의 가벼운 파우치",
   hook:"“발리 한달살기 + 서핑 파우치”",
   sub:"적도 자외선 아래 서핑부터 해 질 녘 비치클럽, 귀국 전날 나눔까지! 발리에서 직접 파도 타고 지내며 남긴 알짜템 & 나눔 스왑 큐레이션",
-  trust:"이 파우치에는 협찬·제휴가 없어요. 발리에서 직접 파도 타고 지내며 남긴 찐 후기예요.",
   howto:"하트를 누르면 내 파우치에 담겨요. 라벨을 누르면 새상품·중고·유사템·나눔 중 어디서 구할 수 있는지 볼 수 있어요.",
   name:"유나(가명)", meta:"발리 한달살기 · 짱구 서핑 3년 차", av:"유", avc:"#1B9AAA",
   best:"써니데이즈 징크 선블록", rebuy:"여행용 샤워기 헤드 & 필터 세트", regretItem:5, regret:"블로그 괴담 보고 바리바리 사 갔는데, 한 달 내내 캐리어에서 꺼내지도 않았어요.",
@@ -70,7 +69,7 @@ export const BAGS = [
    {n:"해변 3초 환복의 영업비밀 ‘판초형 샌드프리 비치타월’", q:"판초 비치타월 샌드프리", t:"used", th:"surf", art:"poncho", cat:"sports/water", ai:1, sense:92, emp:84,
     tip:"바람 부는 해변에서 툭 뒤집어쓰는 이동식 탈의실. 한달살기 끝낸 사람들이 내놓는 S급 중고가 많으니 반값에 구하세요!",
     nw:[["쿠팡",39000],["네이버쇼핑",36000]], used:{n:6,avg:15000}, sim:["후드 비치타월"], share:0},
-   {n:"구릿빛 피부 결 살려 주는 ‘골드 쉬머 바디 오일’", q:"골드 쉬머 바디 오일", t:"swap", th:"sunset", art:"bodyoil", cat:"beauty/body/wash", cons:1, ai:1, sense:89, emp:67,
+   {n:"구릿빛 피부 결 살려 주는 ‘골드 쉬머 바디 오일’", q:"골드 쉬머 바디 오일", src:"sponsor", srcNote:"브랜드 체험으로 받은 제품이에요. 써 보니 향이 호불호라 스왑템으로 뒀어요.", t:"swap", th:"sunset", art:"bodyoil", cat:"beauty/body/wash", cons:1, ai:1, sense:89, emp:67,
     tip:"비치클럽 갈 때 쇄골·어깨에 살짝 바르면 조명을 다 흡수해요. 코코넛 향·펄 크기가 취향 타니, 안 맞으면 다른 향 가진 여행자랑 스왑!",
     nw:[["쿠팡",28000],["네이버쇼핑",26500]], used:{n:3,avg:11000}, sim:["쉬머 바디 로션","하이라이터 스틱"], share:1},
    {n:"출국 전날 두고 가는 ‘대용량 알로에 젤 & 모기 기피제’", q:"대용량 알로에 젤", t:"share", th:"light", art:"aloe", cat:"beauty/body/wash", cons:1, ai:1, sense:96, emp:145,
@@ -159,11 +158,11 @@ export const ART = {
 };
 
 export const PROMOS = [
- {bg:"#FF3D7F",fg:"#FFFFFF",big:"누구나<br>고수가 될 수 있다",small:"처음이라 두렵다면? 고수의 가방을 보여줄게.",tag:"#고수되기"},
- {bg:"#16243A",fg:"#FFFFFF",big:"고수가 쓴 걸,<br>가장 합리적으로",small:"새상품·중고·나눔 중 제일 똑똑한 길을 같이 찾아요.",tag:"#합리적소비"},
+ {bg:"#FF3D7F",fg:"#FFFFFF",big:"내 시간도,<br>내 돈도 아까우니까",small:"검색은 짧게, 선택은 똑똑하게. 고수의 가방을 열어 보세요.",tag:"#고수템"},
+ {bg:"#16243A",fg:"#FFFFFF",big:"더 사라고 만들지 않아요.<br>덜 헤매라고 만들어요",small:"새상품·중고·나눔, 집에 있는 걸로까지. 제일 덜 번거로운 길을 같이 찾아요.",tag:"#합리적소비"},
  {img:"img/intern-kits.webp",bg:"#F3C9DB",fg:"#FFFFFF",big:"4개월 차 인턴의<br>영업비밀 파우치",small:"인기 파우치 덱 · 조회수 31.2K",tag:"#인기덱",open:"intern"},
  {bg:"#C6F432",fg:"#16243A",big:"쇼핑몰은 사라고만 해.<br>고수는 ‘사지 마’도 알려줘.",small:"비추천템까지 솔직하게.",tag:"#사지마"},
- {bg:"#FFD23F",fg:"#16243A",big:"내 가방 공개하고<br>첫 고수 되기",small:"11월 시드 고수 모집 · 선정되면 내 이름의 프로필 페이지 (이벤트 예시)",tag:"EVENT",act:"supply"}
+ {bg:"#FFD23F",fg:"#16243A",big:"내 가방 공개하고<br>첫 고수 되기",small:"11월 시드 고수 모집 · 사진 1장 + 말 5분이면 끝 (이벤트 예시)",tag:"EVENT",act:"supply"}
 ];
 
 export const PCATS = [
@@ -216,4 +215,6 @@ export const TALK_TAGS = ["후기","질문","꿀팁"];
 
 export const PRI = {must:0,used:1,share:2,swap:3};
 
-export const PCH = {nw:"새상품",used:"중고",sim:"유사템",share:"나눔",swap:"스왑"};
+export const PCH = {nw:"새상품",used:"중고",sim:"유사템",share:"나눔",swap:"스왑",have:"집에 있는 걸로"};
+/* 물건 출처 표시 (기본 내돈내산). 협찬·제휴는 숨기지 않고 물건마다 표시 */
+export const SRC = {own:"내돈내산", sponsor:"협찬", affiliate:"제휴 링크", gift:"물려받음", used:"중고로 샀음"};

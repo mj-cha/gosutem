@@ -14,7 +14,7 @@ const DEVMAP = "https://claude.ai/artifact/9KQ7bje3a9EXoxYqtPGvA1";
 function Intro() {
   return (
     <aside className="intro" aria-label="서비스 소개">
-      <div className="wordmark">고수템 <small>GOSUTEM · 가칭</small><a className="devmap-chip" href={DEVMAP} target="_blank" rel="noopener">사업화 맵 ↗</a></div>
+      <div className="wordmark"><span className="wm-t"><small>고수의 아이템 · GOSUTEM</small>고수템</span><a className="devmap-chip" href={DEVMAP} target="_blank" rel="noopener">사업화 맵 ↗</a></div>
       <Promo />
       <Tabs orientation="vertical" className="vtabs" defaultSelectedKey="about">
         <Tabs.ListContainer>

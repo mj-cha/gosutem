@@ -75,6 +75,7 @@ export function listingsOf(it, ch, region) {
       const sl = sellerOf(it, k + 5), place = (ND ? ND[(k + it.n.length) % ND.length] + " " : "") + (0.4 + k * 0.6).toFixed(1) + "km";
       L.push({ src: sl.n, seller: sl, cond: "나눔", deal: "직거래", place, internal: true, p: 0, note: place + " · " + W[k % 5] + " 올라옴" });
     }
+  } else if (ch === "have") { L = [{ src: "집에 있는 것", note: it.sub ? "대신 · " + it.sub : "이미 가진 걸로 대신", p: 0 }];
   } else if (ch === "swap") { const sl = sellerOf(it, 7); L = [{ src: sl.n, seller: sl, cond: "스왑", deal: "교환", place: "내 물건과 교환", note: "내 물건과 교환", p: 0, internal: true }]; }
   L.sort((a, c) => a.p - c.p); cache.set(key, L); return L;
 }
@@ -82,6 +83,7 @@ export function listingsOf(it, ch, region) {
 /* 채널별 가격 요약 (가격 비교 칸) */
 export function chPrice(it, ch, region) {
   const base = minNew(it);
+  if (ch === "have") return { p: 0, n: 1, off: 100 };
   if (ch === "nw") { const ps = it.nw.map((x) => x[1]); return it.nw.length ? { min: Math.min(...ps), max: Math.max(...ps), n: it.nw.length } : null; }
   if (ch === "used") { if (!it.used.n) return null; const p = listingsOf(it, "used", region)[0].p; return { p, n: it.used.n, off: Math.round((1 - p / base) * 100) }; }
   if (ch === "sim") { const l = simList(it); if (!l.length) return null; const m = Math.min(...l.map((x) => x.p)); return { p: m, n: l.length, off: Math.round((1 - m / base) * 100) }; }

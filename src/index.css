@@ -608,3 +608,22 @@ body {
 .join-steps span { font-size: .78rem; color: var(--muted); line-height: 1.5; }
 .join-plus { margin: 0; display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--t-used); font-weight: 700; }
 .join .button { justify-self: start; }
+/* 상단 로고 · 설정 */
+.logo { flex-direction: column; align-items: flex-start; gap: 2px; }
+.logo small { font-size: .62rem; letter-spacing: .02em; line-height: 1; }
+.logo span { line-height: 1; }
+.gear-btn { color: var(--muted) !important; opacity: .55; min-width: 32px !important; width: 32px; height: 32px; }
+.gear-btn:hover, .gear-btn[data-focus-visible="true"] { opacity: 1; }
+.wm-t { display: flex; flex-direction: column; gap: 6px; }
+.wm-t small { font-size: .74rem; }
+.set-sec { display: grid; gap: 8px; }
+.set-radio { flex-wrap: wrap; gap: 14px !important; }
+.set-radio [data-slot="radio"] { margin-top: 0 !important; }
+.set-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.set-row b { font-size: .86rem; }
+/* 출처 배지 · 집에 있는 걸로 */
+.src-tag { display: inline-block; font-size: .6rem; font-weight: 700; border-radius: 4px; padding: 0 5px; margin-left: 5px; vertical-align: 1px; cursor: help; color: var(--muted); background: var(--surface-3); }
+.src-tag.src-sponsor, .src-tag.src-affiliate { color: #8A5300; background: color-mix(in srgb, var(--t-share) 18%, var(--surface)); }
+:root.dark .src-tag.src-sponsor, :root.dark .src-tag.src-affiliate { color: var(--t-share); }
+.pc-v.have { font-weight: 600; font-size: .76rem; color: var(--ink); white-space: normal; }
+.pick-chip[data-ch="have"] { background: color-mix(in srgb, var(--t-used) 13%, var(--surface)); color: var(--t-used); }

@@ -172,13 +172,14 @@ export function HomeTop() {
   return (
     <>
       <Button isIconOnly variant="ghost" className="icon-btn" aria-label="전체 분류" onPress={() => openModal("category")}><Icon id="menu" /></Button>
-      <div className="logo">고수템<small>가칭</small></div>
+      <div className="logo"><small>고수의 아이템 · GOSUTEM</small><span>고수템</span></div>
+      <Button isIconOnly variant="ghost" size="sm" className="gear-btn" aria-label="설정" onPress={() => openModal("settings")}><Icon id="gear" className="icon-sm" /></Button>
     </>
   );
 }
 /* 고정 글: 고수 신청(펼친 상태) + 자주 묻는 질문 (HeroUI Accordion) */
 const FAQ = [
-  ["고수템은 어떤 곳이에요?", "평범한 고수가 실제로 들고 다니는 가방을 열어 보는 곳이에요. 물건마다 알짜템·중고템·나눔템·스왑템·비추천템 라벨이 붙어 있어서, 뭘 사고 뭘 안 사도 되는지 한눈에 보여요."],
+  ["고수템은 어떤 곳이에요?", "검색은 짧게, 선택은 똑똑하게. 평범한 고수가 실제로 들고 다니는 가방을 열어, 뭘 사고 뭘 안 사도 되는지, 집에 있는 걸로 대신할 수 있는지 한눈에 보여 줘요. 더 사라고 만들지 않아요. 덜 헤매라고 만들어요."],
   ["가격은 어디 기준이에요?", "새상품은 쿠팡·네이버쇼핑·11번가 검색 가격, 중고·나눔은 고수템 안에서 다른 고수가 올린 매물이에요. 지금은 시범 화면이라 가격과 매물은 모두 예시예요."],
   ["중고·나눔은 어떻게 거래해요?", "다른 사이트로 넘기지 않고 고수템 안에서 이어 드려요. 매물을 고르면 판매 고수와 채팅하거나 나눔을 신청하고, 직거래는 내 동네 근처부터 보여 드려요."],
   ["화장품 중고, 괜찮을까요?", "소모품은 유통기한이 적힌 매물만 예산 플랜에 넣어요. 의약품과 개봉한 입·눈 화장품은 아예 거래를 막아요."],

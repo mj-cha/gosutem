@@ -6,7 +6,7 @@ import {
 } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { DeckStrip, GosuAvatar, Pager, Photo, Who } from "../components/common.jsx";
-import { ART, CH, CHORDER, PCH, T, TORDER } from "../data/data.js";
+import { ART, CH, CHORDER, PCH, SRC, T, TORDER } from "../data/data.js";
 import {
   ago, budgetPlan, chPrice, costOf, defaultPlan, kfmt, listingsOf, maxBudget, minNew, mk, optionsOf, optPrice, simList, usedOK, won,
 } from "../lib/logic.js";
@@ -84,9 +84,16 @@ function LabelLine({ it }) {
   return (
     <div className="lbl">
       <Tip text={T[it.t].def}>{T[it.t].name}</Tip>
+      <SrcBadge it={it} />
       {it.ai ? <Tip text="AI가 고수 인터뷰로 먼저 쓰고, 고수가 확인한 멘트예요" className="ai-tag"><svg aria-hidden="true"><use href="#i-spark" /></svg>AI 멘트</Tip> : null}
     </div>
   );
+}
+/* 출처 배지: 내돈내산은 흐리게, 협찬·제휴는 눈에 띄게 (숨기지 않고 표시) */
+function SrcBadge({ it }) {
+  const k = it.src || "own";
+  const tip = it.srcNote || (k === "own" ? "고수가 직접 사서 쓰는 물건이에요" : SRC[k]);
+  return <Tip text={tip} className={"src-tag src-" + k}>{SRC[k]}</Tip>;
 }
 const Thumb = ({ it, i }) => (
   <div className="thumb"><span className="no num">{i + 1}</span><svg viewBox="0 0 64 64" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ART[it.art] }} /></div>
@@ -143,7 +150,7 @@ function ItemRow({ b, i, ctx }) {
     );
   }
 
-  const chs = CHORDER.slice(); if (it.t === "swap") chs.push("swap");
+  const chs = CHORDER.slice(); if (it.t === "swap") chs.push("swap"); chs.push("have");
   const st = stage[key], cur = st || sel || null;
   const oc = open[key];
   const L = st ? listingsOf(it, st, region) : [];
@@ -164,16 +171,17 @@ function ItemRow({ b, i, ctx }) {
         <RadioGroup aria-label={it.n + " 어디서 살까요"} className="pc" value={cur} onChange={(v) => ctx.choose(i, v)}>
           {chs.map((ch) => {
             const c = ch === "swap" ? { p: 0, n: 1 } : chPrice(it, ch, region), ok = !!c && (ch !== "used" || usedOK(it));
-            const k = ch === "swap" ? "스왑 · 내 물건과 교환" : CH[ch] + (c ? " · " + c.n + (ch === "nw" ? "곳" : "개") : "");
+            const k = ch === "swap" ? "스왑 · 내 물건과 교환" : ch === "have" ? "집에 있는 걸로 · 0원" : CH[ch] + (c ? " · " + c.n + (ch === "nw" ? "곳" : "개") : "");
             let v;
-            if (!c) v = <span className="pc-v none">없음</span>;
+            if (ch === "have") v = <span className="pc-v have">{it.sub ? "고수 추천 대신템 · " + it.sub : "비슷한 게 이미 있으면 안 사요"}</span>;
+            else if (!c) v = <span className="pc-v none">없음</span>;
             else if (ch === "used" && !usedOK(it)) v = <span className="pc-v none warn">유통기한 미표시</span>;
             else if (ch === "used" || ch === "sim") v = <span className="pc-v">{won(c.p)}<small>부터</small></span>;
             else if (ch === "nw") v = <span className="pc-v">{won(c.min)}{c.max > c.min ? "~" + c.max.toLocaleString("ko-KR") : ""}</span>;
             else v = <span className="pc-v">{c.p ? won(c.p) : "무료"}<s className="num">{won(base)}</s></span>;
             const tag = !ok || ch === "nw" || !c.p ? null : <em className="num">-{c.off}%</em>;
             return (
-              <div key={ch} className={ch === "swap" ? "wide" : ""} style={ch === "swap" ? { gridColumn: "1/-1" } : undefined} onClickCapture={ok ? again(cur, ch, (x) => ctx.choose(i, x)) : undefined}>
+              <div key={ch} className={ch === "swap" || ch === "have" ? "wide" : ""} style={ch === "swap" || ch === "have" ? { gridColumn: "1/-1" } : undefined} onClickCapture={ok ? again(cur, ch, (x) => ctx.choose(i, x)) : undefined}>
                 <Radio value={ch} isDisabled={!ok}>
                   <Radio.Content>
                     <Radio.Control><Radio.Indicator /></Radio.Control>
@@ -454,7 +462,7 @@ export default function Bag({ b }) {
             {b.deck ? <p className="hook">{b.hook}</p> : <p className="views num">조회수 {b.views} · 스크랩 {b.scraps.toLocaleString("ko-KR")}회</p>}
             <h1>{b.title}</h1>
             {b.sub && <p className="deck-sub">{b.sub}</p>}
-            <Surface variant="secondary" className="trust"><Icon id="shield" /><span>{b.trust || "협찬·제휴 표시: 없음. 전부 고수가 직접 사서 쓰는 물건이에요."} <span className="ex-badge">예시</span></span></Surface>
+            <Surface variant="secondary" className="trust"><Icon id="shield" /><span>{trustLine(b)} <span className="ex-badge">예시</span></span></Surface>
           </Surface>
         </div>
 
@@ -548,6 +556,13 @@ export default function Bag({ b }) {
   );
 }
 
+/* 출처 요약: 협찬·제휴가 있으면 개수까지 먼저 밝힘 */
+function trustLine(b) {
+  const c = {}; b.items.forEach((it) => { const k = it.src || "own"; c[k] = (c[k] || 0) + 1; });
+  const others = Object.keys(c).filter((k) => k !== "own");
+  if (!others.length) return "출처 표시 · 전부 내돈내산이에요. 협찬·제휴가 있으면 물건마다 표시해요.";
+  return "출처 표시 · " + others.map((k) => SRC[k] + " " + c[k] + "개").join(" · ") + " (물건에 표시) · 나머지 " + (c.own || 0) + "개는 내돈내산이에요.";
+}
 function TalkCount({ b }) {
   const st = useHub();
   const n = st.off || !st.talkReady ? 0 : talkItems(st, b.id).length;

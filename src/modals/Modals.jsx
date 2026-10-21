@@ -1,7 +1,7 @@
 /* 모든 모달(HeroUI Modal) — 열린 모달은 store 의 modal.type 하나 */
 import { useMemo, useRef, useState } from "react";
 import { Suggest } from "../screens/Home.jsx";
-import { Alert, Button, ListBox, Modal, SearchField, Tabs, Tag, TagGroup } from "@heroui/react";
+import { Alert, Button, ListBox, Modal, Radio, RadioGroup, SearchField, Separator, Tabs, Tag, TagGroup } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { GosuAvatar, TBadge } from "../components/common.jsx";
 import { ART, BAGS, GU, PCATS, CATS, PCH, TORDER } from "../data/data.js";
@@ -102,7 +102,7 @@ function Recommend({ b, dp, region, onOk }) {
 function Checkout({ b, plan, picks, pickOf }) {
   const { closeModal, toast } = useApp();
   const [copied, setCopied] = useState(false);
-  const groups = { nw: [], used: [], sim: [], share: [], swap: [] };
+  const groups = { nw: [], used: [], sim: [], share: [], swap: [], have: [] };
   let total = 0, all = 0;
   b.items.forEach((it, i) => { const c = plan[i]; if (!picks[i] || !c || c === "skip") return; const pk = pickOf(i), p = pk ? pk.p : 0; total += p; all += minNew(it); groups[c].push({ it, i, p, pk }); });
   const lines = [];
@@ -115,7 +115,7 @@ function Checkout({ b, plan, picks, pickOf }) {
         <ul>{g.map(({ it, i, p, pk }) => {
           pk = pk || { src: "", note: "" };
           const word = c === "share" ? "나눔" : c === "swap" ? "스왑" : "채팅";
-          const act = pk.internal ? <button type="button" className="link-btn" onClick={() => req(word)}>{c === "share" ? "나눔 신청" : c === "swap" ? "스왑 요청" : "채팅하기"}</button>
+          const act = c === "have" ? <span className="desc-sm">안 사요</span> : pk.internal ? <button type="button" className="link-btn" onClick={() => req(word)}>{c === "share" ? "나눔 신청" : c === "swap" ? "스왑 요청" : "채팅하기"}</button>
             : pk.link ? <a href={pk.link} target="_blank" rel="noopener">{c === "nw" ? "바로가기" : "찾아보기"}<Icon id="out" className="icon-sm" /></a>
             : <button type="button" className="link-btn" onClick={() => req(c === "swap" ? "스왑" : "나눔")}>{c === "swap" ? "스왑 요청" : "나눔 신청"}</button>;
           lines.push("[" + PCH[c] + "] " + it.n + " · " + (pk.src || "") + " · " + (p ? won(p) : "무료") + (pk.link ? " · " + pk.link : ""));
@@ -365,7 +365,48 @@ function Search() {
   );
 }
 
-const MAP = { search: Search,  install: Install, supply: Supply, profile: Profile, recommend: Recommend, checkout: Checkout, listing: Listing, filter: Filter, category: Category, region: Region };
+/* 설정: 화면 모드 · 내 동네 · 최근 검색어 · 홈 화면 추가 · 정보 */
+function Settings() {
+  const { region, recent, setRecent, openModal, closeModal, toast } = useApp();
+  const root = document.documentElement;
+  const [mode, setMode] = useState(() => root.getAttribute("data-theme") || "system");
+  const pickMode = (v) => {
+    setMode(v);
+    if (v === "system") root.removeAttribute("data-theme"); else root.setAttribute("data-theme", v);
+    try { if (v === "system") localStorage.removeItem("gosutem-theme"); else localStorage.setItem("gosutem-theme", v); } catch { /* 이 기기에 저장 못 해도 지금 화면엔 적용 */ }
+  };
+  return (
+    <Shell title="설정" icon="gear">
+      <section className="set-sec">
+        <h4>화면 모드</h4>
+        <RadioGroup aria-label="화면 모드" orientation="horizontal" value={mode} onChange={pickMode} className="set-radio">
+          {[["system", "기기 설정"], ["light", "밝게"], ["dark", "어둡게"]].map(([v, n]) => (
+            <Radio key={v} value={v}><Radio.Content><Radio.Control><Radio.Indicator /></Radio.Control>{n}</Radio.Content></Radio>
+          ))}
+        </RadioGroup>
+      </section>
+      <Separator />
+      <section className="set-row">
+        <span className="who-t"><b>내 동네</b><span className="desc-sm">{region ? region.full : "전국 · 중고 직거래·나눔에 써요"}</span></span>
+        <Button size="sm" variant="tertiary" onPress={() => openModal("region")}>바꾸기</Button>
+      </section>
+      <section className="set-row">
+        <span className="who-t"><b>최근 검색어</b><span className="desc-sm">{recent.length ? recent.length + "개 · 이 기기에만 저장돼요" : "없어요"}</span></span>
+        <Button size="sm" variant="tertiary" isDisabled={!recent.length} onPress={() => { setRecent([]); toast("최근 검색어를 모두 지웠어요."); }}>모두 지우기</Button>
+      </section>
+      {!installed() && (
+        <section className="set-row">
+          <span className="who-t"><b>홈 화면에 추가</b><span className="desc-sm">한 번만 추가하면 앱처럼 열려요</span></span>
+          <Button size="sm" variant="tertiary" onPress={() => openModal("install")}>방법 보기</Button>
+        </section>
+      )}
+      <Separator />
+      <p className="m-note">고수템 시범 화면 v41 · 가방·인물·가격·매물은 모두 예시예요.</p>
+    </Shell>
+  );
+}
+
+const MAP = { settings: Settings, search: Search,  install: Install, supply: Supply, profile: Profile, recommend: Recommend, checkout: Checkout, listing: Listing, filter: Filter, category: Category, region: Region };
 export default function ModalHost() {
   const { modal } = useApp();
   const C = modal.type && MAP[modal.type];
