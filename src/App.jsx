@@ -33,7 +33,7 @@ function Intro() {
             <div><b className="text-[.82rem]">아이폰</b><ol className="steps"><li>사파리로 열기</li><li>아래 <b>공유</b></li><li><b>홈 화면에 추가</b></li></ol></div>
           </div>
         </Tabs.Panel>
-        <Tabs.Panel id="dev"><h3>사업화 맵</h3><p>메뉴별 개발 메모, 피드백 로그, 주석을 남기는 곳이에요.</p><a className="button button--sm button--primary mt-2 inline-flex" href={DEVMAP} target="_blank" rel="noopener">사업화 맵 열기 ↗</a></Tabs.Panel>
+        <Tabs.Panel id="dev"><h3>사업화 맵</h3><p>기획부터 개발·마케팅·지식재산권까지 할 일과 단계를 관리하는 곳이에요.</p><a className="button button--sm button--primary mt-2 inline-flex" href={DEVMAP} target="_blank" rel="noopener">사업화 맵 열기 ↗</a></Tabs.Panel>
       </Tabs>
       <p className="disclaimer">시범 화면입니다. 가방·인물·가격·재고·좋아요 수는 모두 예시이고, 실제 고수의 가방은 촬영을 마친 뒤 공개합니다. 새상품 바로가기는 각 오픈마켓의 검색 결과로, 중고·나눔은 고수템 안의 다른 고수 매물로 연결돼요.</p>
     </aside>
