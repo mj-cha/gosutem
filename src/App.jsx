@@ -6,7 +6,7 @@ import { AvatarBadge, Promo, TBadge } from "./components/common.jsx";
 import Home, { HomeTop } from "./screens/Home.jsx";
 import Bag, { BagTop } from "./screens/Bag.jsx";
 import ModalHost from "./modals/Modals.jsx";
-import { BAGS, T, TORDER } from "./data/data.js";
+import { BAGS, SRC, SRC_DEF, T, TORDER } from "./data/data.js";
 import { AppProvider, useApp } from "./lib/store.jsx";
 
 const DEVMAP = "https://claude.ai/artifact/9KQ7bje3a9EXoxYqtPGvA1";
@@ -20,13 +20,16 @@ function Intro() {
         <Tabs.ListContainer>
           <Tabs.List aria-label="소개 메뉴">
             <Tabs.Tab id="about">서비스 소개<Tabs.Indicator /></Tabs.Tab>
-            <Tabs.Tab id="labels">라벨 5가지<Tabs.Indicator /></Tabs.Tab>
+            <Tabs.Tab id="labels">라벨·출처<Tabs.Indicator /></Tabs.Tab>
             <Tabs.Tab id="install">홈 화면 추가<Tabs.Indicator /></Tabs.Tab>
             <Tabs.Tab id="dev">사업화 맵<Tabs.Indicator /></Tabs.Tab>
           </Tabs.List>
         </Tabs.ListContainer>
         <Tabs.Panel id="about"><h3>고수의 가방을 열어 봐요</h3><p>평범한 고수의 가방을 열어, 물건마다 담을지 말지 하트로 고르고 그대로 담는 서비스예요. 새상품·중고·유사템·나눔 중 어디서 구할 수 있는지 AI가 바로 찾아 줘요.</p></Tabs.Panel>
-        <Tabs.Panel id="labels"><h3>고수가 붙이는 라벨</h3><ul className="legend">{TORDER.map((k) => <li key={k}><TBadge k={k} /><span>{T[k].def}</span></li>)}</ul></Tabs.Panel>
+        <Tabs.Panel id="labels"><h3>고수가 붙이는 라벨</h3><ul className="legend">{TORDER.map((k) => <li key={k}><TBadge k={k} /><span>{T[k].def}</span></li>)}</ul>
+          <h3 style={{ marginTop: "1.1rem" }}>물건 출처 배지</h3>
+          <ul className="legend">{Object.keys(SRC_DEF).map((k) => <li key={k}><span className={"src-tag src-" + k}>{SRC[k]}</span><span>{SRC_DEF[k]}</span></li>)}</ul>
+        </Tabs.Panel>
         <Tabs.Panel id="install"><h3>폰 홈 화면에 추가</h3>
           <div className="grid grid-cols-2 gap-3">
             <div><b className="text-[.82rem]">갤럭시</b><ol className="steps"><li>폰에서 이 페이지 열기</li><li>메뉴 <b>⋮</b> 또는 <b>≡</b></li><li><b>홈 화면에 추가</b></li></ol></div>

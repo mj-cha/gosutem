@@ -6,7 +6,7 @@ import {
 } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { DeckStrip, GosuAvatar, Pager, Photo, Who } from "../components/common.jsx";
-import { ART, CH, CHORDER, PCH, SRC, T, TORDER } from "../data/data.js";
+import { ART, CH, CHORDER, PCH, SRC, SRC_DEF, T, TORDER } from "../data/data.js";
 import {
   ago, budgetPlan, chPrice, costOf, defaultPlan, kfmt, listingsOf, maxBudget, minNew, mk, optionsOf, optPrice, simList, usedOK, won,
 } from "../lib/logic.js";
@@ -92,7 +92,7 @@ function LabelLine({ it }) {
 /* 출처 배지: 내돈내산은 흐리게, 협찬·제휴는 눈에 띄게 (숨기지 않고 표시) */
 function SrcBadge({ it }) {
   const k = it.src || "own";
-  const tip = it.srcNote || (k === "own" ? "고수가 직접 사서 쓰는 물건이에요" : SRC[k]);
+  const tip = it.srcNote || SRC_DEF[k];
   return <Tip text={tip} className={"src-tag src-" + k}>{SRC[k]}</Tip>;
 }
 const Thumb = ({ it, i }) => (

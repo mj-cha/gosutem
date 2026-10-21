@@ -218,3 +218,4 @@ export const PRI = {must:0,used:1,share:2,swap:3};
 export const PCH = {nw:"새상품",used:"중고",sim:"유사템",share:"나눔",swap:"스왑",have:"집에 있는 걸로"};
 /* 물건 출처 표시 (기본 내돈내산). 협찬·제휴는 숨기지 않고 물건마다 표시 */
 export const SRC = {own:"내돈내산", sponsor:"협찬", affiliate:"제휴 링크", gift:"물려받음", used:"중고로 샀음"};
+export const SRC_DEF = {own:"고수가 직접 돈 주고 사서 쓰는 물건", sponsor:"브랜드에게 받은 물건. 숨기지 않고 표시하고, 별로면 그대로 비추천템", affiliate:"이 링크로 사면 고수템이 수수료를 받아요", gift:"선물받거나 물려받은 물건", used:"고수도 중고로 산 물건"};
