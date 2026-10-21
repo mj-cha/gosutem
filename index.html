@@ -782,6 +782,41 @@ button.l-go{border:0;background:none}
 .flash{animation:flash 420ms var(--ease)}
 @keyframes flash{from{background:color-mix(in srgb,var(--accent) 14%,var(--surface))}to{background:var(--surface)}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;animation-iteration-count:1!important;transition-duration:1ms!important}}
+/* 사전신청 */
+.pre-cta{display:flex;align-items:center;gap:12px;margin-top:14px;padding:14px 16px;border-radius:18px;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-align:left;width:100%;min-height:44px}
+.pre-cta b{display:block;font-size:1rem}
+.pre-cta span{font-size:.9rem;color:var(--muted)}
+.pre-cta .icon{flex:none;color:var(--accent)}
+.pre-cta .go{margin-left:auto;transform:scaleX(-1)}
+.pre-hero{padding-block:24px 8px;display:grid;gap:6px}
+.pre-hero p{margin:0;font-size:1.05rem;font-weight:700;color:var(--ink)}
+.pre-hero h2{margin:4px 0 0;font-family:"Black Han Sans",var(--f-ui,sans-serif);font-weight:400;font-size:1.6rem;line-height:1.3;color:var(--brand)}
+.pre-form{display:grid;gap:20px;padding-block:12px 24px}
+.pre-form fieldset{display:grid;gap:8px;margin:0;padding:0;border:0;min-width:0}
+.pre-form legend,.pre-form .form-label{font-size:1rem;font-weight:700;margin:0 0 2px;color:var(--ink)}
+.pre-form .req{color:var(--t-no);font-size:.85rem;font-weight:700;margin-left:4px}
+.pre-form .opt{color:var(--muted);font-size:.85rem;font-weight:500;margin-left:4px}
+.pre-form .form-control{min-height:48px;font-size:1rem;background:var(--surface);color:var(--ink);border-color:var(--line)}
+.pre-form .form-text{font-size:.9rem;color:var(--muted);margin:0}
+.pre-sits{display:flex;flex-wrap:wrap;gap:8px}
+.pre-sits .btn-check+label{min-height:44px;display:inline-flex;align-items:center;border-radius:999px;padding:0 16px;font-size:.95rem;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.pre-sits .btn-check:checked+label{background:var(--accent);border-color:var(--accent);color:#fff}
+.pre-sits .btn-check:focus-visible+label{outline:2px solid var(--accent);outline-offset:2px}
+.pre-form .form-check{display:flex;gap:10px;align-items:flex-start;min-height:44px;padding-left:0;margin:0}
+.pre-form .form-check-input{flex:none;width:22px;height:22px;margin:1px 0 0;float:none}
+.pre-form .form-check-label{font-size:1rem;color:var(--ink)}
+.pre-privacy{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:14px;display:grid;gap:10px}
+.pre-privacy dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:.92rem}
+.pre-privacy dt{color:var(--muted);font-weight:500}
+.pre-privacy dd{margin:0;color:var(--ink)}
+.pre-err{font-size:.92rem;color:var(--t-no);margin:0}
+.pre-err:empty{display:none}
+.pre-form .btn-lg{min-height:52px;font-weight:700}
+.pre-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.pre-done{padding-block:40px 24px;display:grid;gap:12px;justify-items:center;text-align:center}
+.pre-done .icon{width:44px;height:44px;color:var(--accent)}
+.pre-done h2{margin:0;font-size:1.3rem;font-weight:900}
+.pre-done p{margin:0;font-size:1rem;color:var(--muted)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -853,6 +888,13 @@ button.l-go{border:0;background:none}
     </nav>
   </div>
 </div>
+
+<!-- Netlify Forms 감지용 숨김 폼: 화면의 사전신청 폼은 JS로 그려서, 배포 때 Netlify가 이 HTML로 폼 이름·칸을 읽어요. 칸을 바꾸면 여기도 같이 바꾸기 -->
+<form name="preorder" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name" value="preorder">
+  <input name="bot-field"><input type="email" name="email"><input name="interest"><input name="open_bag"><input name="privacy_agree">
+  <input name="utm_source"><input name="utm_medium"><input name="utm_campaign">
+</form>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -1093,7 +1135,8 @@ function renderHome(){
   document.getElementById("b-search").onclick=focusSearch; document.getElementById("b-cat").onclick=catPanel;
   var h='';
   h+=navBar();
-  h+='<section class="pad pt-3" aria-label="고수템 소식"><h2 class="visually-hidden">고수는 이건 사지 마도 알려줘요</h2>'+promoHTML("promo-home")+'</section>';
+  h+='<section class="pad pt-3" aria-label="고수템 소식"><h2 class="visually-hidden">고수는 이건 사지 마도 알려줘요</h2>'+promoHTML("promo-home")+
+    '<button type="button" class="pre-cta" id="b-pre">'+icon("spark")+'<span><b>출시 알림 사전신청</b><span>이메일만 남기면 열릴 때 알려 드려요</span></span>'+icon("back","go")+'</button></section>';
   h+='<div class="feed pad" id="feed" aria-live="polite"></div>';
   h+='<div class="pad"><section class="supply"><h3>내 가방도 보여 주고 싶다면</h3><p>홍보가 아니에요. 처음 시작하는 사람에게 살 것과 안 사도 되는 것을 알려 주세요.</p>'+
     '<ul><li>'+icon("check","icon-sm")+'<span>사진 1장 + 음성 메모 5분이면 끝 · AI가 초안을 써 드려요</span></li><li>'+icon("check","icon-sm")+'<span>내 가방이 내 이름의 프로필 페이지로 남아요</span></li><li>'+icon("check","icon-sm")+'<span>안 쓰는 물건은 중고·나눔으로 연결해 드려요</span></li></ul>'+
@@ -1102,8 +1145,59 @@ function renderHome(){
   bindNav();
   main.querySelectorAll('[data-act="supply"]').forEach(function(el){ el.onclick=function(e){ e.stopPropagation(); supplySheet(); }; });
   var bi=document.getElementById("b-inst"); if(bi) bi.onclick=installSheet;
+  document.getElementById("b-pre").onclick=function(){ go("preorder"); };
   renderFeed(); bindSearch();
   initPromo(document.getElementById("promo-home"));
+}
+
+/* ---------- 사전신청 (Netlify Forms) ---------- */
+var UTM=(function(){ var o={}; try{ var q=new URLSearchParams(location.search); ["utm_source","utm_medium","utm_campaign"].forEach(function(k){ o[k]=(q.get(k)||"").slice(0,100); }); }catch(e){} return o; })();
+var PRE_SITS=["대학생","직장인","여행","수영","러닝","골프","낚시"];
+function renderPreorder(){
+  tabbar.classList.remove("hide"); setTab(null);
+  topbar.innerHTML='<button class="icon-btn" type="button" id="b-back" aria-label="뒤로">'+icon("back")+'</button><h1 class="bar-title">사전신청</h1>';
+  document.getElementById("b-back").onclick=function(){ go("home"); };
+  var h='<div class="view pad">'+
+    '<section class="pre-hero" aria-labelledby="pre-h"><p>누구나 좋아하는 거 하나쯤은 있다</p><p>누구나 고수가 될 수 있다</p><h2 id="pre-h">처음이라 두렵다면?<br>고수의 가방을 보여줄게.</h2></section>'+
+    '<form class="pre-form" name="preorder" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>'+
+      '<input type="hidden" name="form-name" value="preorder">'+
+      ["utm_source","utm_medium","utm_campaign"].map(function(k){ return '<input type="hidden" name="'+k+'" value="'+esc(UTM[k]||"")+'">'; }).join("")+
+      '<p class="pre-hp" aria-hidden="true"><label>비워 두세요 <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>'+
+      '<div><label class="form-label" for="pre-email">이메일<span class="req">필수</span></label>'+
+        '<input class="form-control" type="email" id="pre-email" name="email" required autocomplete="email" inputmode="email" placeholder="you@example.com" aria-describedby="pre-email-h">'+
+        '<p class="form-text" id="pre-email-h">출시 알림만 보내요.</p></div>'+
+      '<fieldset><legend>관심 있는 상황<span class="opt">여러 개 골라도 돼요</span></legend><div class="pre-sits">'+
+        PRE_SITS.map(function(n,i){ return '<input type="checkbox" class="btn-check" id="pre-s'+i+'" name="interest" value="'+n+'" autocomplete="off"><label for="pre-s'+i+'">'+n+'</label>'; }).join("")+
+      '</div></fieldset>'+
+      '<div class="form-check"><input class="form-check-input" type="checkbox" id="pre-open" name="open_bag" value="yes"><label class="form-check-label" for="pre-open">내 가방을 고수로 공개해 볼래요<span class="opt">선택</span></label></div>'+
+      '<div class="pre-privacy"><dl><dt>모으는 항목</dt><dd>이메일, 관심 상황, 가방 공개 희망 여부</dd><dt>쓰는 곳</dt><dd>고수템 출시 알림</dd><dt>보관 기간</dt><dd>출시 후 6개월, 또는 동의를 거두면 바로 지워요</dd></dl>'+
+        '<p class="form-text">동의하지 않을 수 있어요. 대신 동의하지 않으면 출시 알림을 받을 수 없어요.</p>'+
+        '<div class="form-check"><input class="form-check-input" type="checkbox" id="pre-agree" name="privacy_agree" value="yes" required><label class="form-check-label" for="pre-agree">개인정보 수집·이용에 동의해요<span class="req">필수</span></label></div></div>'+
+      '<p class="pre-err" id="pre-err" role="alert"></p>'+
+      '<button type="submit" class="btn btn-primary btn-lg w-100" id="pre-submit">사전신청하기</button>'+
+    '</form></div>';
+  main.innerHTML=h;
+  var f=main.querySelector(".pre-form"), err=document.getElementById("pre-err"), btn=document.getElementById("pre-submit");
+  f.onsubmit=function(e){
+    e.preventDefault(); err.textContent="";
+    var em=f.email.value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ err.textContent="이메일 주소를 확인해 주세요."; f.email.focus(); return; }
+    if(!f.privacy_agree.checked){ err.textContent="개인정보 수집·이용에 동의해야 신청할 수 있어요."; f.privacy_agree.focus(); return; }
+    var p=new URLSearchParams();
+    p.append("form-name","preorder"); p.append("bot-field",f["bot-field"].value); p.append("email",em);
+    p.append("interest",[].slice.call(f.querySelectorAll('[name="interest"]:checked')).map(function(x){ return x.value; }).join(", "));
+    p.append("open_bag",f.open_bag.checked?"yes":"no"); p.append("privacy_agree","yes");
+    ["utm_source","utm_medium","utm_campaign"].forEach(function(k){ p.append(k,f[k].value); });
+    btn.disabled=true; btn.textContent="보내는 중이에요…";
+    fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:p.toString()})
+      .then(function(r){ if(!r.ok) throw new Error(r.status); preDone(); })
+      .catch(function(){ btn.disabled=false; btn.textContent="사전신청하기"; err.textContent="신청을 보내지 못했어요. 잠시 뒤 다시 해 주세요."; });
+  };
+}
+function preDone(){
+  main.innerHTML='<div class="view pad"><section class="pre-done" aria-live="polite">'+icon("check")+'<h2>사전신청을 받았어요</h2><p>고수템이 열리면 남겨 주신 이메일로 알려 드릴게요.</p><p>그동안 고수의 가방을 먼저 구경해 보세요. 지금 가방은 모두 예시예요.</p><button type="button" class="btn btn-primary btn-lg mt-2" id="pre-home">가방 구경하러 가기</button></section></div>';
+  scroller.scrollTop=0; window.scrollTo(0,0);
+  document.getElementById("pre-home").onclick=function(){ go("home"); };
 }
 
 /* ---------- 가방 상세 ---------- */
@@ -1861,7 +1955,7 @@ function syncTabH(){ var t=document.getElementById("tabbar")||document.querySele
 window.addEventListener("resize",syncTabH); setTimeout(syncTabH,0);
 /* ---------- 라우팅 ---------- */
 function go(id){ if(location.hash!=="#"+id) location.hash=id; else route(); }
-function route(){ closePop(); var gpp=document.getElementById("gp-pop"); if(gpp) gpp._off(); S.curBag=null; var id=(location.hash||"").replace("#",""); var b=BAGS.filter(function(x){return x.id===id})[0]; if(b) renderBag(b); else { renderHome(); scroller.scrollTop=0; } }
+function route(){ closePop(); var gpp=document.getElementById("gp-pop"); if(gpp) gpp._off(); S.curBag=null; var id=(location.hash||"").replace("#",""); var b=BAGS.filter(function(x){return x.id===id})[0]; if(b) renderBag(b); else if(id==="preorder"){ renderPreorder(); scroller.scrollTop=0; window.scrollTo(0,0); } else { renderHome(); scroller.scrollTop=0; } }
 window.addEventListener("hashchange",route);
 document.querySelectorAll(".tab").forEach(function(tbtn){ tbtn.onclick=function(){ var k=tbtn.dataset.tab; if(k==="home"){ go("home"); return; } if(k==="search"){ focusSearch(); return; } toast(k==="saved"?"저장한 가방이 여기 모여요. 시범 화면이라 비어 있어요.":"담은 물건이 여기 모여요. 시범 화면이라 비어 있어요."); }; });
 (function(){ var bx=document.getElementById("promo-intro-box"); if(bx){ bx.innerHTML=promoHTML("promo-intro"); initPromo(document.getElementById("promo-intro")); } })();
