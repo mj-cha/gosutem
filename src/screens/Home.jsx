@@ -239,10 +239,46 @@ function PreorderCta() {
   );
 }
 
+/* 홈 시안 v1 (B 사진 핀 + C 아낀 돈): 이번 주 고수 가방 한 개를 크게, 바로 아래 '고수처럼 담으면 얼마 아끼나' */
+function HomeHero() {
+  const { go } = useApp();
+  const b = BAGS.find((x) => x.deck && x.img) || BAGS[0];
+  if (!b) return null;
+  const c = countT(b);
+  let all = 0, combo = 0;
+  b.items.forEach((it) => { all += minNew(it); if (T[it.t].pick) combo += costOf(it); });
+  const pins = b.items.map((it, i) => ({ n: i + 1, x: it.px, y: it.py })).filter((p) => p.x != null && p.y != null);
+  return (
+    <section className="hero-v1" aria-labelledby="hero-t">
+      <button type="button" className="hero-photo" onClick={() => go(b.id)} aria-label={b.title + " 가방 열기"}>
+        {b.img ? <img src={b.img} alt="" decoding="async" /> : <span className="hero-ph"><Icon id="camera" />고수 가방 사진 자리</span>}
+        <span className="hero-chip">이번 주 고수 · 예시</span>
+        {pins.map((p) => <span key={p.n} className="hero-pin" style={{ left: p.x + "%", top: p.y + "%" }} aria-hidden="true">{p.n}</span>)}
+        <span className="hero-card">
+          <span className="hero-who">{b.meta} · 물건 {b.items.length}</span>
+          <span className="hero-title" id="hero-t">{b.title}</span>
+          <span className="tbadges">{TORDER.filter((k) => c[k]).map((k) => <TBadge key={k} k={k} n={c[k]} />)}</span>
+        </span>
+      </button>
+      {all > 0 && (
+        <div className="save-v1">
+          <div className="save-v1-t">
+            <span className="save-v1-k">이 가방, 고수처럼 담으면</span>
+            <span className="save-v1-big num">−{won(Math.max(0, all - combo))}</span>
+            <span className="save-v1-s">전부 새로 사면 <span className="num">{won(all)}</span> · 예시 가격</span>
+          </div>
+          <Button onPress={() => go(b.id)}>예산으로 담기</Button>
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <div className="view">
       <NavBar />
+      <div className="pad" style={{ paddingTop: 16 }}><HomeHero /></div>
       <section className="pad" style={{ paddingTop: 16 }} aria-label="고수템 소식">
         <h2 className="vh">고수는 이건 사지 마도 알려줘요</h2>
         <Promo />
