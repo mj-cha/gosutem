@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import {
   Button,
-  Tabs,
   TagGroup,
+  Tag,
   Modal,
   Surface,
   Avatar,
-  Badge,
   Alert,
   Accordion,
 } from "@heroui/react";
+import { T, TORDER } from "../data/data.js";
 
 // ==========================================
 // [예시 데이터] 발리 한 달 살기 & 서핑 파우치 프리셋
@@ -24,13 +24,13 @@ const BALI_SURF_PRESET = {
   items: [
     {
       id: "bs-1",
-      name: "써니데이즈 징크 선블록 SPF 30+ (예시)",
-      brand: "Sunny Days (예시)",
+      name: "징크 선블록 SPF 30+ (예시)",
+      brand: "현지 서프샵 (예시)",
       label: "must",
       tip: "한국에서 비싸게 직구하지 마세요! 발리 현지 서프샵 가면 반값에 사요. (예시)",
       comment:
-        "백탁 없이 파운데이션처럼 민낯을 가려주고 파도에도 잘 안 지워져요. 현지 퀵실버·록시 매장에서 소형 7,000원, 대형 15,000원 정도(예시)면 구할 수 있어요.",
-      expDate: "2027.08 까지 (예시 · AI 각인 인식)",
+        "파도 위에서 오래 버틸 때 고수가 챙기는 물건이에요. 현지 서프샵에서 소형·대형으로 팔아요. (예시)",
+      expDate: "2027.08 까지 (예시)",
       marketPrice: "현지 약 7,000원 ~ 15,000원 (예시)",
       stocks: { newCnt: 2, usedCnt: 4, simCnt: 2, shareCnt: 1 },
       senseScore: 99,
@@ -38,13 +38,13 @@ const BALI_SURF_PRESET = {
     },
     {
       id: "bs-2",
-      name: "그로우어스 롱래스팅 미라클 노워시 트리트먼트 (다이소판 · 예시)",
-      brand: "GROWUS (예시)",
+      name: "노워시 헤어 트리트먼트 소용량 (예시)",
+      brand: "생활용품점 (예시)",
       label: "must",
       tip: "무거운 본품 대신 출국 전 다이소에서 소용량으로 가볍게 챙겨 가세요. (예시)",
       comment:
-        "바닷물 소금기에 뻣뻣하게 엉킨 머리카락을 씻어낼 필요 없이 3초 만에 차분하게 복구해 줘요. 은은한 향 덕분에 저녁 약속 갈 때도 기분이 좋아져요.",
-      expDate: "2027.11 까지 (예시 · AI 각인 인식)",
+        "바닷물에 엉킨 머리를 씻지 않고 정리할 때 썼대요. 본품 대신 소용량이면 한 달 충분해요. (예시)",
+      expDate: "2027.11 까지 (예시)",
       marketPrice: "다이소가 3,000원 ~ 5,000원 (예시)",
       stocks: { newCnt: 2, usedCnt: 3, simCnt: 2, shareCnt: 2 },
       senseScore: 98,
@@ -53,7 +53,7 @@ const BALI_SURF_PRESET = {
     {
       id: "bs-3",
       name: "판초형 샌드프리 비치타월 (예시)",
-      brand: "배럴 외 (예시)",
+      brand: "서핑 브랜드 (예시)",
       label: "used",
       tip: "해변에서 옷 갈아입을 때 내 프라이버시를 지켜주는 이동식 탈의실이에요. (예시)",
       comment:
@@ -67,12 +67,12 @@ const BALI_SURF_PRESET = {
     {
       id: "bs-4",
       name: "골드 쉬머 바디 오일 (예시)",
-      brand: "눅스 외 (예시)",
+      brand: "바디 브랜드 (예시)",
       label: "swap",
       tip: "해 질 녘 비치클럽 조명 아래서 은은하게 빛나는 피부 결을 만들어 줘요. (예시)",
       comment:
         "어깨와 쇄골에 살짝 발라주면 건강해 보여요. 코코넛 향이나 펄 입자 크기가 취향을 타니 한 번 써보고 안 맞으면 다른 향 가진 분과 스왑해 보세요.",
-      expDate: "2026.12 까지 (예시 · AI 각인 인식)",
+      expDate: "2026.12 까지 (예시)",
       marketPrice: "교환 희망 / 시세 22,000원 (예시)",
       stocks: { newCnt: 2, usedCnt: 3, simCnt: 2, shareCnt: 1 },
       senseScore: 89,
@@ -110,13 +110,8 @@ const BALI_SURF_PRESET = {
   ],
 };
 
-const LABEL_META = {
-  must: { key: "must", name: "알짜템", colorVar: "var(--t-must)", desc: "자주 손이 가는 애용템이에요" },
-  share: { key: "share", name: "나눔템", colorVar: "var(--t-share)", desc: "필요한 분께 무료로 나눠요" },
-  used: { key: "used", name: "중고템", colorVar: "var(--t-used)", desc: "합리적인 중고로 사고팔아요" },
-  swap: { key: "swap", name: "스왑템", colorVar: "var(--t-swap)", desc: "다른 아이템과 기분 좋게 교환해요" },
-  no: { key: "no", name: "비추천템", colorVar: "var(--t-no)", desc: "막상 잘 안 쓰게 되는 물건이에요" },
-};
+/* 라벨 이름·색·뜻은 공통 데이터(T)에서 가져옴 */
+const LABEL_META = Object.fromEntries(TORDER.map((k) => [k, { key: k, name: T[k].name, colorVar: T[k].c, desc: T[k].def }]));
 
 const AUTOSAVE_KEY = "gosutem_bali_surf_autosave_v1";
 
@@ -149,7 +144,7 @@ function StockDetailModal({ item, isOpen, onClose }) {
 
             <Modal.Body className="py-3 flex flex-col gap-3 text-sm">
               <div className="p-2.5 rounded-xl bg-[var(--ground)] border border-[var(--line)]">
-                <p className="text-xs text-[var(--muted)] mb-1">AI 인식 정보 및 시세 (예시)</p>
+                <p className="text-xs text-[var(--muted)] mb-1">사용기한·시세 (예시)</p>
                 <p className="font-medium text-[var(--ink)]">· 유통기한/상태: {item.expDate}</p>
                 <p className="font-medium text-[var(--accent)]">· 기준 시세: {item.marketPrice}</p>
               </div>
@@ -303,18 +298,18 @@ export default function BaliSurfPouchScreen() {
               <h1 className="text-base font-bold leading-tight text-[var(--ink)]">
                 발리 서핑 & 한 달 살기 파우치
               </h1>
-              <p className="text-xs text-[var(--muted)]">사진 1장 AI 자동 분류 (예시)</p>
+              <p className="text-xs text-[var(--muted)]">고수 가방 예시</p>
             </div>
           </div>
-          <Badge className="text-[11px] px-2 py-0.5 rounded-full bg-[var(--surface)] text-[var(--accent)] border border-[var(--line)]">
+          <span className="shrink-0 text-[11px] px-2 py-0.5 rounded-full bg-[var(--surface)] text-[var(--accent)] border border-[var(--line)]">
             자동저장 {lastSavedAt}
-          </Badge>
+          </span>
         </div>
 
         <Alert className="p-3 rounded-2xl bg-[var(--surface)] border border-[var(--line)] text-xs text-[var(--ink)]">
           <div className="flex flex-col gap-1">
             <span className="font-semibold text-[var(--accent)]">
-              🌴 캐리어는 가볍게, 짱구 서퍼의 찐 애정템만 담았어요! (예시)
+              캐리어는 가볍게, 짱구 서퍼의 찐 애정템만 담았어요! (예시)
             </span>
             <span className="text-[var(--muted)]">
               현지 조달 팁부터 중고·나눔까지 한눈에 비교해 보세요.
@@ -358,30 +353,14 @@ export default function BaliSurfPouchScreen() {
           <span className="text-[11px] text-[var(--accent)] font-semibold">내 가방 담김 {savedIds.length}개</span>
         </div>
 
-        <Tabs selectedKey={filterTab} onSelectionChange={(key) => setFilterTab(String(key))}>
-          <Tabs.ListContainer>
-            <Tabs.List className="flex flex-wrap gap-1 bg-[var(--surface)] p-1.5 rounded-2xl border border-[var(--line)]">
-              <Tabs.Tab id="all" className="px-2.5 py-1 rounded-xl text-xs font-semibold text-[var(--ink)]">
-                전체 {counts.all}<Tabs.Indicator />
-              </Tabs.Tab>
-              <Tabs.Tab id="must" className="px-2.5 py-1 rounded-xl text-xs font-semibold text-[var(--ink)]">
-                알짜템 {counts.must}<Tabs.Indicator />
-              </Tabs.Tab>
-              <Tabs.Tab id="share" className="px-2.5 py-1 rounded-xl text-xs font-semibold text-[var(--ink)]">
-                나눔템 {counts.share}<Tabs.Indicator />
-              </Tabs.Tab>
-              <Tabs.Tab id="used" className="px-2.5 py-1 rounded-xl text-xs font-semibold text-[var(--ink)]">
-                중고템 {counts.used}<Tabs.Indicator />
-              </Tabs.Tab>
-              <Tabs.Tab id="swap" className="px-2.5 py-1 rounded-xl text-xs font-semibold text-[var(--ink)]">
-                스왑템 {counts.swap}<Tabs.Indicator />
-              </Tabs.Tab>
-              <Tabs.Tab id="no" className="px-2.5 py-1 rounded-xl text-xs font-semibold text-[var(--ink)]">
-                비추천템 {counts.no}<Tabs.Indicator />
-              </Tabs.Tab>
-            </Tabs.List>
-          </Tabs.ListContainer>
-        </Tabs>
+        <div className="flex gap-1.5 overflow-x-auto pb-1" role="group" aria-label="라벨로 거르기">
+          {[["all", "전체", counts.all]].concat(Object.values(LABEL_META).map((lm) => [lm.key, lm.name, counts[lm.key] || 0])).map(([k, n, c]) => (
+            <button key={k} type="button" aria-pressed={filterTab === k} onClick={() => setFilterTab(k)}
+              className={`shrink-0 min-h-[40px] px-3 rounded-full text-xs font-semibold border ${filterTab === k ? "bg-[var(--ink)] text-[var(--surface)] border-[var(--ink)]" : "bg-[var(--surface)] text-[var(--ink)] border-[var(--line)]"}`}>
+              {n} {c}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* 아이템 리스트 카드 */}
@@ -425,7 +404,7 @@ export default function BaliSurfPouchScreen() {
                 <p className="text-xs font-semibold text-[var(--accent)]">“{item.tip}”</p>
                 <p className="text-xs text-[var(--ink)] leading-relaxed">{item.comment}</p>
                 {item.instead && (
-                  <p className="text-xs font-semibold text-[var(--off)] mt-0.5">👉 {item.instead}</p>
+                  <p className="text-xs font-semibold text-[var(--off)] mt-0.5">{item.instead}</p>
                 )}
               </div>
 
@@ -470,10 +449,11 @@ export default function BaliSurfPouchScreen() {
               <div className="pt-1.5 border-t border-[var(--line)] flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] text-[var(--muted)]">라벨 바꾸기 (터치 시 즉시 반영·자동저장)</span>
-                  <span className="text-[11px] text-[var(--muted)]">🔥 센스 {item.senseScore}점 · 👍 공감 {item.likes}</span>
+                  <span className="text-[11px] text-[var(--muted)]">공감 {item.likes} (예시)</span>
                 </div>
 
                 <TagGroup
+                  aria-label="라벨 바꾸기"
                   selectionMode="single"
                   selectedKeys={new Set([item.label])}
                   onSelectionChange={(keys) => {
@@ -485,7 +465,7 @@ export default function BaliSurfPouchScreen() {
                     {Object.values(LABEL_META).map((lm) => {
                       const isSelected = item.label === lm.key;
                       return (
-                        <TagGroup.Item
+                        <Tag
                           key={lm.key}
                           id={lm.key}
                           className={`text-[11px] px-2 py-0.5 rounded-lg border cursor-pointer ${
@@ -496,7 +476,7 @@ export default function BaliSurfPouchScreen() {
                           style={isSelected ? { backgroundColor: lm.colorVar } : undefined}
                         >
                           {lm.name}
-                        </TagGroup.Item>
+                        </Tag>
                       );
                     })}
                   </TagGroup.List>
@@ -530,7 +510,7 @@ export default function BaliSurfPouchScreen() {
       {/* 하단 고정 액션 바 */}
       <div className="sticky bottom-2 z-10 p-2.5 rounded-2xl bg-[var(--surface)] border border-[var(--line)] flex flex-col gap-2 shadow-sm">
         {publishNotice && (
-          <p className="text-xs font-semibold text-[var(--accent)] px-1">✨ {publishNotice}</p>
+          <p className="text-xs font-semibold text-[var(--accent)] px-1">{publishNotice}</p>
         )}
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-col">

@@ -5,8 +5,9 @@ import { Icon, Sprite } from "./components/Icon.jsx";
 import { AvatarBadge, Promo, TBadge } from "./components/common.jsx";
 import Home, { HomeTop } from "./screens/Home.jsx";
 import Bag, { BagTop } from "./screens/Bag.jsx";
-import BaliSurfPouchScreen from "./screens/BaliSurfPouchScreen.jsx"; /* Gemini 화면 (#bali-surf) */
 import ModalHost from "./modals/Modals.jsx";
+import Preorder, { Missing, SimpleTop } from "./screens/Preorder.jsx";
+import BaliSurfPouchScreen from "./screens/BaliSurfPouchScreen.jsx"; /* Gemini 화면 (#bali-surf) */
 import { BAGS, SRC, SRC_DEF, T, TORDER } from "./data/data.js";
 import { AppProvider, useApp } from "./lib/store.jsx";
 
@@ -82,18 +83,22 @@ function TabBar({ active }) {
 function Shell() {
   const { route } = useApp();
   const b = BAGS.find((x) => x.id === route);
+  /* 화면: 가방 상세 / 사전신청 / 없는 주소 안내 / 홈 */
+  const screen = b ? "bag" : route === "preorder" ? "preorder" : route === "bali-surf" ? "bali-surf" : route && route !== "home" ? "missing" : "home";
   useEffect(() => {
     const s = document.querySelector(".scroller");
     if (s) s.scrollTop = 0;
     window.scrollTo(0, 0);
   }, [route]);
+  const top = screen === "bag" ? <BagTop b={b} /> : screen === "preorder" ? <SimpleTop title="사전신청" /> : screen === "missing" ? <SimpleTop title="고수의 가방" /> : screen === "bali-surf" ? <SimpleTop title="발리 서핑 파우치" /> : <HomeTop />;
+  const body = screen === "bag" ? <Bag key={b.id} b={b} /> : screen === "preorder" ? <Preorder /> : screen === "missing" ? <Missing /> : screen === "bali-surf" ? <BaliSurfPouchScreen /> : <Home />;
   return (
     <div className="stage">
       <Intro />
       <div className="app">
-        <header className="topbar">{b ? <BagTop b={b} /> : <HomeTop />}</header>
-        <div className="scroller"><main>{route === "bali-surf" ? <BaliSurfPouchScreen /> : b ? <Bag key={b.id} b={b} /> : <Home />}</main></div>
-        <TabBar active={b ? null : "home"} />
+        <header className="topbar">{top}</header>
+        <div className="scroller"><main>{body}</main></div>
+        <TabBar active={screen === "home" ? "home" : null} />
       </div>
     </div>
   );

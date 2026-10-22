@@ -227,6 +227,18 @@ function Pinned() {
   );
 }
 
+/* 출시 알림 사전신청 진입 버튼 */
+function PreorderCta() {
+  const { go } = useApp();
+  return (
+    <button type="button" className="pre-cta" onClick={() => go("preorder")}>
+      <Icon id="spark" />
+      <span><b>출시 알림 사전신청</b><span>이메일만 남기면 열릴 때 알려 드려요</span></span>
+      <Icon id="back" className="go" />
+    </button>
+  );
+}
+
 export default function Home() {
   return (
     <div className="view">
@@ -234,6 +246,7 @@ export default function Home() {
       <section className="pad" style={{ paddingTop: 16 }} aria-label="고수템 소식">
         <h2 className="vh">고수는 이건 사지 마도 알려줘요</h2>
         <Promo />
+        <PreorderCta />
       </section>
       <Feed />
       <div className="pad" style={{ paddingTop: 28 }}>
