@@ -14,6 +14,12 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Netlify Forms 감지용 숨김 폼: 화면의 사전신청 폼은 React로 그려서, 배포 때 Netlify가 이 HTML로 폼 이름·칸을 읽어요. 칸을 바꾸면 여기도 같이 바꾸기 -->
+    <form name="preorder" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="preorder" />
+      <input name="bot-field" /><input type="email" name="email" /><input name="interest" /><input name="open_bag" /><input name="privacy_agree" />
+      <input name="utm_source" /><input name="utm_medium" /><input name="utm_campaign" />
+    </form>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
