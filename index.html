@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>고수템</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#F7FAFD">
@@ -26,8 +31,8 @@ try{new MutationObserver(sync).observe(r,{attributes:true,attributeFilter:["data
   --brand:#1F3A5F;       /* 워드마크·탭 활성 */
   --accent:#2F6DB5;      /* 버튼·링크 */
   --t-must:#2F6DB5;      /* 필수템 */
-  --t-used:#1E8A5A;      /* 중고템 */
-  --t-share:#C77A12;     /* 나눔템 */
+  --t-used:#17744B;      /* 중고템 (흰 바탕 대비 4.5:1 이상) */
+  --t-share:#915708;     /* 나눔템 (흰 바탕 대비 4.5:1 이상) */
   --t-swap:#6B5BD2;      /* 스왑템 */
   --t-no:#C93A3A;        /* 비추천 */
   --photo:#DCE8F5;
@@ -612,7 +617,7 @@ button.l-go{border:0;background:none}
 .stock{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:.78rem}
 .stock .s{font-weight:700;color:var(--accent)}
 .stock .s.zero{font-weight:500;color:var(--muted);opacity:.65}
-.heart{width:40px;height:40px;display:grid;place-items:center;border:0;background:none;border-radius:50%;color:#B9C3D0;grid-area:heart;transition:transform 160ms var(--ease),color 160ms ease}
+.heart{width:44px;height:44px;display:grid;place-items:center;border:0;background:none;border-radius:50%;color:#7F8EA3;grid-area:heart;transition:transform 160ms var(--ease),color 160ms ease}
 .heart:active{transform:scale(.88)}
 .heart svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
 .heart[aria-pressed="true"]{color:#E2465A}
@@ -782,7 +787,32 @@ button.l-go{border:0;background:none}
 .flash{animation:flash 420ms var(--ease)}
 @keyframes flash{from{background:color-mix(in srgb,var(--accent) 14%,var(--surface))}to{background:var(--surface)}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;animation-iteration-count:1!important;transition-duration:1ms!important}}
+
+/* ---------- 모바일 보정 (한 곳에 모음) ---------- */
+/* 본문 글자 15px 이상 */
+.hook,.deck-sub,.section .sub,.item .tip,.item .sub-for,.item h3,.item.compact h3,.ai-note,.empty p,.supply p,.supply ul,.regret blockquote{font-size:.94rem}
+.tab{font-size:.7rem}
+/* 띄어쓰기 없는 긴 글자도 칸 안에서 줄바꿈 (keep-all은 그대로) */
+.app{overflow-wrap:anywhere}
+.feed>*,.card-body,.card-body>*,.d-card>*{min-width:0}
+.who>:not(.avatar){min-width:0}
+.who-t>*{max-width:100%}
+/* 긴 닉네임·제목: 한 줄 말줄임 */
+.who .name,.bar-title{display:block;min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-title{flex:1 1 auto}
+.app .btn{min-height:44px}
+/* 터치 영역 44×44: 보이는 크기는 그대로 두고, 누르는 영역만 넓힘 */
+.react,.mini-btn,.hu-tag,.hu-tab,.link-btn,.emp,.edit-btn,.nx-btn,.cn-all,.sl-cta,.promo-dots .dot,.pg-nav,.pg-num,.who-btn{position:relative}
+.react::after,.mini-btn::after,.hu-tag::after,.hu-tab::after,.link-btn::after,.emp::after,.edit-btn::after,.nx-btn::after,.cn-all::after,.sl-cta::after,.promo-dots .dot::after,.pg-nav::after,.pg-num::after,.who-btn::after{content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}
+/* 입력칸 16px: 아이폰에서 누를 때 화면이 확대되지 않게 + 검색 칸 높이 44px */
+.hu-sinput,.nx-search .hu-sinput,.talk-in,.pl-sel{font-size:16px}
+.nx-search{height:44px}
+.pl-sel{min-height:44px}
+/* 하단 탭·담기 바 아래에 마지막 내용이 가리지 않게 */
+.view{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
 </style>
+</head>
+<body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol>
@@ -1069,7 +1099,7 @@ var topbar=document.getElementById("topbar"), main=document.getElementById("main
 function photoHTML(b,big){
   var r=S.react[b.id], up=b.likes+(r==="up"?1:0), dn=b.dislikes+(r==="down"?1:0);
   return '<div class="photo'+(b.img?' has-img':'')+'">'+
-    (b.img?'<img src="'+b.img+'" alt="'+esc(b.imgAlt||b.title)+'" decoding="async">':'<span class="badge text-bg-light ex">예시</span><div class="ph">'+icon("camera")+'<span>고수 가방 사진 자리<br>촬영 후 실물 사진으로 바뀌어요</span></div>')+
+    (b.img?'<img src="'+b.img+'" alt="'+esc(b.imgAlt||b.title)+'" width="'+(b.imgW||720)+'" height="'+(b.imgH||720)+'" decoding="async">':'<span class="badge text-bg-light ex">예시</span><div class="ph">'+icon("camera")+'<span>고수 가방 사진 자리<br>촬영 후 실물 사진으로 바뀌어요</span></div>')+
     '<div class="reacts">'+
       '<button type="button" class="react up" data-react="up" data-bag="'+b.id+'" aria-pressed="'+(r==="up")+'" aria-label="좋아요 '+up+'">'+icon("up")+'<span class="num">'+up+'</span></button>'+
       '<button type="button" class="react down" data-react="down" data-bag="'+b.id+'" aria-pressed="'+(r==="down")+'" aria-label="싫어요 '+dn+'">'+icon("down")+'<span class="num">'+dn+'</span></button>'+
@@ -1400,7 +1430,7 @@ var promoTimers={};
 function promoHTML(id){
   var sl=PROMOS.map(function(p,i){
     return '<div class="slide'+(p.img?' has-img':'')+'" style="--bg:'+p.bg+';--fg:'+p.fg+'" role="group" aria-roledescription="slide" aria-label="'+(i+1)+' / '+PROMOS.length+'"'+(p.open?' data-open="'+p.open+'"':'')+'>'+
-      (p.img?'<img src="'+p.img+'" alt="" decoding="async">':'<span class="sl-bgword" aria-hidden="true">GOSU</span>')+
+      (p.img?'<img src="'+p.img+'" alt="" width="'+(p.imgW||720)+'" height="'+(p.imgH||720)+'" decoding="async">':'<span class="sl-bgword" aria-hidden="true">GOSU</span>')+
       '<div class="sl-txt"><span class="sl-tag">'+p.tag+'</span><b>'+p.big+'</b><span class="sl-small">'+p.small+'</span>'+(p.act?'<button type="button" class="sl-cta" data-act="'+p.act+'">고수로 신청하기</button>':'')+'</div></div>';
   }).join("");
   var dots=PROMOS.map(function(p,i){ return '<button type="button" class="dot'+(i===0?' on':'')+'" data-go="'+i+'" aria-label="'+(i+1)+'번째 배너"></button>'; }).join("");
@@ -1874,3 +1904,5 @@ document.getElementById("legend").innerHTML=TORDER.map(function(k){ return '<li>
 route();
 })();
 </script>
+</body>
+</html>
