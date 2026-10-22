@@ -5,6 +5,7 @@ import { Icon, Sprite } from "./components/Icon.jsx";
 import { AvatarBadge, Promo, TBadge } from "./components/common.jsx";
 import Home, { HomeTop } from "./screens/Home.jsx";
 import Bag, { BagTop } from "./screens/Bag.jsx";
+import BaliSurfPouchScreen from "./screens/BaliSurfPouchScreen.jsx"; /* Gemini 화면 (#bali-surf) */
 import ModalHost from "./modals/Modals.jsx";
 import { BAGS, SRC, SRC_DEF, T, TORDER } from "./data/data.js";
 import { AppProvider, useApp } from "./lib/store.jsx";
@@ -91,7 +92,7 @@ function Shell() {
       <Intro />
       <div className="app">
         <header className="topbar">{b ? <BagTop b={b} /> : <HomeTop />}</header>
-        <div className="scroller"><main>{b ? <Bag key={b.id} b={b} /> : <Home />}</main></div>
+        <div className="scroller"><main>{route === "bali-surf" ? <BaliSurfPouchScreen /> : b ? <Bag key={b.id} b={b} /> : <Home />}</main></div>
         <TabBar active={b ? null : "home"} />
       </div>
     </div>
