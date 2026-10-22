@@ -34,8 +34,8 @@
   --brand: #1F3A5F;
   --photo: #DCE8F5;
   --t-must: #2F6DB5;
-  --t-used: #1E8A5A;
-  --t-share: #C77A12;
+  --t-used: #17744B; /* 흰 바탕 대비 4.5:1 이상 (1주차 모바일 점검) */
+  --t-share: #915708; /* 흰 바탕 대비 4.5:1 이상 */
   --t-swap: #6B5BD2;
   --t-no: #C93A3A;
   --off: #D9465A;
@@ -337,7 +337,7 @@ body {
 .item h3 { font-size: .92rem; font-weight: 500; margin: 0; line-height: 1.4; color: var(--ink); }
 .item .tip { margin: 0 0 8px; font-size: .8rem; color: var(--muted); line-height: 1.5; }
 .item .sub-for { font-size: .74rem; color: var(--muted); margin: -4px 0 8px; }
-.heart { grid-area: heart; color: #B9C3D0; }
+.heart { grid-area: heart; color: #7F8EA3; min-width: 44px; min-height: 44px; }
 .heart svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linejoin: round; }
 .heart[data-selected="true"] { color: #E2465A; }
 .heart[data-selected="true"] svg { fill: currentColor; }
@@ -627,3 +627,49 @@ body {
 :root.dark .src-tag.src-sponsor, :root.dark .src-tag.src-affiliate { color: var(--t-share); }
 .pc-v.have { font-weight: 600; font-size: .76rem; color: var(--ink); white-space: normal; }
 .pick-chip[data-ch="have"] { background: color-mix(in srgb, var(--t-used) 13%, var(--surface)); color: var(--t-used); }
+
+
+/* ---------- 1주차 모바일 보정 (HTML 버전에서 옮김) ---------- */
+.app { overflow-wrap: anywhere; }
+.feed > *, .card-body, .card-body > * { min-width: 0; }
+.who > :not(.avatar) { min-width: 0; }
+.bar-title { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app input, .app select, .app textarea { font-size: 16px; } /* 아이폰에서 누를 때 화면이 확대되지 않게 */
+.view { padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)); } /* 하단 탭에 마지막 내용이 가리지 않게 */
+
+/* ---------- 사전신청 ---------- */
+.pre-cta { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 14px 16px; border-radius: 18px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-align: left; width: 100%; min-height: 44px; cursor: pointer; font: inherit; }
+.pre-cta b { display: block; font-size: 1rem; }
+.pre-cta span span { font-size: .9rem; color: var(--muted); }
+.pre-cta .icon { flex: none; color: var(--accent); }
+.pre-cta .go { margin-left: auto; transform: scaleX(-1); }
+.pre-hero { padding-block: 24px 8px; display: grid; gap: 6px; }
+.pre-hero p { margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--ink); }
+.pre-hero h2 { margin: 4px 0 0; font-family: "Black Han Sans", var(--f-ui, sans-serif); font-weight: 400; font-size: 1.6rem; line-height: 1.3; color: var(--brand, var(--accent)); }
+.pre-form { display: grid; gap: 20px; padding-block: 12px 24px; }
+.pre-form fieldset { display: grid; gap: 8px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.pre-field { display: grid; gap: 6px; }
+.pre-label { font-size: 1rem; font-weight: 700; color: var(--ink); padding: 0; }
+.pre-form .req { color: var(--t-no); font-size: .85rem; font-weight: 700; margin-left: 4px; }
+.pre-form .opt { color: var(--muted); font-size: .85rem; font-weight: 500; margin-left: 4px; }
+.pre-input { min-height: 48px; font-size: 16px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); width: 100%; }
+.pre-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.pre-help { font-size: .9rem; color: var(--muted); margin: 0; }
+.pre-sits { display: flex; flex-wrap: wrap; gap: 8px; }
+.pre-sit { position: relative; min-height: 44px; display: inline-flex; align-items: center; border-radius: 999px; padding: 0 16px; font-size: .95rem; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.pre-sit input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.pre-sit[data-on="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.pre-sit:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pre-check { display: flex; gap: 10px; align-items: flex-start; min-height: 44px; font-size: 1rem; color: var(--ink); cursor: pointer; }
+.pre-check input { flex: none; width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--accent); }
+.pre-privacy { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); padding: 14px; display: grid; gap: 10px; }
+.pre-privacy dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: .92rem; }
+.pre-privacy dt { color: var(--muted); font-weight: 500; }
+.pre-privacy dd { margin: 0; color: var(--ink); }
+.pre-err { font-size: .92rem; color: var(--t-no); margin: 0; }
+.pre-err:empty { display: none; }
+.pre-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.pre-done { padding-block: 40px 24px; display: grid; gap: 12px; justify-items: center; text-align: center; }
+.pre-done .icon { width: 44px; height: 44px; color: var(--accent); }
+.pre-done h2 { margin: 0; font-size: 1.3rem; font-weight: 900; }
+.pre-done p { margin: 0; font-size: 1rem; color: var(--muted); }
