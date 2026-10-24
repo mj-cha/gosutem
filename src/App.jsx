@@ -64,6 +64,7 @@ function TabBar({ active }) {
     if (k === "home") go("home");
     else if (k === "search") openModal("search");
     else if (!member) needMember(null, k === "saved" ? "저장한 가방은 회원만 볼 수 있어요." : "내 가방은 회원만 볼 수 있어요.");
+    else if (k === "me") go("login"); /* 회원이면 내 계정 화면(로그아웃) */
     else toast(k === "saved" ? "저장한 가방이 여기 모여요. 시범 화면이라 비어 있어요." : "담은 물건이 여기 모여요. 시범 화면이라 비어 있어요.");
   };
   return (
