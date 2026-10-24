@@ -283,7 +283,7 @@ function HomeHero() {
 
 /* 많이 담긴 고수템: 공감 수 순 상위 4개 (숫자는 예시) */
 function firstLine(t) { const m = String(t || "").split(/(?<=[.!?。])\s|\n/)[0]; return m.length > 44 ? m.slice(0, 43) + "…" : m; }
-function BestItems() {
+export function BestItems() {
   const { go } = useApp();
   const top = useMemo(() => {
     const all = [];
@@ -326,19 +326,74 @@ function BestItems() {
   );
 }
 
+
+/* 홈 '고수의 가방' (10/25): THE EDIT 양식 — 어두운 바탕, 가방마다 큰 사진 카드, PC 2열 지그재그
+   카드에는 예전처럼 좋아요·싫어요·조회·스크랩, 라벨 개수, 고수 추천대로 담으면 얼마인지 보여 줌 */
+const GB_TONES = ["#E9E8E2", "#E9E8E2", "#333FDF"];
+function GoBags() {
+  const { go, nav, region, scrap, setScrap, openModal, commitSearch } = useApp();
+  const { shown } = useMemo(() => filterBags(nav), [nav]);
+  const qq = nav.q.trim();
+  const head = qq ? "“" + qq + "” 검색 결과"
+    : nav.pc || nav.cat ? [nav.pc ? catName(nav.pc) : "", nav.cat ? catName(nav.cat) + " 물건" : ""].filter(Boolean).join(" · ") : "Every bag. Every gosu.";
+  return (
+    <section className="edit gb-ed pad" aria-labelledby="gb-h">
+      <p className="ed-kick">THE GOSU SELECTION / VOL. 01</p>
+      <h2 className="ed-h" id="gb-h"><span>THE</span> <em>BAGS.</em><sup>{String(shown.length).padStart(2, "0")}</sup></h2>
+      <div className="ed-sub"><span>{head}</span><span>고수의 가방 · {region ? region.full : "전국"} <button type="button" className="gb-switch" onClick={() => go("items")}>물건별로 보기 →</button></span></div>
+      {shown.length ? (
+        <ul className="ed-grid">
+          {shown.map((b, i) => {
+            const on = !!scrap[b.id], c = countT(b), cover = b.items.find((it) => it.t === "must") || b.items[0];
+            let all = 0, combo = 0;
+            b.items.forEach((it) => { all += minNew(it); if (T[it.t].pick) combo += costOf(it); });
+            const open = () => { if (nav.q) commitSearch(nav.q); go(b.id); };
+            return (
+              <li key={b.id} className="ed-card">
+                <button type="button" className="ed-img" style={{ background: b.img ? "#E9E8E2" : GB_TONES[i % GB_TONES.length] }} onClick={open} aria-label={b.title + " 가방 열기"}>
+                  {b.img ? <img src={b.img} alt="" decoding="async" className="gb-photo" />
+                    : cover && <svg viewBox="0 0 64 64" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ART[cover.art] || "" }} />}
+                  <span className="ed-tag lime">BAG {String(i + 1).padStart(2, "0")}</span>
+                  {b.deck && <span className="ed-tag right dark">인기 파우치 덱</span>}
+                  <span className="gb-react num" aria-label={"좋아요 " + b.likes + ", 싫어요 " + b.dislikes}>
+                    <span><Icon id="up" className="icon-xs" />{b.likes.toLocaleString("ko-KR")}</span>
+                    <span><Icon id="down" className="icon-xs" />{b.dislikes.toLocaleString("ko-KR")}</span>
+                  </span>
+                </button>
+                <div className="ed-cap">
+                  <div className="gb-cap">
+                    <p className="ed-meta">{b.name} / {b.meta}</p>
+                    <h3 className="ed-name">{b.title}</h3>
+                    <p className="gb-stats num"><span><Icon id="eye" className="icon-xs" />조회 {b.views}</span><span><Icon id="bookmark" className="icon-xs" />스크랩 {b.scraps.toLocaleString("ko-KR")}</span></p>
+                    <div className="tbadges">{TORDER.filter((k) => c[k]).map((k) => <TBadge key={k} k={k} n={c[k]} />)}</div>
+                    {all > 0 && <p className="gb-save num">고수 추천대로 담으면 <em>-{Math.round((1 - combo / all) * 100)}%</em> <b>{won(combo)}</b> <s>{won(all)}</s></p>}
+                  </div>
+                  <button type="button" className="ed-heart" aria-pressed={on} aria-label={b.title + " 스크랩"} onClick={() => setScrap((s) => ({ ...s, [b.id]: !s[b.id] }))}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.4C1.5 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 2.9 1.4-1.8 3-2.9 5-2.9 3.4 0 5.5 3.3 4.3 6.6-1.8 4.8-9.3 9.4-9.3 9.4z" /></svg>
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <div className="ed-empty"><p>이 조건의 가방은 아직 없어요. 고수를 모시는 중이에요.</p><Button onPress={() => openModal("supply")}>내 가방 보여 주기</Button></div>
+      )}
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <div className="view">
       <Promo />
       <NavBar />
-      <div className="pad" style={{ paddingTop: 16 }}><HomeHero /></div>
-      <section className="pad" style={{ paddingTop: 16 }} aria-label="고수템 소식">
+      <section className="pad" aria-label="고수템 소식">
         <h2 className="vh">고수템 소식</h2>
         <PreorderCta />
       </section>
-      <BestItems />
-      <Feed />
-      <div className="pad" style={{ paddingTop: 28 }}>
+      <GoBags />
+      <div className="pin-wrap pad">
         <Pinned />
         <p className="foot-note">모든 가방·인물·가격·재고·좋아요 수는 예시예요.</p>
       </div>

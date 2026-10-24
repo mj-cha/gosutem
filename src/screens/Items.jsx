@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { BAGS, ART, T, TORDER } from "../data/data.js";
 import { minNew, usedOK, won } from "../lib/logic.js";
 import { useApp } from "../lib/store.jsx";
+import { BestItems } from "./Home.jsx";
 
 const ALL = BAGS.flatMap((b) => b.items.map((it, i) => ({ b, it, i, key: b.id + ":" + i })))
   .sort((x, y) => (y.it.emp || 0) - (x.it.emp || 0));
@@ -53,6 +54,7 @@ export default function Items() {
       <p className="ed-kick">THE GOSU SELECTION / VOL. 01</p>
       <h2 className="ed-h"><span>THE</span> <em>ITEMS.</em><sup>01</sup></h2>
       <div className="ed-sub"><span>Every bag. Every item.</span><span>고수의 가방에서 물건만 꺼내 모았어요. 라벨로 골라 보세요.</span></div>
+      <BestItems />
       <div className="ed-bar">
         <div className="ed-chips" role="group" aria-label="라벨로 고르기">
           {chips.map(([k, t]) => <button key={k} type="button" className="ed-chip" aria-pressed={f === k} onClick={() => setF(k)}>{t}</button>)}

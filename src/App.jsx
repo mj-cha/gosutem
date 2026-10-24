@@ -97,7 +97,7 @@ function Shell() {
   return (
     <div className="stage">
       <Intro />
-      <div className={"app" + (screen === "items" ? " is-dark" : "")}>
+      <div className={"app" + (screen === "items" || screen === "home" ? " is-dark" : "")}>
         <header className="topbar">{top}</header>
         <div className="scroller"><main>{body}</main><SiteFooter /></div>
         <TabBar active={screen === "home" ? "home" : null} />
