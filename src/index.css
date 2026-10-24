@@ -1016,3 +1016,16 @@ body {
 .gb-cap { gap: 6px; }
 .gb-cap .ed-name { margin-top: 0; }
 .gb-foot { margin-top: 2px; gap: 10px; }
+
+/* 상단 바·하단 메뉴는 모든 화면에서 같은 디자인(검정 바탕·밝은 글씨·라임 강조) (10/25 MJ) */
+.topbar, .tabbar {
+  --foreground: #F2F1EC; --ink: #F2F1EC; --surface: var(--v-ink); --muted: var(--v-muted-dark);
+  --border: var(--v-line-dark); --line: var(--v-line-dark); --default: #1E1E1B; --default-foreground: #F2F1EC; --focus: var(--v-lime);
+  background: var(--v-ink) !important; color: #F2F1EC; border-color: var(--v-line-dark);
+}
+.topbar .bar-title, .topbar .logo, .topbar .icon-btn, .topbar .gear-btn { color: #F2F1EC; }
+.topbar .logo small { color: var(--v-muted-dark); }
+.topbar .icon-btn[aria-pressed="true"] .icon, .topbar .icon-btn[data-selected="true"] .icon { color: var(--v-lime); }
+.tabbar .tab { color: var(--v-muted-dark); }
+.tabbar .tab[aria-current="page"] { color: var(--v-lime); }
+.tabbar .tab[aria-current="page"] .icon { background: none; color: var(--v-lime); }
