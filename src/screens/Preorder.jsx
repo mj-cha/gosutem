@@ -1,5 +1,6 @@
 /* 출시 알림 사전신청 (Netlify Forms) + 없는 주소 안내 — 1주차 HTML 버전(#3·bugfix)을 React로 옮김 */
 import { useMemo, useState } from "react";
+import { track } from "../lib/track.js";
 import { Button } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { useApp } from "../lib/store.jsx";
@@ -62,7 +63,7 @@ export default function Preorder() {
     UTM_KEYS.forEach((k) => p.append(k, utm[k] || ""));
     setSending(true);
     fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: p.toString() })
-      .then((r) => { if (!r.ok) throw new Error(String(r.status)); setDone(true); window.scrollTo(0, 0); document.querySelector(".scroller")?.scrollTo(0, 0); })
+      .then((r) => { if (!r.ok) throw new Error(String(r.status)); track("preorder_done", { interest: sits.join("|"), open_bag: openBag ? 1 : 0 }); setDone(true); window.scrollTo(0, 0); document.querySelector(".scroller")?.scrollTo(0, 0); })
       .catch(() => { setSending(false); setErr("신청을 보내지 못했어요. 잠시 뒤 다시 해 주세요."); });
   };
 

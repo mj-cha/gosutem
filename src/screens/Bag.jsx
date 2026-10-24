@@ -1,5 +1,6 @@
 /* 고수의 가방 상세: 머리 카드 → 물건마다 고르기 → (후회 · 예산 · 한마디 · 이야기) → 담기 바 */
 import { useEffect, useMemo, useRef, useState } from "react";
+import { track } from "../lib/track.js";
 import {
   Alert, Button, Disclosure, DisclosureGroup, Label, Popover, Radio, RadioGroup, Separator, Slider,
   Surface, Tabs, Tag, TagGroup, TextArea, ToggleButton, Tooltip,
@@ -395,6 +396,7 @@ export default function Bag({ b }) {
 
   const finalize = (i, c, k) => {
     const key = b.id + ":" + i, np = { ...plan, [i]: c };
+    track("channel_pick", { bag: b.id, item: i, ch: c, k }); /* 지표: 어디서 살지 확정 */
     setPlan(np); setLpick((s) => ({ ...s, [key]: k })); setStage((s) => ({ ...s, [key]: null })); setTentS((s) => ({ ...s, [key]: undefined }));
     setPicksB((p) => p.map((v, j) => (j === i ? true : v))); setExp((s) => ({ ...s, [key]: false })); setOpen((s) => ({ ...s, [key]: null }));
     const pos = idx.indexOf(i); let nx = null;
