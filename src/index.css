@@ -1111,3 +1111,16 @@ body {
 .is-dark .deck-wrap { border-color: var(--v-line-dark); }
 .is-dark .deck-badge { background: var(--v-lime); color: var(--v-ink); }
 .o-trust .ex-badge { white-space: nowrap; }
+
+/* 넓은 화면: 예전처럼 왼쪽에 사진 + 바로 아래 설명·버튼, 오른쪽에 물건 목록과 합계 (10/25 MJ) */
+@media (min-width: 768px) {
+  .detail .d-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .detail .d-hero { grid-template-columns: minmax(0, 1fr); align-items: start; padding-top: 16px; padding-bottom: 0; border-bottom: 0; }
+  .detail .d-photo { padding-right: 16px; }
+  .detail .d-info { padding-left: 32px; padding-right: 16px; padding-top: 24px; }
+  .detail .d-items { padding-right: 32px; padding-left: 16px; }
+  .detail .d-aside { position: sticky; top: auto; bottom: 16px; padding: 0 32px 0 16px; z-index: 5; }
+  .detail .d-aside .sumcard { margin-top: 20px; box-shadow: 0 12px 32px rgba(0, 0, 0, .4); }
+  .detail .o-title .ts-main { font-size: clamp(1.6rem, 2.6vw, 2.2rem); }
+}
+@media (min-width: 768px) and (min-height: 900px) { .detail .d-hero { position: sticky; top: 56px; } }

@@ -508,7 +508,8 @@ export default function Bag({ b }) {
   return (
     <>
       <div className="view detail">
-        {/* 머리: 벤치마킹 Orbit 양식 — 사진(왼쪽) · 정보(오른쪽), 폰은 위아래 (10/25 MJ) */}
+        {/* 왼쪽: 사진 바로 아래 가방 설명·컬렉션 저장·팔로우 (Orbit 글꼴·버튼) / 오른쪽: 물건 목록 + 합계 (10/25 MJ) */}
+        <div className="d-grid">
         <div className="d-hero">
           <div className="d-photo pad"><ViewTabs b={b} /></div>
           <div className="d-info pad">
@@ -535,7 +536,7 @@ export default function Bag({ b }) {
           </div>
         </div>
 
-        <div className="d-grid">
+        <div className="d-right">
         <section className="section pad d-items" aria-labelledby="h-items">
           <h2 id="h-items">물건마다 담을지 골라 보세요</h2>
           <p className="sub">{b.howto || "하트를 누르면 담겨요. 라벨을 누르면 새상품·중고·유사템·나눔 중 어디서 구할 수 있는지 볼 수 있어요."}</p>
@@ -559,6 +560,7 @@ export default function Bag({ b }) {
           </div>
         </section>
         <aside className="d-aside pad" aria-label="내 구성 합계"><SumCard n={n} done={done} need={need} mine={mine} all={allP} onCart={onCart} onReset={onReset} /></aside>
+        </div>
         </div>
 
         <Surface variant="default" className="dg">
