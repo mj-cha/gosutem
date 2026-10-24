@@ -11,7 +11,7 @@ export const useApp = () => useContext(Ctx);
 export const useScraps = (b) => { const { scrap } = useContext(Ctx); return (b.scraps + (scrap[b.id] ? 1 : 0)).toLocaleString("ko-KR"); };
 
 /* localStorage 는 막혀 있을 수 있어서 항상 try/catch */
-const REG_KEY = "gosutem-region", RECENT_KEY = "gosutem-recent";
+const REG_KEY = "gosutem-region", RECENT_KEY = "gosutem-recent", FOLLOW_KEY = "gosutem-follow";
 function load(key, fb) { try { const v = JSON.parse(localStorage.getItem(key) || "null"); return v ?? fb; } catch { return fb; } }
 function save(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch { /* 저장 못 해도 화면은 그대로 */ } }
 
@@ -26,7 +26,9 @@ export function AppProvider({ children }) {
   const [emp, setEmp] = useState(() => Object.fromEntries(BAGS.map((b) => [b.id, b.items.map(() => false)])));
   const [react, setReact] = useState({});
   const [scrap, setScrap] = useState({});
-  const [follow, setFollow] = useState({});
+  const [follow, setFollowS] = useState(() => { const v = load(FOLLOW_KEY, {}); return v && typeof v === "object" ? v : {}; });
+  /* 팔로우는 이 기기에 저장 (끄면 바로 지워짐) */
+  const setFollow = useCallback((fn) => setFollowS((s) => { const n = typeof fn === "function" ? fn(s) : fn; save(FOLLOW_KEY, n); return n; }), []);
   const [chosen, setChosen] = useState({}); /* 가방별로 경로까지 고른 물건 수 (하단 '내 가방' 배지) */
   const [modal, setModal] = useState({ type: null, props: {}, open: false, seq: 0 });
 

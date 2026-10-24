@@ -12,6 +12,7 @@ import {
 } from "../lib/logic.js";
 import { regionLabel, useApp, useScraps } from "../lib/store.jsx";
 import { TitleSplit } from "./Home.jsx";
+import { followNotify } from "../lib/notify.js";
 import { TAGS, talkAdd, talkDelete, talkItems, useHub, useProfiles } from "../lib/claude.js";
 
 const reduceMotion = () => typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -55,7 +56,7 @@ function GosuPopover({ b }) {
           <div className="pop-head">
             <Who b={b} sub={"@" + (b.handle || b.id)} size="md" />
             <ToggleButton size="sm" isSelected={f} variant={f ? "default" : "default"} className={f ? "" : "bg-[var(--ink)] text-[var(--surface)]"}
-              onChange={(v) => { setFollow((s) => ({ ...s, [b.id]: v })); toast(v ? b.name + "님을 팔로우했어요. 새 가방이 올라오면 알려 드려요. (시범)" : "팔로우를 취소했어요."); }}>
+              onChange={(v) => { setFollow((s) => ({ ...s, [b.id]: v })); followNotify(v, b.name).then(toast); }}>
               {f ? "팔로잉" : "팔로우"}
             </ToggleButton>
           </div>
@@ -538,8 +539,8 @@ export default function Bag({ b }) {
               <button type="button" className="o-btn lime" aria-pressed={!!scrap[b.id]} onClick={() => { const v = !scrap[b.id]; setScrap((x) => ({ ...x, [b.id]: v })); toast(v ? "컬렉션에 저장했어요. 저장 탭에 모여요." : "컬렉션에서 뺐어요."); }}>
                 {scrap[b.id] ? "저장됨 ✓" : "컬렉션에 저장 +"}
               </button>
-              <button type="button" className="o-btn line" aria-pressed={!!follow[b.id]} onClick={() => { const v = !follow[b.id]; setFollow((x) => ({ ...x, [b.id]: v })); toast(v ? b.name + "님을 팔로우했어요. 새 가방이 올라오면 알려 드려요. (시범)" : "팔로우를 취소했어요."); }}>
-                {follow[b.id] ? "팔로잉 ✓" : "고수 팔로우 +"}
+              <button type="button" className="o-btn line" aria-pressed={!!follow[b.id]} onClick={() => { const v = !follow[b.id]; setFollow((x) => ({ ...x, [b.id]: v })); followNotify(v, b.name).then(toast); }}>
+                {follow[b.id] ? "팔로잉 · 알림 켜짐" : "고수 팔로우 +"}
               </button>
             </div>
             <p className="o-stat num">♡ {scN}명이 저장 · {b.name} 팔로워 {fol.toLocaleString("ko-KR")}명</p>
