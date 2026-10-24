@@ -1,5 +1,6 @@
 /* 모든 모달(HeroUI Modal) — 열린 모달은 store 의 modal.type 하나 */
 import { useMemo, useRef, useState } from "react";
+import { track } from "../lib/track.js";
 import { Suggest } from "../screens/Home.jsx";
 import { Alert, Button, ListBox, Modal, Radio, RadioGroup, SearchField, Separator, Tabs, Tag, TagGroup } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
@@ -71,7 +72,8 @@ function supDraft(it, pick, why, text, mode) {
 }
 function Supply() {
   const { closeModal, toast } = useApp();
-  const [step, setStep] = useState(0);          // 0 안내 · 1 사진 · 2 입력 · 3 초안 · 4 공개(닉네임)
+  const [step, setStepS] = useState(0);         // 0 안내 · 1 사진 · 2 입력 · 3 초안 · 4 공개(닉네임)
+  const setStep = (n) => { track("supply_step", { step: n }); setStepS(n); }; /* 지표: 고수 데뷔 단계 */
   const [mode, setMode] = useState("tap");       // tap · voice · text · photo
   const [pick, setPick] = useState({});          // i -> must/no/share
   const [why, setWhy] = useState({});            // i -> [chips]

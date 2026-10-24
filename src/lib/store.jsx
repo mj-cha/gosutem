@@ -4,6 +4,7 @@ import { toast } from "@heroui/react";
 import { BAGS, T } from "../data/data.js";
 import { normQ } from "./logic.js";
 import { recordSearch } from "./claude.js";
+import { track } from "./track.js";
 
 const Ctx = createContext(null);
 export const useApp = () => useContext(Ctx);
@@ -23,11 +24,15 @@ export function AppProvider({ children }) {
   const [picks, setPicks] = useState(() => Object.fromEntries(BAGS.map((b) => [b.id, b.items.map((it) => T[it.t].pick)])));
   const [emp, setEmp] = useState(() => Object.fromEntries(BAGS.map((b) => [b.id, b.items.map(() => false)])));
   const [react, setReact] = useState({});
-  const [scrap, setScrap] = useState({});
-  const [follow, setFollow] = useState({});
+  const [scrap, setScrapS] = useState({});
+  const [follow, setFollowS] = useState({});
+  /* 지표: 스크랩·팔로우는 켜고 끈 결과를 같이 기록 */
+  const setScrap = useCallback((f) => setScrapS((s) => { const n = typeof f === "function" ? f(s) : f; Object.keys(n).forEach((k) => { if (!!n[k] !== !!s[k]) track("scrap", { bag: k, on: n[k] ? 1 : 0 }); }); return n; }), []);
+  const setFollow = useCallback((f) => setFollowS((s) => { const n = typeof f === "function" ? f(s) : f; Object.keys(n).forEach((k) => { if (!!n[k] !== !!s[k]) track("follow", { bag: k, on: n[k] ? 1 : 0 }); }); return n; }), []);
   const [chosen, setChosen] = useState({}); /* 가방별로 경로까지 고른 물건 수 (하단 '내 가방' 배지) */
   const [modal, setModal] = useState({ type: null, props: {}, open: false, seq: 0 });
 
+  useEffect(() => { track("screen", { route: route || "home" }); }, [route]); /* 지표: 화면 이동 */
   useEffect(() => {
     const f = () => setRoute(routeOf());
     window.addEventListener("hashchange", f);
@@ -42,18 +47,18 @@ export function AppProvider({ children }) {
   const commitSearch = useCallback((t) => {
     t = normQ(t); if (t.length < 2) return;
     setRecentS((cur) => { const a = [t, ...cur.filter((x) => x !== t)].slice(0, 8); save(RECENT_KEY, a); return a; });
-    recordSearch(t);
+    recordSearch(t); track("search", { q: t });
   }, []);
   const patchNav = useCallback((p) => setNav((n) => ({ ...n, page: 1, ...p })), []);
 
-  const openModal = useCallback((type, props = {}) => setModal((m) => ({ type, props, open: true, seq: m.seq + 1 })), []);
+  const openModal = useCallback((type, props = {}) => { track("modal", { type }); setModal((m) => ({ type, props, open: true, seq: m.seq + 1 })); }, []);
   const closeModal = useCallback(() => setModal((m) => ({ ...m, open: false })), []);
 
   const value = useMemo(() => ({
     route, go, region, setRegion, nav, setNav, patchNav, recent, setRecent, commitSearch,
     picks, setPicks, emp, setEmp, react, setReact, scrap, setScrap, follow, setFollow, chosen, setChosen,
     modal, openModal, closeModal, toast: (m) => toast(m),
-  }), [route, go, region, setRegion, nav, patchNav, recent, setRecent, commitSearch, picks, emp, react, scrap, follow, chosen, modal, openModal, closeModal]);
+  }), [route, go, region, setRegion, nav, patchNav, recent, setRecent, commitSearch, picks, emp, react, scrap, setScrap, follow, setFollow, chosen, modal, openModal, closeModal]);
 
   return <Ctx value={value}>{children}</Ctx>;
 }
