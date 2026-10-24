@@ -863,7 +863,7 @@ button.l-go{border:0;background:none}
 <form name="preorder" data-netlify="true" netlify-honeypot="bot-field" hidden>
   <input type="hidden" name="form-name" value="preorder">
   <input name="bot-field"><input type="email" name="email"><input name="interest"><input name="open_bag"><input name="privacy_agree">
-  <input name="utm_source"><input name="utm_medium"><input name="utm_campaign">
+  <input name="utm_source"><input name="utm_medium"><input name="utm_campaign"><input name="interest_other">
 </form>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -1124,7 +1124,7 @@ function renderHome(){
 
 /* ---------- 사전신청 (Netlify Forms) ---------- */
 var UTM=(function(){ var o={}; try{ var q=new URLSearchParams(location.search); ["utm_source","utm_medium","utm_campaign"].forEach(function(k){ o[k]=(q.get(k)||"").slice(0,100); }); }catch(e){} return o; })();
-var PRE_SITS=["대학생","직장인","여행","수영","러닝","골프","낚시"];
+var PRE_SITS=["대학생","직장인","여행","수영","러닝","골프","낚시","기타"];
 function renderPreorder(){
   tabbar.classList.remove("hide"); setTab(null);
   topbar.innerHTML='<button class="icon-btn" type="button" id="b-back" aria-label="뒤로">'+icon("back")+'</button><h1 class="bar-title">사전신청</h1>';
@@ -1138,9 +1138,9 @@ function renderPreorder(){
       '<div><label class="form-label" for="pre-email">이메일<span class="req">필수</span></label>'+
         '<input class="form-control" type="email" id="pre-email" name="email" required autocomplete="email" inputmode="email" placeholder="you@example.com" aria-describedby="pre-email-h">'+
         '<p class="form-text" id="pre-email-h">출시 알림과 서비스 안내만 보내요.</p></div>'+
-      '<fieldset><legend>관심 있는 상황<span class="opt">여러 개 골라도 돼요</span></legend><div class="pre-sits">'+
+      '<fieldset><legend>관심 있는 상황<span class="opt">여러 개 골라도 돼요</span><span class="req">필수</span></legend><div class="pre-sits">'+
         PRE_SITS.map(function(n,i){ return '<input type="checkbox" class="btn-check" id="pre-s'+i+'" name="interest" value="'+n+'" autocomplete="off"><label for="pre-s'+i+'">'+n+'</label>'; }).join("")+
-      '</div></fieldset>'+
+      '</div><div id="pre-other-w" hidden><label class="visually-hidden" for="pre-other">기타 상황</label><input class="form-control mt-2" type="text" id="pre-other" name="interest_other" maxlength="30" autocomplete="off" placeholder="어떤 상황인지 적어 주세요"></div></fieldset>'+
       '<div class="form-check"><input class="form-check-input" type="checkbox" id="pre-open" name="open_bag" value="yes"><label class="form-check-label" for="pre-open">내 가방을 고수로 공개해 볼래요<span class="opt">선택</span></label></div>'+
       '<div class="pre-privacy"><dl><dt>수집 항목</dt><dd>이메일, 관심 상황, 가방 공개 희망 여부</dd><dt>이용 목적</dt><dd>고수템(가칭) 출시 알림과 서비스 안내</dd><dt>보유 기간</dt><dd>출시 알림 발송 후 6개월, 또는 동의를 철회하면 바로 지워요</dd><dt>동의 거부</dt><dd>동의하지 않을 수 있어요. 동의하지 않으면 사전신청이 안 돼요</dd></dl>'+
         '<p class="form-text">운영자: MJ Cha · 문의: awethings.cha@gmail.com</p>'+
@@ -1150,20 +1150,26 @@ function renderPreorder(){
     '</form></div>';
   main.innerHTML=h;
   var f=main.querySelector(".pre-form"), err=document.getElementById("pre-err"), btn=document.getElementById("pre-submit");
+  var etc=f.querySelector('[name="interest"][value="기타"]'), otherW=document.getElementById("pre-other-w"), other=document.getElementById("pre-other");
+  etc.onchange=function(){ otherW.hidden=!etc.checked; if(etc.checked) other.focus(); };
   f.onsubmit=function(e){
     e.preventDefault(); err.textContent="";
     var em=f.email.value.trim();
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ err.textContent="이메일 주소를 확인해 주세요."; f.email.focus(); return; }
+    var picked=[].slice.call(f.querySelectorAll('[name="interest"]:checked'));
+    if(!picked.length){ err.textContent="관심 있는 상황을 하나 이상 골라 주세요."; f.querySelector('[name="interest"]').focus(); return; }
+    var oth=etc.checked?other.value.trim():"";
+    if(etc.checked&&!oth){ err.textContent="기타를 골랐다면 어떤 상황인지 적어 주세요."; other.focus(); return; }
     if(!f.privacy_agree.checked){ err.textContent="개인정보 수집·이용에 동의해야 신청할 수 있어요."; f.privacy_agree.focus(); return; }
     var p=new URLSearchParams();
     p.append("form-name","preorder"); p.append("bot-field",f["bot-field"].value); p.append("email",em);
-    p.append("interest",[].slice.call(f.querySelectorAll('[name="interest"]:checked')).map(function(x){ return x.value; }).join(", "));
+    p.append("interest",picked.map(function(x){ return x.value; }).join(", ")); p.append("interest_other",oth);
     p.append("open_bag",f.open_bag.checked?"yes":"no"); p.append("privacy_agree","yes");
     ["utm_source","utm_medium","utm_campaign"].forEach(function(k){ p.append(k,f[k].value); });
     btn.disabled=true; btn.textContent="보내는 중이에요…";
     fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:p.toString()})
       .then(function(r){ if(!r.ok) throw new Error(r.status); preDone(); })
-      .catch(function(){ btn.disabled=false; btn.textContent="사전신청하기"; err.textContent="신청을 보내지 못했어요. 잠시 뒤 다시 해 주세요."; });
+      .catch(function(e){ btn.disabled=false; btn.textContent="사전신청하기"; err.textContent="신청을 보내지 못했어요. 잠시 뒤 다시 해 주세요. (오류 코드: "+(/^\d+$/.test(e&&e.message)?e.message:"네트워크")+")"; });
   };
 }
 function preDone(){
