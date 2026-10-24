@@ -154,7 +154,9 @@ function ItemRow({ b, i, ctx }) {
   const st = stage[key], cur = st || sel || null;
   const oc = open[key];
   const L = st ? listingsOf(it, st, region) : [];
-  const lcur = st && sel === st ? lpick[key] || 0 : null;
+  /* 목록에서 누른 건 '임시 선택'만 하고, '이걸로 고르기'를 눌러야 확정·다음 물건으로 넘어감
+     (폰에서 경로를 누르는 같은 탭이 새로 열린 목록까지 눌러 버려 바로 닫히던 문제 방지) */
+  const lcur = st ? (ctx.tent[key] ?? (sel === st ? lpick[key] || 0 : 0)) : null;
 
   return (
     <li className={cls(on ? "" : " off")} style={{ "--tc": T[it.t].c }} id={"it-" + i}>
@@ -167,7 +169,7 @@ function ItemRow({ b, i, ctx }) {
         <p className="tip">{it.tip}</p>
         {it.sub && <p className="sub-for">대신 · {it.sub}</p>}
         {it.note && <p className="sub-for">{it.note}</p>}
-        <div className="pick-q"><span className="label-sm">어디서 살까요?</span><span className="desc-sm">고르면 접히고 다음 물건으로 넘어가요</span></div>
+        <div className="pick-q"><span className="label-sm">어디서 살까요?</span><span className="desc-sm">판매처가 여러 곳이면 하나를 골라 확정해요</span></div>
         <RadioGroup aria-label={it.n + " 어디서 살까요"} className="pc" value={cur} onChange={(v) => ctx.choose(i, v)}>
           {chs.map((ch) => {
             const c = ch === "swap" ? { p: 0, n: 1 } : chPrice(it, ch, region), ok = !!c && (ch !== "used" || usedOK(it));
@@ -197,10 +199,10 @@ function ItemRow({ b, i, ctx }) {
             <div className="lst-h"><b>{PCH[st]} {L.length}개</b>
               <span>{(st === "used" || st === "share") && <><button type="button" className="link-btn lst-reg" onClick={() => ctx.openModal("region")}><Icon id="pin" className="icon-sm" />{regionLabel(region)}{region ? " 근처" : ""}</button> · </>}하나를 골라 주세요</span>
             </div>
-            <RadioGroup aria-label={PCH[st] + " " + L.length + "개 중 고르기"} className="lrows" value={lcur == null ? null : String(lcur)} onChange={(v) => ctx.finalize(i, st, +v)}>
+            <RadioGroup aria-label={PCH[st] + " " + L.length + "개 중 고르기"} className="lrows" value={lcur == null ? null : String(lcur)} onChange={(v) => ctx.setTent(i, +v)}>
               {L.map((x, k) => (
                 <div className="lrow" key={k}>
-                  <div onClickCapture={again(lcur == null ? null : String(lcur), String(k), () => ctx.finalize(i, st, k))}>
+                  <div>
                     <Radio value={String(k)}>
                       <Radio.Content>
                         <Radio.Control><Radio.Indicator /></Radio.Control>
@@ -218,7 +220,10 @@ function ItemRow({ b, i, ctx }) {
                 </div>
               ))}
             </RadioGroup>
-            <button type="button" className="link-btn" style={{ justifySelf: "start", padding: 6 }} onClick={() => ctx.unstage(i)}>다른 경로 보기</button>
+            <div className="lst-f">
+              <button type="button" className="link-btn" style={{ padding: 6 }} onClick={() => ctx.unstage(i)}>다른 경로 보기</button>
+              <Button size="sm" className="lst-ok" onPress={() => ctx.finalize(i, st, lcur ?? 0)}>이걸로 고르기 · {L[lcur ?? 0] ? (L[lcur ?? 0].p ? won(L[lcur ?? 0].p) : "무료") : ""}</Button>
+            </div>
           </div>
         )}
         {oc && !st && <div className="offers"><Offers it={it} ch={oc} region={region} onStage={(c) => ctx.stageTo(i, c)} /></div>}
@@ -366,6 +371,7 @@ export default function Bag({ b }) {
   const [exp, setExp] = useState({});
   const [stage, setStage] = useState({});
   const [lpick, setLpick] = useState({});
+  const [tent, setTentS] = useState({});
   const [open, setOpen] = useState({});
   const [next, setNext] = useState(null);
   const [budget, setBudget] = useState(null);
@@ -382,13 +388,14 @@ export default function Bag({ b }) {
   useEffect(() => {
     const t = scrollTo.current; if (t == null) return; scrollTo.current = null;
     const li = document.getElementById("it-" + t.i); if (!li) return;
-    li.scrollIntoView({ block: t.block || "center", behavior: reduceMotion() ? "auto" : "smooth" });
+    const box = (t.el && li.querySelector(t.el)) || li;
+    box.scrollIntoView({ block: t.block || "center", behavior: reduceMotion() ? "auto" : "smooth" });
     const r = li.querySelector(t.sel || 'input[type="radio"]:not(:disabled)'); if (r) r.focus({ preventScroll: true });
   });
 
   const finalize = (i, c, k) => {
     const key = b.id + ":" + i, np = { ...plan, [i]: c };
-    setPlan(np); setLpick((s) => ({ ...s, [key]: k })); setStage((s) => ({ ...s, [key]: null }));
+    setPlan(np); setLpick((s) => ({ ...s, [key]: k })); setStage((s) => ({ ...s, [key]: null })); setTentS((s) => ({ ...s, [key]: undefined }));
     setPicksB((p) => p.map((v, j) => (j === i ? true : v))); setExp((s) => ({ ...s, [key]: false })); setOpen((s) => ({ ...s, [key]: null }));
     const pos = idx.indexOf(i); let nx = null;
     for (let q = 1; q < idx.length; q++) { const j = idx[(pos + q) % idx.length]; if (np[j] == null && b.items[j].t !== "no" && picks[j] !== false) { nx = j; break; } }
@@ -396,14 +403,16 @@ export default function Bag({ b }) {
     else { setNext(null); toast("다 골랐어요! 아래 '일괄 구매'로 한 번에 사요."); }
   };
   const ctx = {
-    plan, picks, empOn, exp, stage, lpick, open, next, region, pickOf, openModal, finalize,
+    plan, picks, empOn, exp, stage, lpick, tent, open, next, region, pickOf, openModal, finalize,
+    setTent: (i, k) => setTentS((s) => ({ ...s, [b.id + ":" + i]: k })),
     choose: (i, c) => {
-      const L = listingsOf(b.items[i], c, region);
+      const key = b.id + ":" + i, L = listingsOf(b.items[i], c, region);
       if (L.length <= 1) { finalize(i, c, 0); return; }
-      setStage((s) => ({ ...s, [b.id + ":" + i]: c })); scrollTo.current = { i, block: "nearest", sel: ".lst input[type=radio]" };
+      setTentS((s) => ({ ...s, [key]: undefined }));
+      setStage((s) => ({ ...s, [key]: c })); scrollTo.current = { i, block: "nearest", el: ".lst", sel: ".lst input[type=radio]:checked" };
     },
-    stageTo: (i, c) => { const key = b.id + ":" + i; setOpen((s) => ({ ...s, [key]: null })); setStage((s) => ({ ...s, [key]: c })); },
-    unstage: (i) => { setStage((s) => ({ ...s, [b.id + ":" + i]: null })); scrollTo.current = { i, block: "nearest" }; },
+    stageTo: (i, c) => { const key = b.id + ":" + i; setOpen((s) => ({ ...s, [key]: null })); setTentS((s) => ({ ...s, [key]: undefined })); setStage((s) => ({ ...s, [key]: c })); scrollTo.current = { i, block: "nearest", el: ".lst", sel: ".lst input[type=radio]:checked" }; },
+    unstage: (i) => { const key = b.id + ":" + i; setStage((s) => ({ ...s, [key]: null })); setTentS((s) => ({ ...s, [key]: undefined })); scrollTo.current = { i, block: "nearest" }; },
     expand: (i) => { setExp((s) => ({ ...s, [b.id + ":" + i]: true })); scrollTo.current = { i, block: "nearest" }; },
     toggleWhere: (i) => { const key = b.id + ":" + i, p = plan[i]; setOpen((s) => ({ ...s, [key]: s[key] ? null : p && p !== "skip" && p !== "swap" ? p : "nw" })); },
     toggleEmp: (i) => setEmp((s) => ({ ...s, [b.id]: s[b.id].map((v, j) => (j === i ? !v : v)) })),
@@ -422,7 +431,7 @@ export default function Bag({ b }) {
     setBudget(v);
     const p = budgetPlan(b, v, region), sel = { ...p.sel };
     b.items.forEach((it, i) => { if (sel[i] === undefined && it.t !== "no") sel[i] = "skip"; });
-    setPlan(sel); setPicksB(() => b.items.map((_, i) => p.sel[i] !== undefined)); setOpen({}); setExp({}); setStage({}); setLpick({}); setLastPlan(p);
+    setPlan(sel); setPicksB(() => b.items.map((_, i) => p.sel[i] !== undefined)); setOpen({}); setExp({}); setStage({}); setLpick({}); setTentS({}); setLastPlan(p);
   };
 
   /* 합계 */
@@ -437,7 +446,7 @@ export default function Bag({ b }) {
     const dp = defaultPlan(b, picks, region);
     openModal("recommend", {
       b, dp, region,
-      onOk: () => { setPlan(dp); setExp({}); setStage({}); setLpick({}); toast("골라 뒀어요. 바꿀 건 '변경'을 눌러 주세요."); requestAnimationFrame(() => { const x = document.getElementById("items"); if (x) x.scrollIntoView({ block: "start" }); }); },
+      onOk: () => { setPlan(dp); setExp({}); setStage({}); setLpick({}); setTentS({}); toast("골라 뒀어요. 바꿀 건 '변경'을 눌러 주세요."); requestAnimationFrame(() => { const x = document.getElementById("items"); if (x) x.scrollIntoView({ block: "start" }); }); },
     });
   };
 

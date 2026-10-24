@@ -57,7 +57,7 @@ export function Photo({ b }) {
   const tog = (v) => (e) => { e.stopPropagation(); e.preventDefault(); setReact((s) => ({ ...s, [b.id]: s[b.id] === v ? null : v })); };
   return (
     <div className={"photo" + (b.img ? " has-img" : "")}>
-      {b.img ? <img src={b.img} alt={b.imgAlt || b.title} decoding="async" />
+      {b.img ? <img src={b.img} alt={b.imgAlt || b.title} width="720" height="720" decoding="async" />
         : <><span className="ex-badge ex">예시</span><div className="ph"><Icon id="camera" /><span>고수 가방 사진 자리<br />촬영 후 실물 사진으로 바뀌어요</span></div></>}
       <div className="reacts">
         <button type="button" className="react up" aria-pressed={r === "up"} aria-label={"좋아요 " + up} onClick={tog("up")}><Icon id="up" /><span className="num">{up}</span></button>
@@ -119,7 +119,7 @@ export function Promo() {
           <div key={i} className={"slide" + (p.img ? " has-img" : "") + (i === idx ? " on" : "")} style={{ "--bg": p.bg, "--fg": p.fg }}
             role="group" aria-roledescription="slide" aria-label={i + 1 + " / " + PROMOS.length}
             data-open={p.open || undefined} onClick={p.open ? () => go(p.open) : undefined}>
-            {p.img ? <img src={p.img} alt="" decoding="async" /> : <span className="sl-bgword" aria-hidden="true">GOSU</span>}
+            {p.img ? <img src={p.img} alt="" width="720" height="720" loading={i === 0 ? "eager" : "lazy"} decoding="async" /> : <span className="sl-bgword" aria-hidden="true">GOSU</span>}
             <div className="sl-txt">
               <span className="sl-tag">{p.tag}</span>
               <b>{p.big.split("<br>").map((l, k) => <span key={k}>{k > 0 && <br />}{l}</span>)}</b>
