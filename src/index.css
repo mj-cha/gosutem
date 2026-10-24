@@ -673,3 +673,49 @@ body {
 .pre-done .icon { width: 44px; height: 44px; color: var(--accent); }
 .pre-done h2 { margin: 0; font-size: 1.3rem; font-weight: 900; }
 .pre-done p { margin: 0; font-size: 1rem; color: var(--muted); }
+
+/* 고수 데뷔 시범 흐름 (Supply 모달) */
+.sup-modal .m-body { display: grid; gap: 12px; }
+.sup-prog { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.sup-prog i { height: 4px; border-radius: 2px; background: var(--surface-3); }
+.sup-prog i[data-on="true"] { background: var(--accent); }
+.sup-photo { display: grid; justify-items: center; gap: 4px; padding: 22px 12px; border: 2px dashed color-mix(in srgb, var(--accent) 45%, var(--surface)); border-radius: 16px; background: color-mix(in srgb, var(--accent) 6%, var(--surface)); color: var(--ink); cursor: pointer; }
+.sup-photo .icon { color: var(--accent); }
+.sup-photo b { font-size: .92rem; }
+.sup-photo span { font-size: .78rem; color: var(--muted); }
+.sup-found { margin: 0; font-size: .84rem; color: var(--ink); }
+.sup-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.sup-list li { display: grid; gap: 2px; background: var(--surface-2); border-radius: 12px; padding: 9px 12px; }
+.sup-list li span { font-size: .86rem; font-weight: 700; color: var(--ink); }
+.sup-list li small { font-size: .74rem; color: var(--muted); line-height: 1.5; }
+.sup-modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.sup-modes button { display: grid; gap: 1px; padding: 8px 4px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
+.sup-modes button b { font-size: .84rem; color: var(--ink); }
+.sup-modes button small { font-size: .68rem; }
+.sup-modes button[data-on="true"] { background: var(--sel); border-color: var(--sel); }
+.sup-modes button[data-on="true"] b, .sup-modes button[data-on="true"] small { color: var(--sel-fg); }
+.sup-items, .sup-draft { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.sup-items li, .sup-draft li { display: grid; gap: 8px; background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
+.sup-items li[data-done="true"] { outline: 1.5px solid color-mix(in srgb, var(--accent) 50%, var(--surface)); }
+.sup-it { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sup-it > span:first-child { font-size: .86rem; font-weight: 800; color: var(--ink); }
+.sup-it small { font-size: .72rem; color: var(--muted); }
+.sup-it .icon { color: var(--accent); stroke-width: 2.4; }
+.sup-pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.sup-pick button { padding: 9px 4px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); font-size: .84rem; font-weight: 800; color: var(--ink); cursor: pointer; }
+.sup-pick button[data-ch="must"][data-on="true"] { background: var(--t-must); border-color: var(--t-must); color: #fff; }
+.sup-pick button[data-ch="no"][data-on="true"] { background: var(--t-no); border-color: var(--t-no); color: #fff; }
+.sup-pick button[data-ch="share"][data-on="true"] { background: var(--t-share); border-color: var(--t-share); color: #fff; }
+.sup-why { display: flex; flex-wrap: wrap; gap: 5px; }
+.sup-why button { font-size: .74rem; font-weight: 700; padding: 4px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
+.sup-why button[data-on="true"] { background: var(--sel); border-color: var(--sel); color: var(--sel-fg); }
+.sup-rec { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: .8rem; text-align: left; cursor: pointer; }
+.sup-rec i { flex: none; width: 14px; height: 14px; border-radius: 50%; background: var(--t-no); }
+.sup-rec[data-on="true"] { border-color: var(--accent); }
+.sup-rec[data-on="true"] i { background: var(--accent); border-radius: 3px; }
+.sup-txt { width: 100%; padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.sup-draft p { margin: 0; font-size: .84rem; line-height: 1.6; color: var(--ink); }
+.sup-nick { display: grid; gap: 4px; }
+.sup-nick span { font-size: .78rem; font-weight: 800; color: var(--muted); }
+.sup-nick input { padding: 11px 12px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); font-weight: 700; }
+.sup-nick input:focus { outline: none; border-color: var(--accent); }

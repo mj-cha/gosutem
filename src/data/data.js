@@ -162,7 +162,7 @@ export const PROMOS = [
  {bg:"#16243A",fg:"#FFFFFF",big:"더 사라고 만들지 않아요.<br>덜 헤매라고 만들어요",small:"새상품·중고·나눔, 집에 있는 걸로까지. 제일 덜 번거로운 길을 같이 찾아요.",tag:"#합리적소비"},
  {img:"img/intern-kits.webp",bg:"#F3C9DB",fg:"#FFFFFF",big:"4개월 차 인턴의<br>영업비밀 파우치",small:"인기 파우치 덱 · 조회수 31.2K",tag:"#인기덱",open:"intern"},
  {bg:"#C6F432",fg:"#16243A",big:"쇼핑몰은 사라고만 해.<br>고수는 ‘사지 마’도 알려줘.",small:"비추천템까지 솔직하게.",tag:"#사지마"},
- {bg:"#FFD23F",fg:"#16243A",big:"내 가방 공개하고<br>첫 고수 되기",small:"11월 시드 고수 모집 · 사진 1장 + 말 5분이면 끝 (이벤트 예시)",tag:"EVENT",act:"supply"}
+ {bg:"#FFD23F",fg:"#16243A",big:"내 가방 공개하고<br>첫 고수 되기",small:"11월 시드 고수 모집 · 사진 1장 + 30초면 끝, 가입은 나중에 (이벤트 예시)",tag:"EVENT",act:"supply"}
 ];
 
 export const PCATS = [

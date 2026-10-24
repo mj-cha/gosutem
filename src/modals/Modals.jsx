@@ -4,7 +4,7 @@ import { Suggest } from "../screens/Home.jsx";
 import { Alert, Button, ListBox, Modal, Radio, RadioGroup, SearchField, Separator, Tabs, Tag, TagGroup } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { GosuAvatar, TBadge } from "../components/common.jsx";
-import { ART, BAGS, GU, PCATS, CATS, PCH, TORDER } from "../data/data.js";
+import { ART, BAGS, GU, PCATS, CATS, PCH, T, TORDER } from "../data/data.js";
 import {
   allRegions, catCount, filterBags, normQ, relatedTerms, isPouchPath, listingsOf, minNew, nearestGu, optionsOf, pcCount, pGroups, prodGroups, won,
 } from "../lib/logic.js";
@@ -52,16 +52,132 @@ function Install() {
     </Shell>
   );
 }
+/* 고수 데뷔 시범 흐름: 사진 → (누르기·말하기·쓰기·건너뛰기) → 초안 → 닉네임만 정하고 공개. 가입은 맨 마지막, 모두 예시 */
+const SUP_ITEMS = [
+  { n: "보조배터리 10000mAh", hint: "AI가 사진에서 찾음" },
+  { n: "스테인리스 텀블러", hint: "AI가 사진에서 찾음" },
+  { n: "접이식 우산", hint: "AI가 사진에서 찾음" },
+];
+const SUP_LABELS = [["must", "알짜"], ["no", "비추천"], ["share", "나눔"]];
+const SUP_WHY = ["매일 써요", "가성비", "오래 써요", "무거워요", "금방 고장", "집에 있는 걸로 돼요", "잘 안 써서"];
+function supDraft(it, pick, why, text, mode) {
+  const w = why.length ? why.join(", ") : "";
+  if (mode === "photo") return `${it.n} — 사진만 보고 쓴 초안이에요. 한 줄만 고쳐 주세요.`;
+  if (text && text.trim()) return `${it.n} — ${text.trim()}`;
+  if (pick === "must") return `${it.n}은 손이 매일 가요.${w ? " " + w + "." : ""} 처음부터 갖춰 두세요.`;
+  if (pick === "no") return `${it.n}은 저라면 안 사요.${w ? " " + w + "." : ""} 대신 · 집에 있는 걸로.`;
+  if (pick === "share") return `${it.n}은 새로 사지 마세요.${w ? " " + w + "." : ""} 나눔으로 받아도 충분해요.`;
+  return `${it.n} — 한 줄은 나중에 채워도 돼요.`;
+}
 function Supply() {
+  const { closeModal, toast } = useApp();
+  const [step, setStep] = useState(0);          // 0 안내 · 1 사진 · 2 입력 · 3 초안 · 4 공개(닉네임)
+  const [mode, setMode] = useState("tap");       // tap · voice · text · photo
+  const [pick, setPick] = useState({});          // i -> must/no/share
+  const [why, setWhy] = useState({});            // i -> [chips]
+  const [text, setText] = useState({});          // i -> string
+  const [rec, setRec] = useState({});            // i -> true (녹음 완료 예시)
+  const [cur, setCur] = useState(0);
+  const [nick, setNick] = useState("");
+  const togWhy = (i, w) => setWhy((o) => { const a = o[i] || []; return { ...o, [i]: a.includes(w) ? a.filter((x) => x !== w) : [...a, w] }; });
+  const done = SUP_ITEMS.filter((_, i) => pick[i] || rec[i] || (text[i] || "").trim()).length;
+  const finish = () => { toast("시범 화면이라 저장되지 않아요. 진짜 공개는 11월 시드 고수 모집 때 열려요."); closeModal(); };
+
+  const head = [
+    ["가입 없이 먼저 만들어 보기", "글은 AI가 쓰고, 고수님은 고르기만 해 주세요."],
+    ["찰칵, 1장", "가방 속 물건을 펼쳐 놓고 한 장. 물건 이름은 AI가 찾아요."],
+    ["말하거나, 누르거나 — 30초", "녹음은 선택이에요. 물건마다 버튼만 눌러도 돼요."],
+    ["쓱, 확인", "AI가 쓴 초안이에요. 틀린 것만 고치면 돼요."],
+    ["닉네임만 정하면 끝", "가입은 지금이 처음이에요. 비밀번호도, 프로필 사진도 없어요."],
+  ][step];
+  const prog = <div className="sup-prog" aria-hidden="true">{[1, 2, 3, 4].map((k) => <i key={k} data-on={step >= k} />)}</div>;
+
+  const footer = step === 0 ? <Button onPress={() => setStep(1)}><Icon id="spark" className="icon-sm" />사진 한 장으로 시작</Button>
+    : step === 1 ? <><Button variant="tertiary" onPress={() => { setMode("photo"); setStep(3); }}>사진만 올리고 끝</Button><Button onPress={() => { setMode("tap"); setStep(2); }}>다음</Button></>
+    : step === 2 ? <><Button variant="tertiary" onPress={() => setStep(3)}>{done ? "건너뛰고 초안 보기" : "다 건너뛰기"}</Button><Button onPress={() => setStep(3)}>초안 보기{done ? ` (${done}/${SUP_ITEMS.length})` : ""}</Button></>
+    : step === 3 ? <><Button variant="tertiary" onPress={() => setStep(2)}>고치기</Button><Button onPress={() => setStep(4)}>공개하기</Button></>
+    : <><Button variant="tertiary" onPress={finish}>카카오로 한 번에</Button><Button isDisabled={!nick.trim()} onPress={finish}>{nick.trim() ? `${nick.trim()}으로 공개` : "닉네임 입력"}</Button></>;
+
   return (
-    <Shell title="10분 만에 고수 데뷔" icon="spark" desc="글은 AI가 쓰고, 고수님은 말만 해 주세요.">
-      <ol className="join-steps">
-        <li><b>찰칵, 1장 · 1분</b><span>가방 속 물건을 펼쳐 놓고 폰으로 한 장. 물건 이름은 AI가 사진에서 찾아요.</span></li>
-        <li><b>수다, 5분</b><span>"이건 꼭 사, 이건 사지 마"를 말로만. 알짜템·비추천템·후회한 것, 질문 3개에 답하면 돼요.</span></li>
-        <li><b>쓱, 확인 · 3분</b><span>AI가 라벨과 한 줄 팁까지 채운 초안을 보여 드려요. 틀린 것만 고치고 공개할지 정해요.</span></li>
-      </ol>
-      <p className="join-plus"><Icon id="check" className="icon-xs" />안 쓰는 물건은 그 자리에서 중고·나눔으로 올려 드려요.</p>
-      <Note status="accent">시범 화면이라 신청서는 아직 연결되지 않았어요.</Note>
+    <Shell title={head[0]} icon="spark" desc={head[1]} footer={footer} className="sup-modal">
+      {step > 0 && prog}
+      {step === 0 && (
+        <>
+          <ol className="join-steps">
+            <li><b>찰칵, 1장 · 1분</b><span>가방 속 물건을 펼쳐 놓고 폰으로 한 장. 사진만 올려도 초안이 나와요.</span></li>
+            <li><b>말하거나, 누르거나 · 30초</b><span>물건마다 [알짜·비추천·나눔] 버튼과 이유 한 개. 말하고 싶으면 10초씩, 쓰고 싶으면 한 줄.</span></li>
+            <li><b>쓱, 확인 · 1분</b><span>AI가 라벨과 한 줄 팁까지 채운 초안을 보여 드려요. 틀린 것만 고치고 공개할지 정해요.</span></li>
+          </ol>
+          <p className="join-plus"><Icon id="check" className="icon-xs" />가입은 공개할 때 닉네임 하나만. 여기까지는 아무것도 안 물어봐요.</p>
+          <Note status="accent">시범 화면이에요. 아래 버튼을 누르면 흐름을 그대로 눌러 볼 수 있어요. 저장은 되지 않아요.</Note>
+        </>
+      )}
+      {step === 1 && (
+        <>
+          <button type="button" className="sup-photo" onClick={() => toast("시범 화면이라 예시 사진으로 진행해요.")}>
+            <Icon id="spark" /><b>사진 고르기</b><span>갤러리에서 한 장, 또는 지금 찍기</span>
+          </button>
+          <p className="sup-found"><b>AI가 찾은 물건 {SUP_ITEMS.length}개</b> <span className="desc-sm">(예시) · 틀리면 초안에서 고쳐요</span></p>
+          <ul className="sup-list">{SUP_ITEMS.map((it, i) => <li key={i}><span>{it.n}</span><small>{it.hint}</small></li>)}</ul>
+        </>
+      )}
+      {step === 2 && (
+        <>
+          <div className="sup-modes" role="tablist" aria-label="입력 방식">
+            {[["tap", "누르기", "30초"], ["voice", "말하기", "10초×3"], ["text", "쓰기", "한 줄"]].map(([k, l, t]) => (
+              <button key={k} type="button" role="tab" aria-selected={mode === k} data-on={mode === k} onClick={() => setMode(k)}><b>{l}</b><small>{t}</small></button>
+            ))}
+          </div>
+          <ul className="sup-items">
+            {SUP_ITEMS.map((it, i) => (
+              <li key={i} data-done={!!(pick[i] || rec[i] || (text[i] || "").trim())}>
+                <div className="sup-it"><span>{it.n}</span>{(pick[i] || rec[i] || (text[i] || "").trim()) ? <Icon id="check" className="icon-xs" /> : <small>건너뛰어도 돼요</small>}</div>
+                {mode === "tap" && (
+                  <>
+                    <div className="sup-pick">{SUP_LABELS.map(([k, l]) => <button key={k} type="button" data-ch={k} data-on={pick[i] === k} onClick={() => setPick((o) => ({ ...o, [i]: o[i] === k ? undefined : k }))}>{l}</button>)}</div>
+                    {pick[i] && <div className="sup-why">{SUP_WHY.map((w) => <button key={w} type="button" data-on={(why[i] || []).includes(w)} onClick={() => togWhy(i, w)}>{w}</button>)}</div>}
+                  </>
+                )}
+                {mode === "voice" && (
+                  <button type="button" className="sup-rec" data-on={!!rec[i]} onClick={() => setRec((o) => ({ ...o, [i]: !o[i] }))}>
+                    <i /><span>{rec[i] ? "녹음 완료 · 0:10 (예시)" : "10초만 말하기 — “이건 꼭 사” 또는 “이건 사지 마”"}</span>
+                  </button>
+                )}
+                {mode === "text" && (
+                  <input className="sup-txt" placeholder="한 줄이면 돼요. 예) 매일 써요, 가성비 좋아요" value={text[i] || ""} onChange={(e) => setText((o) => ({ ...o, [i]: e.target.value }))} />
+                )}
+              </li>
+            ))}
+          </ul>
+          <p className="m-note">셋 다 섞어도 돼요. 안 고른 물건은 AI가 사진만 보고 초안을 써 두고, 공개 전에 한 줄만 물어봐요.</p>
+        </>
+      )}
+      {step === 3 && (
+        <>
+          <ul className="sup-draft">
+            {SUP_ITEMS.map((it, i) => {
+              const k = mode === "photo" ? null : pick[i];
+              return (
+                <li key={i}>
+                  <div className="sup-it"><span>{it.n}</span>{k && <span className="pick-chip" data-ch={k}>{T[k].name}</span>}{!k && <span className="pick-chip skip">라벨 확인 필요</span>}</div>
+                  <p>{supDraft(it, k, why[i] || [], text[i], mode)}</p>
+                </li>
+              );
+            })}
+          </ul>
+          <Note status="accent">{mode === "photo" ? "사진만으로 쓴 초안이라 라벨은 비워 뒀어요. 공개 후에 눌러서 채워도 돼요." : "말투는 고수님 말을 그대로 살려요. 가격·효능은 지어내지 않아요."}</Note>
+        </>
+      )}
+      {step === 4 && (
+        <>
+          <label className="sup-nick"><span>닉네임</span><input value={nick} onChange={(e) => setNick(e.target.value)} placeholder="예) 텀블러언니" maxLength={12} autoFocus /></label>
+          <ul className="sup-list">
+            <li><span>비밀번호</span><small>없어요. 다음에 올 땐 카카오나 이메일 링크로 열어요.</small></li>
+            <li><span>프로필 사진·소개</span><small>지금 안 물어봐요. 필요할 때 하나씩.</small></li>
+            <li><span>내 가방</span><small>닉네임으로 된 프로필 페이지에 남아요. 언제든 비공개로 돌릴 수 있어요.</small></li>
+          </ul>
+        </>
+      )}
     </Shell>
   );
 }

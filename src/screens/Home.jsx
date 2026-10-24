@@ -184,11 +184,12 @@ const FAQ = [
   ["중고·나눔은 어떻게 거래해요?", "다른 사이트로 넘기지 않고 고수템 안에서 이어 드려요. 매물을 고르면 판매 고수와 채팅하거나 나눔을 신청하고, 직거래는 내 동네 근처부터 보여 드려요."],
   ["화장품 중고, 괜찮을까요?", "소모품은 유통기한이 적힌 매물만 예산 플랜에 넣어요. 의약품과 개봉한 입·눈 화장품은 아예 거래를 막아요."],
   ["협찬이나 광고도 있나요?", "있을 수 있어요. 대신 숨기지 않아요. 협찬받은 물건과 제휴 링크(사면 고수템이 수수료를 받는 링크)는 물건마다 표시해요. 협찬이어도 고수가 별로라고 하면 그대로 비추천템이에요."],
+  ["회원가입 꼭 해야 하나요?", "만들 땐 안 해도 돼요. 사진 올리고 초안까지 보는 데 가입이 없어요. 공개할 때 닉네임 하나만 정하면 끝이고, 비밀번호도 없어요. 카카오로 한 번 누르면 더 빨라요."],
 ];
 const JOIN = [
-  ["찰칵, 1장", "가방 속 물건을 펼쳐 놓고 사진 한 장. 물건 이름은 AI가 알아서 찾아요."],
-  ["수다, 5분", "\u201C이건 꼭 사, 이건 사지 마\u201D를 말로만 하면 돼요. 질문 3개에 답하면 끝."],
-  ["쓱, 확인", "AI가 쓴 초안에서 틀린 것만 고치고 공개 버튼을 눌러요."],
+  ["찰칵, 1장", "가방 속 물건을 펼쳐 놓고 사진 한 장. 물건 이름은 AI가 알아서 찾아요. 사진만 올려도 초안이 나와요."],
+  ["말하거나, 누르거나 \u2014 30초", "\u201C이건 꼭 사, 이건 사지 마\u201D를 물건마다 버튼으로 고르거나, 10초씩 말해요. 녹음은 선택이에요."],
+  ["쓱, 확인", "AI가 쓴 초안에서 틀린 것만 고치고 공개 버튼을 눌러요. 가입은 이때 닉네임만."],
 ];
 function Pinned() {
   const { openModal } = useApp();
@@ -205,12 +206,12 @@ function Pinned() {
           </Accordion.Heading>
           <Accordion.Panel>
             <Accordion.Body className="join">
-              <p className="join-lead">거창한 리뷰는 필요 없어요. 매일 들고 다니는 가방이면 충분해요. 글은 AI가 쓰고, 고수님은 말만 해 주세요.</p>
+              <p className="join-lead">거창한 리뷰는 필요 없어요. 매일 들고 다니는 가방이면 충분해요. 글은 AI가 쓰고, 고수님은 고르기만 해 주세요.</p>
               <ol className="join-steps">
                 {JOIN.map(([t, d], k) => <li key={k}><b>{t}</b><span>{d}</span></li>)}
               </ol>
               <p className="join-plus"><Icon id="check" className="icon-xs" />안 쓰는 물건은 그 자리에서 중고·나눔으로 올려 드려요.</p>
-              <Button onPress={() => openModal("supply")}><Icon id="spark" className="icon-sm" />10분 만에 고수 되기</Button>
+              <Button onPress={() => openModal("supply")}><Icon id="spark" className="icon-sm" />가입 없이 먼저 만들어 보기</Button>
             </Accordion.Body>
           </Accordion.Panel>
         </Accordion.Item>
