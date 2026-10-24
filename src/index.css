@@ -1032,3 +1032,24 @@ body {
 
 /* 가방 상세도 메인처럼 네모(모서리 둥글기 없음) (10/25 MJ) */
 .detail .photo, .detail .deck-wrap, .detail .flatlay, .detail .d-card, .detail .items, .detail .dg, .detail .sumcard, .detail .trust { border-radius: 0; }
+
+/* 가방 상세 아래 펼침 구역(후회·예산·한마디·이야기)을 메인 Q&A처럼: 코발트 바탕·흰 글씨·열린 항목 라임 표시 (10/25 MJ) */
+.detail .dg { margin: 48px 0 0; padding: 32px 20px 40px; border-radius: 0; background: var(--v-cobalt); color: #FFFFFF; box-shadow: none; border: 0;
+  --foreground: #FFFFFF; --ink: #FFFFFF; --surface: transparent; --surface-foreground: #FFFFFF; --muted: rgba(255, 255, 255, .8);
+  --surface-2: rgba(255, 255, 255, .1); --surface-3: rgba(255, 255, 255, .1); --surface-secondary: rgba(255, 255, 255, .1); --surface-tertiary: rgba(255, 255, 255, .14);
+  --border: rgba(255, 255, 255, .24); --separator: rgba(255, 255, 255, .24); --line: rgba(255, 255, 255, .24);
+  --accent: var(--v-lime); --accent-foreground: var(--v-ink); --focus: var(--v-lime); --t-used: var(--v-lime);
+  --default: rgba(255, 255, 255, .14); --default-foreground: #FFFFFF; --field-background: #FFFFFF; --field-foreground: var(--v-ink); --segment: rgba(255, 255, 255, .14); --segment-foreground: #FFFFFF; }
+.detail .dg .disclosure__trigger { padding: 16px 12px; border-radius: 0; transition: background-color 160ms ease; }
+.detail .dg .disclosure__trigger:hover:not([aria-expanded="true"]) { background: rgba(255, 255, 255, .1); }
+.detail .dg .disclosure:has(.disclosure__trigger[aria-expanded="true"]) { background: rgba(255, 255, 255, .1); box-shadow: inset 3px 0 0 var(--v-lime); }
+.detail .dg .disclosure__trigger[aria-expanded="true"] .dc-title, .detail .dg .disclosure__trigger[aria-expanded="true"] .disclosure__indicator { color: var(--v-lime); }
+.detail .dg .dc-body { padding: 0 12px 20px; }
+.detail .dg .budget, .detail .dg .compare .col, .detail .dg .word, .detail .dg .regret, .detail .dg .talk-box { border-radius: 0; }
+.detail .dg .compare .col.mine { border-color: var(--v-lime); }
+.detail .dg .pl-sel, .detail .dg textarea { background: #FFFFFF; color: var(--v-ink); }
+.detail .dg .regret { border-color: rgba(255, 255, 255, .4) !important; }
+.detail .dg .tb { color: var(--v-ink); background: #FFFFFF; border-color: transparent; }
+@media (min-width: 768px) {
+  .detail .dg { width: 100vw; margin-left: calc(50% - 50vw); margin-right: 0; padding-inline: max(32px, calc((100vw - 1180px) / 2 + 20px)); padding-block: 48px 56px; }
+}
