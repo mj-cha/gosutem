@@ -1144,3 +1144,9 @@ body {
 }
 .detail .sumcard { --muted: var(--v-muted-dark); }
 .detail .d-right .themes { border-radius: 0; }
+
+/* 스왑 조건 상자: 고수가 내놓는 것 ↔ 받고 싶은 것 (10/25 MJ) */
+.swap-box { display: grid; gap: 4px; padding: 10px 12px; background: color-mix(in srgb, var(--t-swap) 9%, #FFFFFF); border-left: 3px solid var(--t-swap); font-size: var(--fs-xs); color: var(--ink); }
+.swap-box .sw-k { font-weight: 800; color: var(--t-swap); display: flex; align-items: center; gap: 6px; }
+.swap-box .sw-row { display: grid; grid-template-columns: 5em 1fr; gap: 8px; line-height: 1.5; }
+.swap-box .sw-row b { font-weight: 700; color: var(--muted); }

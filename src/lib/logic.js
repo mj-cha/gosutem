@@ -76,7 +76,7 @@ export function listingsOf(it, ch, region) {
       L.push({ src: sl.n, seller: sl, cond: "나눔", deal: "직거래", place, internal: true, p: 0, note: place + " · " + W[k % 5] + " 올라옴" });
     }
   } else if (ch === "have") { L = [{ src: "집에 있는 것", note: it.sub ? "대신 · " + it.sub : "이미 가진 걸로 대신", p: 0 }];
-  } else if (ch === "swap") { const sl = sellerOf(it, 7); L = [{ src: sl.n, seller: sl, cond: "스왑", deal: "교환", place: "내 물건과 교환", note: "내 물건과 교환", p: 0, internal: true }]; }
+  } else if (ch === "swap") { const sl = sellerOf(it, 7); L = [{ src: sl.n, seller: sl, cond: "스왑", deal: "교환", place: "내 물건과 교환", note: it.swapWant ? "고수가 원하는 것 · " + it.swapWant : "내 물건과 교환", p: 0, internal: true }]; }
   L.sort((a, c) => a.p - c.p); cache.set(key, L); return L;
 }
 

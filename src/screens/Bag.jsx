@@ -168,21 +168,31 @@ function ItemRow({ b, i, ctx }) {
         <p className="tip">{it.tip}</p>
         {it.sub && <p className="sub-for">대신 · {it.sub}</p>}
         {it.note && <p className="sub-for">{it.note}</p>}
+        {it.t === "swap" && (it.swapHave || it.swapWant) && (
+          <div className="swap-box">
+            <span className="sw-k">스왑 조건 <span className="ex-badge">예시</span></span>
+            <span className="sw-row"><b>내놓는 것</b>{it.swapHave}</span>
+            <span className="sw-row"><b>원하는 것</b>{it.swapWant}</span>
+          </div>
+        )}
         <div className="pick-q"><span className="label-sm">어디서 살까요?</span><span className="desc-sm">고르면 접히고 다음 물건으로 넘어가요</span></div>
         <RadioGroup aria-label={it.n + " 어디서 살까요"} className="pc" value={cur} onChange={(v) => ctx.choose(i, v)}>
           {chs.map((ch) => {
             const c = ch === "swap" ? { p: 0, n: 1 } : chPrice(it, ch, region), ok = !!c && (ch !== "used" || usedOK(it));
             const k = ch === "swap" ? "스왑 · 내 물건과 교환" : ch === "have" ? "집에 있는 걸로 · 0원" : CH[ch] + (c ? " · " + c.n + (ch === "nw" ? "곳" : "개") : "");
             let v;
-            if (ch === "have") v = <span className="pc-v have">{it.sub ? "고수 추천 대신템 · " + it.sub : "비슷한 게 이미 있으면 안 사요"}</span>;
+            if (ch === "swap") v = <span className="pc-v">무료<small> · 조건은 위에</small></span>;
+            else if (ch === "have") v = <span className="pc-v have">{it.sub ? "고수 추천 대신템 · " + it.sub : "비슷한 게 이미 있으면 안 사요"}</span>;
             else if (!c) v = <span className="pc-v none">없음</span>;
             else if (ch === "used" && !usedOK(it)) v = <span className="pc-v none warn">유통기한 미표시</span>;
             else if (ch === "used" || ch === "sim") v = <span className="pc-v">{won(c.p)}<small>부터</small></span>;
             else if (ch === "nw") v = <span className="pc-v">{won(c.min)}{c.max > c.min ? "~" + c.max.toLocaleString("ko-KR") : ""}</span>;
             else v = <span className="pc-v">{c.p ? won(c.p) : "무료"}<s className="num">{won(base)}</s></span>;
             const tag = !ok || ch === "nw" || !c.p ? null : <em className="num">-{c.off}%</em>;
+            /* 2열 칸: 개수가 홀수일 때만 마지막 칸을 가로로 꽉 (6개면 3행 2열, 10/25 MJ) */
+            const wideLast = chs.length % 2 === 1 && ch === chs[chs.length - 1];
             return (
-              <div key={ch} className={ch === "swap" || ch === "have" ? "wide" : ""} style={ch === "swap" || ch === "have" ? { gridColumn: "1/-1" } : undefined} onClickCapture={ok ? again(cur, ch, (x) => ctx.choose(i, x)) : undefined}>
+              <div key={ch} className={wideLast ? "wide" : ""} style={wideLast ? { gridColumn: "1/-1" } : undefined} onClickCapture={ok ? again(cur, ch, (x) => ctx.choose(i, x)) : undefined}>
                 <Radio value={ch} isDisabled={!ok}>
                   <Radio.Content>
                     <Radio.Control><Radio.Indicator /></Radio.Control>
