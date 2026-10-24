@@ -10,7 +10,7 @@ import { ART, CH, CHORDER, PCH, SRC, SRC_DEF, T, TORDER } from "../data/data.js"
 import {
   ago, budgetPlan, chPrice, costOf, defaultPlan, kfmt, listingsOf, maxBudget, minNew, mk, optionsOf, optPrice, simList, usedOK, won,
 } from "../lib/logic.js";
-import { regionLabel, useApp } from "../lib/store.jsx";
+import { regionLabel, useApp, useScraps } from "../lib/store.jsx";
 import { TitleSplit } from "./Home.jsx";
 import { TAGS, talkAdd, talkDelete, talkItems, useHub, useProfiles } from "../lib/claude.js";
 
@@ -418,6 +418,7 @@ export default function Bag({ b }) {
   const app = useApp();
   const { region, picks: allPicks, setPicks, emp: allEmp, setEmp, openModal, toast, setChosen } = app;
   const picks = allPicks[b.id], empOn = allEmp[b.id];
+  const scN = useScraps(b);
   const [tab, setTab] = useState("all");
   const [ch, setCh] = useState(null);
   const [theme, setTheme] = useState("all");
@@ -521,7 +522,7 @@ export default function Bag({ b }) {
               </div>
             </div>
             <Separator />
-            {b.deck ? <p className="hook">{b.hook}</p> : <p className="views num">조회수 {b.views} · 스크랩 {b.scraps.toLocaleString("ko-KR")}회</p>}
+            {b.deck ? <p className="hook">{b.hook}</p> : <p className="views num">조회수 {b.views} · 스크랩 {scN}회</p>}
             <TitleSplit t={b.title} as="h1" className="" />
             {b.sub && <p className="deck-sub">{b.sub}</p>}
             <Surface variant="secondary" className="trust"><Icon id="shield" /><span>{trustLine(b)} <span className="ex-badge">예시</span></span></Surface>

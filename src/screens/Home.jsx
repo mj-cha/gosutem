@@ -107,7 +107,7 @@ function NavBar() {
 }
 
 function BagCard({ b }) {
-  const { go, nav, commitSearch } = useApp();
+  const { go, nav, commitSearch, scrap } = useApp();
   const c = countT(b);
   let all = 0, combo = 0;
   b.items.forEach((it) => { all += minNew(it); if (T[it.t].pick) combo += costOf(it); });
@@ -121,7 +121,7 @@ function BagCard({ b }) {
         <Who b={b} />
         {b.deck && <p className="hook">{b.hook}</p>}
         <h3>{b.title}</h3>
-        {b.deck ? <p className="deck-sub">{b.sub}</p> : <p className="views num">조회수 {b.views} · 스크랩 {b.scraps.toLocaleString("ko-KR")}회</p>}
+        {b.deck ? <p className="deck-sub">{b.sub}</p> : <p className="views num">조회수 {b.views} · 스크랩 {(b.scraps + (scrap[b.id] ? 1 : 0)).toLocaleString("ko-KR")}회</p>}
         <Separator />
         <div className="tbadges">{TORDER.map((k) => <TBadge key={k} k={k} n={c[k]} />)}</div>
         <p className="save-line"><span>고수 추천대로 담으면</span><em className="num">-{Math.round((1 - combo / all) * 100)}%</em><span className="num">{won(combo)}</span><s className="num" aria-label={"전부 새로 사면 " + won(all)}>{won(all)}</s></p>
@@ -369,7 +369,7 @@ function GoBags() {
                 <div className="ed-cap">
                   <div className="gb-cap">
                     <TitleSplit t={b.title} />
-                    <p className="ed-meta num">{b.name} · 조회 {b.views} · 스크랩 {b.scraps.toLocaleString("ko-KR")}</p>
+                    <p className="ed-meta num">{b.name} · 조회 {b.views} · 스크랩 {(b.scraps + (on ? 1 : 0)).toLocaleString("ko-KR")}</p>
                   </div>
                   <button type="button" className="ed-heart" aria-pressed={on} aria-label={b.title + " 스크랩"} onClick={() => setScrap((s) => ({ ...s, [b.id]: !s[b.id] }))}>
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.4C1.5 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 2.9 1.4-1.8 3-2.9 5-2.9 3.4 0 5.5 3.3 4.3 6.6-1.8 4.8-9.3 9.4-9.3 9.4z" /></svg>

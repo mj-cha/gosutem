@@ -7,6 +7,8 @@ import { recordSearch } from "./claude.js";
 
 const Ctx = createContext(null);
 export const useApp = () => useContext(Ctx);
+/* 스크랩 수: 내가 스크랩하면 +1 해서 모든 화면에 같은 숫자로 보여 줌 */
+export const useScraps = (b) => { const { scrap } = useContext(Ctx); return (b.scraps + (scrap[b.id] ? 1 : 0)).toLocaleString("ko-KR"); };
 
 /* localStorage 는 막혀 있을 수 있어서 항상 try/catch */
 const REG_KEY = "gosutem-region", RECENT_KEY = "gosutem-recent";

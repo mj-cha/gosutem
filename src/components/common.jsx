@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Avatar, Badge, Pagination } from "@heroui/react";
 import { Icon } from "./Icon.jsx";
 import { PROMOS, T } from "../data/data.js";
-import { useApp } from "../lib/store.jsx";
+import { useApp, useScraps } from "../lib/store.jsx";
 
 /* 고수 얼굴: HeroUI Avatar
    - 프로필 사진(src)이 있으면 사진, 사진을 안 정했거나 못 불러오면 이니셜(Fallback) + 고수별 색 */
@@ -39,12 +39,13 @@ export function TBadge({ k, n }) {
 }
 
 export function DeckStrip({ b }) {
+  const sc = useScraps(b);
   return (
     <div className="deck-strip">
       <span className="deck-badge"><Icon id="spark" />인기 파우치 덱</span>
       <span className="deck-stat">
         <span><Icon id="eye" /><b className="num">{b.views}</b><span className="vh">조회수</span></span>
-        <span><Icon id="bookmark" /><b className="num">{b.scraps.toLocaleString("ko-KR")}</b><span className="vh">스크랩</span></span>
+        <span><Icon id="bookmark" /><b className="num">{sc}</b><span className="vh">스크랩</span></span>
       </span>
     </div>
   );
