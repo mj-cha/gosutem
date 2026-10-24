@@ -1158,3 +1158,11 @@ body {
 .pick-sum b, .pick-sum s, .pick-sum .pick-chip { flex: none; white-space: nowrap; }
 .pick-sum { flex-wrap: wrap; }
 .pick-sum .pick-src.full { order: 9; flex-basis: 100%; white-space: normal; color: var(--t-swap); font-weight: 600; }
+
+/* 새상품 판매처: 배송비 포함 총액 기준 (10/25 MJ) */
+.l-best { display: inline-block; margin-left: 6px; padding: 1px 6px; font-size: .62rem; font-weight: 800; background: var(--v-lime); color: var(--v-ink); vertical-align: 1px; }
+.lst-sort { font-weight: 500; font-size: .72rem; color: var(--muted); }
+.offer .o-note { font-size: .7rem; color: var(--muted); }
+.lst .nw-note { white-space: normal; overflow: visible; text-overflow: clip; }
+.lst-h .lst-sort { flex-basis: 100%; order: 3; }
+.lst-h { flex-wrap: wrap; }

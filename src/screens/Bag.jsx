@@ -8,7 +8,7 @@ import { Icon } from "../components/Icon.jsx";
 import { DeckStrip, GosuAvatar, Pager, Photo, Who } from "../components/common.jsx";
 import { ART, CH, CHORDER, PCH, SRC, SRC_DEF, T, TORDER } from "../data/data.js";
 import {
-  ago, budgetPlan, chPrice, costOf, defaultPlan, kfmt, listingsOf, maxBudget, minNew, mk, optionsOf, optPrice, simList, usedOK, won,
+  ago, budgetPlan, chPrice, costOf, defaultPlan, kfmt, listingsOf, maxBudget, minNew, mk, nwOffers, optionsOf, optPrice, simList, usedOK, won,
 } from "../lib/logic.js";
 import { regionLabel, useApp, useScraps } from "../lib/store.jsx";
 import { TitleSplit } from "./Home.jsx";
@@ -104,8 +104,8 @@ const Strike = ({ base, p, off }) => (<><s className="num">{won(base)}</s>{p ? <
 /* 판매처 목록(새상품·유사템은 쇼핑몰, 중고·나눔은 고수템 안 매물로 이어짐) */
 function Offers({ it, ch, region, onStage }) {
   const base = minNew(it);
-  if (ch === "nw") return it.nw.map((x) => (
-    <div className="offer" key={x[0]}><span><span className="m">{x[0]}</span> <span className="num">{won(x[1])}</span></span><a href={mk(x[0], it.q)} target="_blank" rel="noopener">바로가기<Icon id="out" className="icon-sm" /></a></div>
+  if (ch === "nw") return nwOffers(it).map((x, k) => (
+    <div className="offer" key={x.src + x.store}><span><span className="m">{x.src}</span> <span className="num"><b>{won(x.p)}</b></span>{k === 0 && <span className="l-best">배송비 포함 최저</span>}<br /><span className="o-note">{x.note}</span></span><a href={x.link} target="_blank" rel="noopener">새 탭에서 보기<Icon id="out" className="icon-sm" /></a></div>
   ));
   if (ch === "used") {
     if (!it.used.n) return <div className="offer none">지금은 고수 중고 매물이 없어요.</div>;
@@ -206,7 +206,7 @@ function ItemRow({ b, i, ctx }) {
         </RadioGroup>
         {st && (
           <div className="lst">
-            <div className="lst-h"><b>{PCH[st]} {L.length}개</b>
+            <div className="lst-h"><b>{PCH[st]} {L.length}개</b>{st === "nw" && <span className="lst-sort">배송비 포함 가격순 · 판매자·배송비는 예시</span>}
               <span>{(st === "used" || st === "share") && <><button type="button" className="link-btn lst-reg" onClick={() => ctx.openModal("region")}><Icon id="pin" className="icon-sm" />{regionLabel(region)}{region ? " 근처" : ""}</button> · </>}하나를 골라 주세요</span>
             </div>
             <RadioGroup aria-label={PCH[st] + " " + L.length + "개 중 고르기"} className="lrows" value={lcur == null ? null : String(lcur)} onChange={(v) => ctx.finalize(i, st, +v)}>
@@ -217,8 +217,8 @@ function ItemRow({ b, i, ctx }) {
                       <Radio.Content>
                         <Radio.Control><Radio.Indicator /></Radio.Control>
                         <span className="l-t">
-                          <span className="l-src">{x.seller ? <><GosuAvatar av={x.seller.av} color={x.seller.c} className="av-xs" />{x.seller.n} 고수<span className="l-badge">고수템</span></> : x.src}</span>
-                          <span className="l-note">{x.note}</span>
+                          <span className="l-src">{x.seller ? <><GosuAvatar av={x.seller.av} color={x.seller.c} className="av-xs" />{x.seller.n} 고수<span className="l-badge">고수템</span></> : <>{x.src}{st === "nw" && k === 0 && <span className="l-best">배송비 포함 최저</span>}</>}</span>
+                          <span className={"l-note" + (st === "nw" ? " nw-note" : "")}>{x.note}</span>
                         </span>
                         <span className="l-p num">{x.p ? won(x.p) : "무료"}{x.p && x.p < base && st !== "nw" ? <em>-{Math.round((1 - x.p / base) * 100)}%</em> : null}</span>
                       </Radio.Content>

@@ -59,7 +59,7 @@ export function listingsOf(it, ch, region) {
   const key = it.n + "|" + ch + "|" + (region ? region.full : "");
   if (cache.has(key)) return cache.get(key);
   const q = it.q, ND = nearDongs(region); let L = [];
-  if (ch === "nw") L = it.nw.map((x) => ({ src: x[0], note: "새상품", p: x[1], link: mk(x[0], q) }));
+  if (ch === "nw") L = nwOffers(it);
   else if (ch === "used") {
     const F = [0.8, 0.95, 1.05, 1.2, 0.88, 1.1, 0.75, 1.3], C = ["미개봉", "거의 새것", "사용감 적음", "사용감 있음"];
     for (let k = 0; k < it.used.n; k++) {
@@ -80,11 +80,29 @@ export function listingsOf(it, ch, region) {
   L.sort((a, c) => a.p - c.p); cache.set(key, L); return L;
 }
 
+/* 새상품 판매처: 배송비까지 더한 '받는 가격' 기준 (10/25 MJ)
+   - 같은 쇼핑몰 안에서도 판매자마다 상품가·배송비가 달라서, 총액으로 줄 세워 고르게 함
+   - 배송비·판매자는 시범 예시 (실제는 쇼핑몰 API로 받아 옴) */
+const SHIP = { "쿠팡": (p) => (p >= 19800 ? 0 : 3000), "네이버쇼핑": (p) => (p >= 30000 ? 0 : 3000), "11번가": () => 2500 };
+export function nwOffers(it) {
+  const q = it.q, out = [];
+  it.nw.forEach((x) => {
+    const m = x[0], price = x[1], ship = x[2] != null ? x[2] : (SHIP[m] || (() => 0))(price);
+    out.push({ src: m, store: m === "쿠팡" ? "로켓배송" : m === "11번가" ? "11번가 판매자" : "가성비스토어", price, ship, p: price + ship, link: mk(m, q) });
+    if (m === "네이버쇼핑") { /* 네이버는 판매자가 여럿: 조금 비싸도 무료배송인 곳을 같이 보여 줌 */
+      out.push({ src: m, store: "무료배송샵", price: price + 500, ship: 0, p: price + 500, link: mk(m, q) });
+      out.push({ src: m, store: "오늘출발마켓", price: price + 1200, ship: 0, p: price + 1200, link: mk(m, q) });
+    }
+  });
+  out.forEach((o) => { o.note = o.store + " · " + (o.ship ? "상품 " + won(o.price) + " + 배송 " + won(o.ship) : "무료배송"); });
+  return out.sort((a, c) => a.p - c.p);
+}
+
 /* 채널별 가격 요약 (가격 비교 칸) */
 export function chPrice(it, ch, region) {
   const base = minNew(it);
   if (ch === "have") return { p: 0, n: 1, off: 100 };
-  if (ch === "nw") { const ps = it.nw.map((x) => x[1]); return it.nw.length ? { min: Math.min(...ps), max: Math.max(...ps), n: it.nw.length } : null; }
+  if (ch === "nw") { const L = nwOffers(it), ps = L.map((x) => x.p); return L.length ? { min: Math.min(...ps), max: Math.max(...ps), n: L.length } : null; }
   if (ch === "used") { if (!it.used.n) return null; const p = listingsOf(it, "used", region)[0].p; return { p, n: it.used.n, off: Math.round((1 - p / base) * 100) }; }
   if (ch === "sim") { const l = simList(it); if (!l.length) return null; const m = Math.min(...l.map((x) => x.p)); return { p: m, n: l.length, off: Math.round((1 - m / base) * 100) }; }
   if (ch === "swap") return it.t === "swap" ? { p: 0, n: 1, off: 100 } : null;
