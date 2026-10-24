@@ -996,3 +996,8 @@ body {
 .promo-dots .pp-dots .dot.on { width: 14px; opacity: 1; }
 .pp-dots { flex: none; }
 @media (min-width: 768px) { .pp-bar { max-width: 320px; } }
+
+/* THE BAGS 카드 라벨 배지: 한 줄 고정 (10/25 MJ) */
+.gb-foot { display: grid; gap: 8px; margin-top: -6px; }
+.gb-foot .tbadges { flex-wrap: nowrap; gap: 4px; }
+.gb-foot .tb { flex: none; font-size: .64rem; padding: .2em .5em; }
