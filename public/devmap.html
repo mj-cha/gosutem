@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>고수템 사업화 맵</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* 레이아웃: 위 = 라운드 단계 줄 + 요약. 보기 3개 — 흐름 지도(영역 8줄 × 단계 3칸 표), 일정(마감순 주간 묶음), 상세(왼쪽 영역별 항목 목록 + 오른쪽 항목 카드·상태 바꾸기·메모·피드백·주석) */
+:root{
+  --bg:#EEF3F9; --surface:#FFFFFF; --soft:#F4F7FB; --ink:#16243A; --muted:#5A6B82; --line:#D3E0EE;
+  --brand:#1F3A5F; --accent:#2F6DB5; --late:#C93A3A;
+  --done:#1E8A5A; --doing:#C77A12; --plan:#6B5BD2; --hold:#7A8699;
+  --a-plan:#2F6DB5; --a-ux:#B8457A; --a-proto:#0F7F84; --a-dev:#3D4FB0; --a-ops:#B06A10; --a-mkt:#C23D52; --a-ip:#6B5BD2; --a-biz:#1E7A52;
+  --f:"Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --fd:"Black Han Sans","Noto Sans KR",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1520;--surface:#172232;--soft:#1C2A3D;--ink:#E6EEF8;--muted:#9FB0C6;--line:#2A3A52;--brand:#A9C6EC;--accent:#6FA6E8;--late:#F07272;--done:#4FC08A;--doing:#E8A440;--plan:#A99BF5;--hold:#9AA6B8;--a-plan:#6FA6E8;--a-ux:#E58AB2;--a-proto:#4CC3C7;--a-dev:#8C9BF0;--a-ops:#E8A440;--a-mkt:#F0808F;--a-ip:#A99BF5;--a-biz:#4FC08A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1520;--surface:#172232;--soft:#1C2A3D;--ink:#E6EEF8;--muted:#9FB0C6;--line:#2A3A52;--brand:#A9C6EC;--accent:#6FA6E8;--late:#F07272;--done:#4FC08A;--doing:#E8A440;--plan:#A99BF5;--hold:#9AA6B8;--a-plan:#6FA6E8;--a-ux:#E58AB2;--a-proto:#4CC3C7;--a-dev:#8C9BF0;--a-ops:#E8A440;--a-mkt:#F0808F;--a-ip:#A99BF5;--a-biz:#4FC08A;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.6;word-break:keep-all;overflow-wrap:break-word}
+:focus-visible{outline:3px solid #F2B705;outline-offset:2px;border-radius:6px}
+button,select,textarea,input{font:inherit;color:inherit}
+a{color:var(--accent);text-underline-offset:3px}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1240px;margin:0 auto;padding-block:24px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+.title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.title b{font-family:var(--fd);font-weight:400;font-size:1.9rem;color:var(--brand);line-height:1}
+.title span{color:var(--muted);font-size:.86rem}
+.links{display:flex;flex-wrap:wrap;gap:6px}
+.links a{display:inline-flex;align-items:center;gap:4px;text-decoration:none;font-weight:700;font-size:.8rem;padding:6px 11px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.links a.main{background:var(--brand);color:var(--bg);border-color:var(--brand)}
+
+/* 라운드 단계 줄 */
+.phases{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;margin:0 0 14px;padding:0;list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.phases li{position:relative;padding:12px 14px 12px 16px;display:grid;gap:2px;border-right:1px solid var(--line);min-width:0}
+.phases li:last-child{border-right:0}
+.phases .k{font-size:.7rem;font-weight:800;letter-spacing:.04em;color:var(--muted)}
+.phases b{font-size:.9rem}
+.phases .d{font-size:.74rem;color:var(--muted)}
+.phases li[data-st="done"] .k{color:var(--done)}
+.phases li[data-st="doing"]{background:color-mix(in srgb,var(--doing) 9%,var(--surface))}
+.phases li[data-st="doing"] .k{color:var(--doing)}
+.phases li[data-st="doing"]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--doing)}
+
+.summary{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px;padding:0;list-style:none}
+.summary li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:5px 11px;font-size:.82rem;display:flex;align-items:center;gap:6px}
+.summary .dday{background:var(--brand);color:var(--bg);border-color:var(--brand);font-weight:700}
+.summary .late{color:var(--late);font-weight:700}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--sc);display:inline-block;flex:none}
+
+/* 보기 전환 */
+.views{display:inline-flex;gap:2px;padding:4px;border-radius:12px;background:color-mix(in srgb,var(--ink) 7%,var(--surface));margin-bottom:16px}
+.views button{border:0;background:none;padding:7px 14px;border-radius:9px;font-size:.86rem;font-weight:500;color:var(--muted);cursor:pointer}
+.views button[aria-selected="true"]{background:var(--surface);color:var(--ink);font-weight:800;box-shadow:0 1px 3px rgba(16,32,56,.12)}
+
+/* 흐름 지도 */
+.flow-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+table.flow{width:100%;min-width:860px;border-collapse:collapse;table-layout:fixed}
+.flow col.c-area{width:190px}
+.flow th,.flow td{border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+.flow thead th{font-size:.78rem;color:var(--muted);font-weight:700;padding:10px 12px;background:var(--soft)}
+.flow thead th span{display:block;font-weight:500;font-size:.7rem}
+.flow tbody tr:last-child th,.flow tbody tr:last-child td{border-bottom:0}
+.flow tbody th{padding:12px 14px;border-left:4px solid var(--gc);background:color-mix(in srgb,var(--gc) 6%,var(--surface))}
+.flow tbody th b{display:block;color:var(--gc);font-size:.9rem;font-weight:900}
+.flow tbody th small{display:block;color:var(--muted);font-size:.72rem;font-weight:400;margin:2px 0 6px}
+.bar{height:6px;border-radius:999px;background:color-mix(in srgb,var(--ink) 10%,var(--surface));overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.bar .b-done{background:var(--done)}.bar .b-doing{background:var(--doing)}
+.flow td{padding:10px;border-left:1px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;max-width:100%;border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:4px 9px;font-size:.78rem;cursor:pointer;text-align:left}
+.chip .nm{min-width:0}
+.chip.late{border-color:color-mix(in srgb,var(--late) 50%,var(--line))}
+.chip .due{font-size:.68rem;color:var(--muted)}
+.chip.late .due{color:var(--late);font-weight:700}
+@media (hover:hover){.chip:hover{border-color:var(--accent)}}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.76rem;color:var(--muted);margin:10px 2px 0}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+
+/* 일정 */
+.sched{display:grid;gap:14px}
+.week{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.week h3{margin:0;padding:10px 16px;font-size:.88rem;font-weight:900;background:var(--soft);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px}
+.week h3 span{font-weight:500;color:var(--muted);font-size:.78rem}
+.week.now h3{background:color-mix(in srgb,var(--doing) 12%,var(--surface))}
+.week.past h3{background:color-mix(in srgb,var(--late) 10%,var(--surface));color:var(--late)}
+.week ul{list-style:none;margin:0;padding:4px 8px}
+.week li button{width:100%;display:grid;grid-template-columns:62px 10px minmax(0,1fr) auto;align-items:center;gap:10px;border:0;background:none;text-align:left;padding:8px;border-radius:9px;cursor:pointer;font-size:.88rem}
+@media (hover:hover){.week li button:hover{background:var(--soft)}}
+.week time{font-size:.78rem;color:var(--muted)}
+.week .late time{color:var(--late);font-weight:700}
+.atag{font-size:.7rem;font-weight:800;color:var(--gc);white-space:nowrap}
+.week .who{font-size:.72rem;color:var(--muted);margin-left:6px}
+
+/* 상세 */
+.grid{display:grid;grid-template-columns:290px minmax(0,1fr);gap:20px;align-items:start}
+nav.side{position:sticky;top:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:auto;max-height:calc(100vh - 32px)}
+.nav-sec + .nav-sec{border-top:6px solid var(--bg)}
+.nav-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 14px;background:color-mix(in srgb,var(--gc) 9%,var(--surface));border-bottom:1px solid var(--line);border-left:4px solid var(--gc)}
+.nav-head b{font-size:.84rem;font-weight:900;color:var(--gc)}
+.nav-head span{font-size:.72rem;color:var(--muted)}
+.nav-list{padding:6px}
+.nav-sub{font-size:.68rem;font-weight:800;color:var(--muted);padding:8px 10px 2px;letter-spacing:.02em}
+.nav-item{width:100%;display:flex;align-items:center;gap:8px;text-align:left;border:0;background:none;padding:7px 10px;border-radius:9px;font-size:.86rem;cursor:pointer}
+.nav-item .nm{flex:1;min-width:0}
+.nav-item[aria-current="true"]{background:color-mix(in srgb,var(--accent) 12%,var(--surface));font-weight:700}
+@media (hover:hover){.nav-item:hover{background:var(--soft)}}
+.cnt{font-size:.68rem;font-weight:700;border-radius:999px;padding:0 7px;background:color-mix(in srgb,var(--ink) 8%,var(--surface));color:var(--muted)}
+.cnt.has{background:var(--accent);color:#fff}
+.mobile-pick{display:none}
+main.detail{display:grid;gap:16px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;min-width:0}
+.card h3{margin:0 0 10px;font-size:1rem;font-weight:900}
+.head-card{border-left:4px solid var(--gc)}
+.crumb{font-size:.76rem;font-weight:800;color:var(--gc)}
+.head-card h2{margin:2px 0 8px;font-size:1.35rem;font-weight:900;text-wrap:balance}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.pill{font-size:.74rem;font-weight:700;border-radius:999px;padding:2px 10px;border:1px solid color-mix(in srgb,var(--sc) 40%,transparent);color:var(--sc);background:color-mix(in srgb,var(--sc) 10%,var(--surface))}
+.what{margin:0}
+.out{margin:10px 0 0;font-size:.86rem;color:var(--muted)}
+.out b{color:var(--ink)}
+.lk{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:.85rem}
+ul.dev{margin:0;padding-left:1.1em;display:grid;gap:6px;font-size:.92rem}
+/* 상태 바꾸기 */
+.edit{display:grid;gap:12px}
+.edit .row{display:grid;grid-template-columns:64px minmax(0,1fr);align-items:center;gap:10px}
+.edit label,.edit .lb{font-size:.8rem;font-weight:700;color:var(--muted)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:5px 12px;font-size:.82rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.seg button[aria-pressed="true"]{border-color:var(--sc);background:color-mix(in srgb,var(--sc) 14%,var(--surface));font-weight:800}
+.edit input[type=date],.edit select{border:1px solid var(--line);border-radius:9px;padding:6px 10px;background:var(--surface);max-width:220px}
+.edit .msg{font-size:.78rem;color:var(--muted)}
+.edit button:disabled,.edit input:disabled,.edit select:disabled{opacity:.55;cursor:not-allowed}
+.log{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.log li{display:grid;grid-template-columns:86px minmax(0,1fr);gap:12px;font-size:.9rem;border-top:1px solid var(--line);padding-top:10px}
+.log li:first-child{border-top:0;padding-top:0}
+.log time{font-size:.78rem;color:var(--muted)}
+.log .res{display:block;font-size:.78rem;color:var(--muted);margin-top:2px}
+.empty{color:var(--muted);font-size:.88rem;margin:0}
+form.note{display:grid;gap:8px}
+textarea{width:100%;min-height:84px;resize:vertical;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}
+.form-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:9px 16px;font-weight:700;background:var(--accent);color:#fff;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:none;border:1px solid var(--line);color:var(--muted);padding:4px 10px;font-size:.78rem;border-radius:8px;cursor:pointer}
+.status-msg{font-size:.8rem;color:var(--muted)}
+.notes{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+.notes li{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:.9rem;display:grid;gap:4px}
+.notes .nh{display:flex;justify-content:space-between;gap:8px;font-size:.76rem;color:var(--muted)}
+.notes .tx{white-space:pre-wrap}
+@media (max-width:860px){
+  .phases{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .phases li{border-bottom:1px solid var(--line)}
+  .grid{grid-template-columns:minmax(0,1fr)}
+  nav.side{display:none}
+  .mobile-pick{display:grid;gap:6px;margin-bottom:14px}
+  .mobile-pick select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
+  .log li{grid-template-columns:minmax(0,1fr)}
+  .week li button{grid-template-columns:52px 10px minmax(0,1fr)}
+  .week li button .atag{grid-column:3}
+}
+@media (max-width:700px){
+  table.flow{min-width:0;table-layout:auto}
+  .flow colgroup,.flow thead{display:none}
+  .flow tbody,.flow tr,.flow th,.flow td{display:block;width:auto}
+  .flow tbody tr{border-bottom:6px solid var(--bg)}
+  .flow tbody tr:last-child{border-bottom:0}
+  .flow td{border-left:4px solid var(--gc);border-bottom:1px solid var(--line)}
+  .flow td.none{display:none}
+  .flow td::before{content:attr(data-stage);display:block;font-size:.7rem;font-weight:800;color:var(--muted);margin-bottom:6px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="title"><b>고수템 사업화 맵</b><span>가칭 · 기획부터 지식재산권까지 한 장에서 관리 · 항목마다 상태·마감·담당을 바꿀 수 있어요</span></div>
+    <nav class="links" aria-label="바로가기">
+      <a class="main" href="https://claude.ai/artifact/G8R5B42eNADjZnQ7bPnqR6" target="_blank" rel="noopener">React 미리보기 ↗</a>
+      <a href="https://claude.ai/artifact/Xf396JrQa9h8QBy1XJg1j6" target="_blank" rel="noopener">v39 시범 앱 ↗</a>
+      <a href="https://github.com/mj-cha/gosutem/pull/1" target="_blank" rel="noopener">GitHub PR ↗</a>
+    </nav>
+  </header>
+  <ol class="phases" id="phases" aria-label="모두의 창업 라운드"></ol>
+  <ul class="summary" id="summary"></ul>
+  <div class="views" role="tablist" aria-label="보기">
+    <button type="button" role="tab" id="v-flow" data-view="flow">흐름 지도</button>
+    <button type="button" role="tab" id="v-sched" data-view="sched">일정</button>
+    <button type="button" role="tab" id="v-detail" data-view="detail">항목 상세</button>
+  </div>
+  <section id="view-flow" role="tabpanel" aria-labelledby="v-flow"></section>
+  <section id="view-sched" role="tabpanel" aria-labelledby="v-sched" hidden></section>
+  <section id="view-detail" role="tabpanel" aria-labelledby="v-detail" hidden>
+    <label class="mobile-pick"><span class="status-msg">항목 고르기</span><select id="pick"></select></label>
+    <div class="grid">
+      <nav class="side" id="side" aria-label="사업화 항목"></nav>
+      <main class="detail" id="detail"></main>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+"use strict";
+var PROTO="https://claude.ai/artifact/G8R5B42eNADjZnQ7bPnqR6", OLD="https://claude.ai/artifact/Xf396JrQa9h8QBy1XJg1j6";
+var ST={done:{n:"완료",c:"var(--done)"},doing:{n:"진행 중",c:"var(--doing)"},plan:{n:"예정",c:"var(--plan)"},hold:{n:"보류",c:"var(--hold)"}};
+var STAGES=[{k:"1R",n:"1R 지역예선",d:"~12/1"},{k:"2R",n:"2R · MVP 시제품",d:"12월~"},{k:"3R+",n:"3R 이후 · 확장",d:"사업화"}];
+var OWNERS=["MJ","Claude","MJ+Claude","GPT·Gemini","외주","변리사","멘토"];
+var PHASES=[
+ {k:"아이디어",n:"아이디어 제출",d:"9/17",st:"done"},
+ {k:"1R",n:"지역예선 · 관찰·서면",d:"10/15 ~ 12/1 13:00",st:"doing"},
+ {k:"2R",n:"지역오디션 · MVP",d:"12/2~12/10 평가 · 시제품비 최대 1천만",st:"plan"},
+ {k:"3R",n:"권역오디션",d:"사업화자금 최대 1억",st:"plan"},
+ {k:"4R",n:"전국오디션",d:"우승 최대 10억",st:"plan"}];
+/* 사업화 흐름 순서대로 영역 8개 */
+var AREAS=[
+ {k:"plan",n:"기획 · 기능정의",d:"무엇을 왜 만드나",c:"var(--a-plan)"},
+ {k:"ux",n:"UI/UX",d:"어떻게 보이고 쓰이나",c:"var(--a-ux)"},
+ {k:"proto",n:"프로토타입",d:"눌러 보는 시범 앱",c:"var(--a-proto)"},
+ {k:"dev",n:"개발",d:"화면 · AI · 기반",c:"var(--a-dev)"},
+ {k:"ops",n:"운영 프로세스",d:"고수·거래·규칙·멘토링",c:"var(--a-ops)"},
+ {k:"mkt",n:"마케팅 · 브랜드",d:"이름·로고·채널·지표",c:"var(--a-mkt)"},
+ {k:"ip",n:"지식재산권",d:"상표·특허·권리",c:"var(--a-ip)"},
+ {k:"biz",n:"사업계획 · 제출",d:"마감과 평가 자료",c:"var(--a-biz)"}];
+var AC={}; AREAS.forEach(function(a){AC[a.k]=a;});
+/* 항목. id는 주석·피드백·상태 저장 키라 바꾸지 않음 (예전 개발맵 id 그대로 유지) */
+var ITEMS=[
+ // 기획 · 기능정의
+ {id:"p-concept",a:"plan",n:"컨셉 · 한 줄",st:"done",sg:"1R",due:"2026-10-16",ow:"MJ",
+  what:"고수가 쓴 걸, 가장 합리적으로. 쇼핑몰은 사라고만 하지만, 고수는 '이건 사지 마'도 알려줘요.",out:"마스터플랜 v1.1 0장",
+  dev:["화장품 메인 → '고수의 가방'(전 카테고리)으로 확정","유명인 X, 평범한 고수·전형적 직장인 O"]},
+ {id:"p-mvp",a:"plan",n:"MVP 범위 1장",st:"plan",sg:"1R",due:"2026-10-24",ow:"MJ+Claude",
+  what:"2R 시제품에 넣을 기능과 뺄 기능을 한 장으로 정리.",out:"MVP 범위표 1장",
+  dev:["욕심낼 곳: 가방 카드 · 가방 열림 · 따라 담기 · 사진 자동 분류","이 맵에서 단계가 '2R'인 개발 항목이 후보","버릴 곳: 연예인 가방, 영상 피드, 해외·외국어"]},
+ {id:"p-spec",a:"plan",n:"기능 정의서",st:"doing",sg:"1R",due:"2026-10-31",ow:"Claude",
+  what:"화면·기능마다 무엇을 하는지, 입력·출력, 예외, 우선순위(꼭 / 있으면 좋음 / 나중).",out:"docs/PRODUCT.md + 이 맵의 개발 항목",
+  dev:["개발 영역 항목 하나 = 기능 정의 한 단위","GPT·Gemini에 화면을 맡길 때 이 정의를 붙여서 전달 (docs/AI-COLLAB.md)"]},
+ {id:"p-hypo",a:"plan",n:"핵심 가설 · 검증 지표",st:"doing",sg:"1R",due:"2026-11-10",ow:"MJ",
+  what:"가설 1번 '일반인의 가방도 사람들이 볼까?'와 판정 숫자.",out:"가설 3개 + 지표 표",
+  dev:["지표: 섭외 응답률, 가방 제출률, 카드 클릭률, 사전신청 수","인터뷰 20명 (11/7)"]},
+ {id:"p-bm",a:"plan",n:"수익모델",st:"plan",sg:"1R",due:"2026-10-24",ow:"MJ",
+  what:"제휴 링크 수수료 → 거래 중개수수료 → B2B(재고 대안 노출 · 체험 매칭 · 데이터 리포트).",out:"수익모델 표(단가×물량)",
+  dev:["자선사업이 아니라는 숫자 근거","B2B 재고 소싱을 1단계에 넣을지 멘토 확인"]},
+ {id:"p-market",a:"plan",n:"시장 크기",st:"plan",sg:"1R",due:"2026-10-26",ow:"MJ",
+  what:"TAM/SAM/SOM과 출처·산출근거.",out:"시장 크기 표",dev:["사업계획서 수치에는 출처 필수(별첨3)"]},
+ // UI/UX
+ {id:"u-ds",a:"ux",n:"디자인 시스템",st:"doing",sg:"1R",due:"2026-10-31",ow:"Claude",
+  what:"브랜드 색·글꼴·간격을 HeroUI v3 변수로 정리.",out:"디자인시스템 v1.1 문서, src/index.css",
+  dev:["파랑 #2F6DB5 + 라벨 5색, 다크 모드 자동","로고 확정 후 색 재점검"]},
+ {id:"u-ia",a:"ux",n:"화면 구조 · 내비게이션",st:"doing",sg:"1R",due:"2026-10-31",ow:"MJ+Claude",
+  what:"하단 탭(홈·찾기·저장·내 가방), 상단은 ☰·로고, 홈 내비 바(지역·필터·파우치 분류).",out:"화면 구조도",
+  dev:["검색은 하단 '찾기' 하나로 (10/21)","홈 화면 추가 안내는 ☰ 안으로 (10/21)","저장·내 가방 화면은 아직 없음 → 개발 '저장 · 내 가방'"],link:PROTO},
+ {id:"layout",a:"ux",n:"PC 레이아웃 · 홈 화면 추가",st:"done",sg:"1R",ow:"Claude",
+  what:"PC: 왼쪽 소개(세로 탭) + 오른쪽 앱 화면을 창 높이에 꽉. 폰: 앱 화면만.",
+  dev:["홈 화면 추가 안내는 ☰ 메뉴 맨 아래, 이미 설치했으면 숨김","폰 기준 글씨 작게, 여백 넉넉히"],link:PROTO},
+ {id:"u-copy",a:"ux",n:"UX 라이팅",st:"doing",sg:"1R",ow:"Claude",
+  what:"해요체, 과장 금지(생존·필수), 라벨 5개 어휘 통일.",out:"AI 초안 프롬프트 v1.0",
+  dev:["고정 글 '10분 만에 고수 데뷔' 톤 (10/21)"]},
+ {id:"u-test",a:"ux",n:"사용성 테스트",st:"plan",sg:"1R",due:"2026-11-22",ow:"MJ",
+  what:"가방마다 초보 3명에게 보여 주고 '따라 살 것 · 필요 없는 것 · 가격 불명확' 표시받기.",out:"피드백·수정 목록",
+  dev:["시드 가방 4주차(11/16~11/22)","인터뷰 사례는 상품권 대신 카페 회의비"]},
+ {id:"u-a11y",a:"ux",n:"접근성 · 다크 모드",st:"done",sg:"1R",ow:"Claude",
+  what:"키보드 이동, 포커스 표시, 움직임 줄이기, 다크 모드.",dev:["HeroUI(React Aria)가 기본 처리"]},
+ // 프로토타입
+ {id:"p-v39",a:"proto",n:"v39 한 파일 시범 앱",st:"done",sg:"1R",ow:"Claude",
+  what:"부트스트랩 한 파일 버전. 댓글 저장소가 실제로 연결된 유일한 버전.",dev:["legacy/index.html로 보관"],link:OLD},
+ {id:"p-react",a:"proto",n:"React · HeroUI 이전",st:"doing",sg:"1R",due:"2026-10-24",ow:"Claude",
+  what:"Vite + React 19 + HeroUI v3.2.6. feature/react 브랜치, PR #1.",out:"React 미리보기 아티팩트",
+  dev:["v41: Accordion·Alert·Badge 추가","Netlify 연결 → Deploy Preview 확인 → main 합치기(MJ)"],link:PROTO},
+ {id:"p-demo",a:"proto",n:"데모 시나리오",st:"plan",sg:"1R",due:"2026-11-27",ow:"MJ+Claude",
+  what:"멘토·심사용 2분 클릭 경로: 홈 → 인턴 가방 → 경로 고르기 → 예산 → 일괄 구매.",out:"데모 경로 1장 + 화면 캡처",
+  dev:["활동보고서 붙임 사진으로도 사용"]},
+ {id:"p-real",a:"proto",n:"실물 사진 교체 · 시범 공개",st:"plan",sg:"1R",due:"2026-11-27",ow:"MJ",
+  what:"예시 그림을 시드 가방 실물 사진으로 바꿔 공개.",dev:["출처 배지·가격 기준일 점검","시드 가방 5주차"]},
+ // 개발 — 화면
+ {id:"home",a:"dev",sub:"화면",n:"홈 · 가방 피드",st:"done",sg:"1R",ow:"Claude",
+  what:"내비 바(지역·필터·파우치 분류 탭·하위 칩), 배너, 고정 글, 가방 카드 3개씩 페이지.",
+  dev:["2R: 실제 시드 가방 사진, 조회수·스크랩 실측값"],link:PROTO},
+ {id:"promo",a:"dev",sub:"화면",n:"메인 배너 · 이벤트",st:"done",sg:"1R",ow:"Claude",
+  what:"포스터가 옆으로 넘어가는 배너 5장(고수 모집 이벤트 포함).",
+  dev:["이벤트 혜택은 예시. 활동자금 규칙(상품권 불가) 확인 후 확정","2R: 실제 디자인 이미지·짧은 영상"]},
+ {id:"pinned",a:"dev",sub:"화면",n:"고정 글 · 고수 데뷔 + FAQ",st:"done",sg:"1R",ow:"Claude",
+  what:"피드 맨 위 '고정' 글. 첫 칸 '10분 만에 고수 데뷔'(펼침), 아래 FAQ 5개.",dev:["HeroUI Accordion"],link:PROTO},
+ {id:"search",a:"dev",sub:"화면",n:"찾기",st:"done",sg:"1R",ow:"Claude",
+  what:"하단 돋보기 → 찾기 창. 최근 검색어(이 기기), 인기 검색어(모두의 검색 7일 집계), 결과 가방 바로 열기.",
+  dev:["인기 검색어는 아티팩트 저장소에서만 실제 집계, 2R 자체 서버로"]},
+ {id:"filter",a:"dev",sub:"화면",n:"필터 · 지역 · 전체 분류",st:"done",sg:"1R",ow:"Claude",
+  what:"파우치 분류(상황·취미군)와 물건 종류(뷰티·생활) 분리, 고수 고르기, 동네 고르기·현재 위치.",
+  dev:["지역은 중고 직거래·나눔·스왑에만 사용"]},
+ {id:"bag-head",a:"dev",sub:"화면",n:"가방 상세 · 헤더",st:"done",sg:"1R",ow:"Claude",
+  what:"가방 사진·좋아요/싫어요, 고수 프로필 팝오버·팔로우, 덱 배지, 후킹 문구, 제목, 협찬 없음 표시.",dev:["인턴 이미지 속 문구('생존')와 제목 정리 필요"],link:PROTO+"#intern"},
+ {id:"themes",a:"dev",sub:"화면",n:"테마 필터",st:"done",sg:"1R",ow:"Claude",
+  what:"가방마다 고수가 정한 테마 태그(예: 멘탈방어 & 안구보안).",dev:["라벨 탭과 같이 걸림(AND)","2R: 테마 이름도 AI 초안"]},
+ {id:"tabs",a:"dev",sub:"화면",n:"라벨 탭 · 경로 칩",st:"done",sg:"1R",ow:"Claude",
+  what:"알짜템·나눔템·중고템·스왑템·비추천템 탭(위에 붙음). 라벨을 고르면 경로별 개수·가격 범위 칩.",
+  dev:["가격·재고는 예시값 → 2R 매칭 엔진 값"]},
+ {id:"rows",a:"dev",sub:"화면",n:"물건 줄 · 경로 고르기",st:"done",sg:"1R",ow:"Claude",
+  what:"번호 사진·라벨·팁·하트. '어디서 살까요?' 라디오(새상품·중고·유사템·나눔·스왑) → 매물 고르기 → 접히고 다음 물건으로.",
+  dev:["소모품 중고는 유통기한 있어야 선택 가능","제품 사진은 단순 그림 → 실물 사진"]},
+ {id:"market",a:"dev",sub:"화면",n:"고수 매물 · 거래 연결",st:"done",sg:"1R",ow:"Claude",
+  what:"중고·나눔·스왑은 외부 링크 대신 고수템 안 다른 고수 매물. 동네 근처순, 매물 상세(판매 고수·상태·유통기한·거래 방식).",
+  dev:["지금은 예시 매물 생성","2R: 실제 매물 등록·채팅·나눔 신청"]},
+ {id:"sense",a:"dev",sub:"화면",n:"공감",st:"done",sg:"1R",ow:"Claude",
+  what:"물건마다 👍 공감 버튼·숫자.",dev:["센스지수는 기준이 없어 뺌","2R: 공감 수 실제 저장"]},
+ {id:"cart",a:"dev",sub:"화면",n:"예산 플랜 · 일괄 구매",st:"done",sg:"1R",ow:"Claude",
+  what:"예산 슬라이더로 다시 짜기(최저 경로 → 낮은 우선순위 빼기 → 남는 돈으로 알짜템 새상품), 전부 새로 vs 내 조합, 경로별 일괄 구매.",
+  dev:["가격은 예시. 2R은 가격 기준일 표시"],link:PROTO+"#swim"},
+ {id:"talk",a:"dev",sub:"화면",n:"파우치 이야기 (댓글)",st:"done",sg:"1R",ow:"Claude",
+  what:"후기·질문·꿀팁 댓글. 모두 읽기, 각자 자기 글만 쓰기.",dev:["v39 아티팩트에서만 실제 저장","2R: 자체 서버로 이전"]},
+ {id:"supply",a:"dev",sub:"화면",n:"고수 신청 (10분 흐름)",st:"doing",sg:"1R",ow:"Claude",
+  what:"사진 1장 · 음성 메모 5분 · AI 초안 확인 3분.",dev:["화면 안내는 완료, 신청서 연결은 아직","시범 기간은 대신 만들어 주는 섭외"]},
+ {id:"my",a:"dev",sub:"화면",n:"저장 · 내 가방 화면",st:"plan",sg:"2R",ow:"GPT·Gemini",
+  what:"스크랩한 가방과 고른 물건을 모아 보는 화면.",dev:["다른 AI에 맡기기 좋은 첫 화면 후보","하단 탭 배지 숫자와 연결"]},
+ // 개발 — AI
+ {id:"ai-copy",a:"dev",sub:"AI",n:"AI 멘트 초안",st:"doing",sg:"2R",ow:"Claude",
+  what:"고수 답변으로 물건 설명·제목을 센스 있게 먼저 쓰고, 고수가 확인 후 공개.",out:"AI 초안 프롬프트 v1.0",
+  dev:["과장 금지 어휘·라벨 기준 반영","고수 수정 내역은 말투 학습에 사용","위생·법규 문장 자동 추가"]},
+ {id:"ai-voice",a:"dev",sub:"AI",n:"음성 메모 → 글",st:"plan",sg:"2R",ow:"Claude",
+  what:"질문 3개에 말로 답하면 받아 적어 라벨·팁으로 정리.",dev:["10분 신청 흐름의 핵심"]},
+ {id:"ai-vision",a:"dev",sub:"AI",n:"사진 → 물건 인식",st:"plan",sg:"2R",ow:"Claude",
+  what:"가방 사진 한 장에서 물건을 찾아 번호를 매기고 제품명으로 정리.",dev:["확신이 낮으면 새상품 사진·링크를 고수에게 물어봄","화장품·퍼스널케어부터"]},
+ {id:"ai-match",a:"dev",sub:"AI",n:"가격 · 매물 매칭",st:"plan",sg:"2R",ow:"Claude",
+  what:"제품명으로 오픈마켓 신품가, 고수템 안 중고·나눔 매물, 유사템을 연결.",dev:["신품: 오픈마켓 제휴·공식 API 확인","3R+: 자체 가격비교 엔진(제품 정규화 DB)"]},
+ {id:"ai-dupe",a:"dev",sub:"AI",n:"AI 가성비 대체품",st:"hold",sg:"3R+",ow:"Claude",
+  what:"같은 성분·성능의 싼 대체품 매칭.",dev:["지금은 유사템 경로로 일부 대신","성분 DB가 필요"]},
+ // 개발 — 기반
+ {id:"d-git",a:"dev",sub:"기반",n:"Git · Netlify 배포",st:"doing",sg:"1R",due:"2026-10-24",ow:"MJ",
+  what:"저장소 mj-cha/gosutem(비공개). Netlify에 연결하면 PR마다 미리보기 주소가 생김.",dev:["netlify.toml 설정 완료, 연결은 MJ가 Netlify 화면에서"],link:"https://github.com/mj-cha/gosutem/pull/1"},
+ {id:"d-backend",a:"dev",sub:"기반",n:"저장소 · 로그인",st:"plan",sg:"2R",ow:"Claude",
+  what:"댓글·검색어·매물·신청서를 자체 서버로(예: Supabase).",dev:["지금은 claude.ai 아티팩트 저장소에 기대고 있음"]},
+ {id:"d-collab",a:"dev",sub:"기반",n:"여러 AI 협업 규칙",st:"done",sg:"1R",ow:"Claude",
+  what:"AI마다 브랜치, 화면 하나씩, PR로 합치기.",out:"docs/AI-COLLAB.md · 프로젝트 문서 'AI협업 규칙 v1.0'"},
+ // 운영 프로세스
+ {id:"seed",a:"ops",n:"시드 가방 확보 (6주)",st:"doing",sg:"1R",due:"2026-11-30",ow:"MJ",
+  what:"10/26~11/30 고수 가방 모으기. 공개 약속 10개, 내부 목표 30개(제안).",out:"시드가방 계획 v1.2",
+  dev:["1주 양식·안내문·메시지 → 2주 5개 → 3주 10개 → 4주 피드백 → 5주 공개 → 6주 지표","인스타=발견, 에타=소속·수요 확인"]},
+ {id:"o-onboard",a:"ops",n:"고수 온보딩 흐름",st:"plan",sg:"1R",due:"2026-11-01",ow:"MJ+Claude",
+  what:"촬영 안내문, 질문 3개, AI 초안 확인, 공개 동의까지 한 흐름.",out:"촬영 안내문 1, 질문지, 동의서",dev:["10분 안에 끝나는지 첫 고수 5명으로 측정"]},
+ {id:"rules",a:"ops",n:"라벨 기준 · 위생 규칙",st:"doing",sg:"1R",ow:"MJ",
+  what:"알짜템·나눔템·중고템·스왑템·비추천템 기준과 거래 불가 품목.",
+  dev:["의약품·개봉 의약품 개인 간 거래 불가 → 알짜템(소장)으로만","입에 닿는 개봉 화장품은 나눔·중고 안 받음","법무 확인: Law in data + 자문단"]},
+ {id:"o-trade",a:"ops",n:"거래 운영 · 신고",st:"plan",sg:"2R",ow:"MJ",
+  what:"매물 검수, 금지 품목 자동 차단, 분쟁·신고 처리, 안전결제.",dev:["플랫폼 운영 의무 확인(Law in data → 자문단, 10/29)"]},
+ {id:"o-mentor",a:"ops",n:"책임멘토링 · 기록",st:"doing",sg:"1R",due:"2026-11-30",ow:"MJ",
+  what:"1:1 최소 2회(2~4회 가점), 시작·종료 시각 증빙, 매주 금 업데이트.",dev:["그룹·설명회는 인정 안 됨","받은 피드백 → 반영한 활동 → 변화 순으로 기록"]},
+ {id:"o-fund",a:"ops",n:"활동자금 · 증빙",st:"doing",sg:"1R",due:"2026-11-30",ow:"MJ",
+  what:"전용카드만, 10만 원 이상·오픈마켓은 증빙, 50만 원 초과는 사전승인.",out:"1R 운영규칙 v1.0",dev:["상품권·기차표·본인 식비 불가","11/30 카드 사용 종료"]},
+ {id:"o-weekly",a:"ops",n:"주간 리뷰 · 문서 정리",st:"doing",sg:"1R",ow:"MJ+Claude",
+  what:"매주 일 주간 리뷰, 문서 버전 규칙.",out:"주간리뷰 v1.0, 정리규칙 v1.0"},
+ // 마케팅 · 브랜드
+ {id:"name",a:"mkt",n:"네이밍",st:"doing",sg:"1R",ow:"MJ",
+  what:"가칭 '고수템 GOSUTEM'. 상표 조회·변리사 확인 전.",dev:["갓백·인마이는 충돌 확인됨(10/15)","타깃 10명에게 이름만 보여 주고 반응 확인"]},
+ {id:"logo",a:"mkt",n:"로고",st:"plan",sg:"1R",due:"2026-11-15",ow:"외주",
+  what:"이름 확정 뒤 로고 브리프 → 시안 3안 → 확정.",
+  dev:["10/27 브리프(키워드·색·쓰임) + 디자이너 공고","11/2~11/8 시안 3안(외주 시 견적서·계약서, 50만 원 초과 사전승인)","11/9~11/15 확정 → 상표 출원"]},
+ {id:"m-channel",a:"mkt",n:"고수 발견 채널",st:"doing",sg:"1R",due:"2026-11-15",ow:"MJ",
+  what:"인스타(발견) · 에타(소속) · 동아리 · 해시태그 계정.",dev:["채널마다 연락 → 응답 → 가방 제출 수 기록"]},
+ {id:"m-landing",a:"mkt",n:"랜딩 · 사전신청",st:"plan",sg:"1R",due:"2026-11-10",ow:"MJ+Claude",
+  what:"한 장짜리 소개 + 고수 신청 · 초보 사전신청 받기.",dev:["가설 1번 판정 숫자로 사용"]},
+ {id:"m-content",a:"mkt",n:"공유 카드 · SNS 콘텐츠",st:"plan",sg:"1R",due:"2026-11-27",ow:"MJ",
+  what:"가방 카드 이미지, 배너 포스터, 짧은 영상.",dev:["12월 Nordy 등 AI 솔루션 후보"]},
+ {id:"m-metrics",a:"mkt",n:"지표 정리",st:"plan",sg:"1R",due:"2026-11-30",ow:"MJ+Claude",
+  what:"채널별 응답률·제출률·클릭 수 표.",dev:["활동보고서·사업계획서에 그대로 넣음"]},
+ // 지식재산권
+ {id:"ip-search",a:"ip",n:"상표 사전 조회",st:"doing",sg:"1R",due:"2026-10-31",ow:"MJ",
+  what:"KIPRIS에서 TN=고수템 / GOSUTEM / 발음 비슷한 영문 조회, 9·35·42류 위주.",dev:["조회 결과를 이 항목 주석에 남기기","발음·뜻 유사는 변리사 검토"]},
+ {id:"ip-tm",a:"ip",n:"상표 출원",st:"plan",sg:"1R",due:"2026-11-15",ow:"변리사",
+  what:"이름 확정 → 9류(앱)·35류(판매중개·광고)·42류(플랫폼) 출원.",dev:["관납료·변리사 수수료는 활동자금 카드 가능(지급수수료)","로고 확정 뒤 도형 상표 따로 검토"]},
+ {id:"ip-copy",a:"ip",n:"콘텐츠 권리 · 동의",st:"plan",sg:"1R",due:"2026-11-01",ow:"MJ",
+  what:"고수 사진·글·음성 이용 동의서, 초상권, 로고 외주 저작권 양도 계약.",dev:["첫 촬영(11/2) 전에 동의서 준비"]},
+ {id:"ip-domain",a:"ip",n:"도메인 · SNS 계정",st:"plan",sg:"1R",due:"2026-10-31",ow:"MJ",
+  what:"이름 후보로 도메인·인스타 핸들이 비어 있는지 확인하고 확보.",dev:["확보 여부는 아직 확인 안 함"]},
+ {id:"ip-patent",a:"ip",n:"특허 검토 (BM)",st:"plan",sg:"2R",ow:"변리사",
+  what:"사진 → 물건 인식 → 신품·중고·나눔 경로 추천 · 예산 플랜 흐름의 특허 가능성.",dev:["공개 전 출원이 원칙. 이미 공개한 내용은 예외 기간을 변리사에게 확인"]},
+ // 사업계획 · 제출
+ {id:"b-kickoff",a:"biz",n:"발대식 · 책임멘토 상견례",st:"plan",sg:"1R",due:"2026-10-22",ow:"MJ",
+  what:"10/22(목) 14~17시 원주 인터불고호텔. 멘토링 일정 조율.",dev:["기차·버스표는 카드 불가, 현지 택시는 가능"]},
+ {id:"b-ai1",a:"biz",n:"AI 솔루션 1개월차 신청",st:"doing",sg:"1R",due:"2026-10-25",ow:"MJ",
+  what:"사용 11/1~30. 기한 지나면 취소·환불 불가.",dev:["후보: IGN8T, 핸디핏, AiApp 프로, PurplePrint"]},
+ {id:"b-ai2",a:"biz",n:"AI 솔루션 2개월차 신청",st:"plan",sg:"1R",due:"2026-11-25",ow:"MJ",what:"사용 12/1~31."},
+ {id:"b-report",a:"biz",n:"활동보고서",st:"plan",sg:"1R",due:"2026-12-01",ow:"MJ+Claude",
+  what:"A4 7쪽: 멘토링 → 받은 피드백 → 반영 활동 → 변화, 활동자금, AI 솔루션.",dev:["12/1(화) 13:00 플랫폼 제출, 연장 없음","집행 내역·증빙 zip"]},
+ {id:"b-plan",a:"biz",n:"사업계획서",st:"plan",sg:"1R",due:"2026-12-01",ow:"MJ+Claude",
+  what:"A4 8쪽: 문제 인식 · 실현 가능성 · 성장전략 · 향후 발전방안.",dev:["완료와 예정 구분","카테고리 확대·자체 가격비교 엔진은 Q4"]},
+ {id:"b-2r",a:"biz",n:"2R 평가 · MVP 시제품",st:"plan",sg:"2R",due:"2026-12-10",ow:"MJ",
+  what:"12/2~12/10 2R 진출 평가. 진출하면 시제품비 최대 1,000만 원으로 MVP.",dev:["MVP 범위 1장이 기준"]}
+];
+var byId={}; ITEMS.forEach(function(x){byId[x.id]=x;});
+var state={view:"flow",item:null,over:{},notes:[],feedback:[],db:null,canWrite:true};
+var $=function(id){return document.getElementById(id);};
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]}); }
+
+/* 날짜 */
+function today(){ var d=new Date(); d.setHours(0,0,0,0); return d; }
+function pd(s){ if(!s) return null; var p=s.split("-"); return new Date(+p[0],+p[1]-1,+p[2]); }
+function md(s){ var d=pd(s); return d?(d.getMonth()+1)+"/"+d.getDate():""; }
+function mon(d){ var x=new Date(d); var w=(x.getDay()+6)%7; x.setDate(x.getDate()-w); return x; }
+function eff(it){ var o=state.over[it.id]||{}; return {st:o.st||it.st, due:o.due!==undefined?o.due:(it.due||""), ow:o.ow||it.ow||""}; }
+function isLate(it){ var e=eff(it); return !!e.due && e.st!=="done" && pd(e.due)<today(); }
+function cntNotes(id){ return state.notes.filter(function(n){return n.menu===id}).length; }
+
+function renderTop(){
+  $("phases").innerHTML=PHASES.map(function(p){ return '<li data-st="'+p.st+'"><span class="k">'+esc(p.k)+(p.st==="doing"?' · 지금':p.st==="done"?' · 완료':'')+'</span><b>'+esc(p.n)+'</b><span class="d">'+esc(p.d)+'</span></li>'; }).join("");
+  var c={done:0,doing:0,plan:0,hold:0}, late=0; ITEMS.forEach(function(it){ c[eff(it).st]++; if(isLate(it)) late++; });
+  var dl=new Date(2026,11,1), dd=Math.round((dl-today())/864e5);
+  $("summary").innerHTML='<li class="dday">1R 제출 '+(dd>0?'D-'+dd:dd===0?'D-day':'마감 지남')+' · 12/1 13:00</li>'+
+    Object.keys(ST).map(function(k){return '<li><span class="sdot" style="--sc:'+ST[k].c+'"></span>'+ST[k].n+' <b class="num">'+c[k]+'</b></li>'}).join("")+
+    (late?'<li class="late">마감 지남 '+late+'</li>':'')+'<li>피드백 <b class="num">'+state.feedback.length+'</b></li><li>주석 <b class="num">'+state.notes.length+'</b></li>';
+}
+function chip(it){ var e=eff(it), l=isLate(it);
+  return '<button type="button" class="chip'+(l?' late':'')+'" data-open="'+it.id+'"><span class="sdot" style="--sc:'+ST[e.st].c+'"></span><span class="nm">'+esc(it.n)+'</span>'+(e.due?'<span class="due num">'+md(e.due)+'</span>':'')+'</button>'; }
+function renderFlow(){
+  var h='<div class="flow-wrap"><table class="flow"><colgroup><col class="c-area"><col><col><col></colgroup><thead><tr><th scope="col">영역</th>'+STAGES.map(function(s){return '<th scope="col">'+esc(s.n)+'<span>'+esc(s.d)+'</span></th>'}).join("")+'</tr></thead><tbody>';
+  AREAS.forEach(function(a){
+    var its=ITEMS.filter(function(x){return x.a===a.k}), n=its.length, dn=its.filter(function(x){return eff(x).st==="done"}).length, dg=its.filter(function(x){return eff(x).st==="doing"}).length;
+    h+='<tr style="--gc:'+a.c+'"><th scope="row"><b>'+esc(a.n)+'</b><small>'+esc(a.d)+' · 완료 '+dn+'/'+n+'</small><div class="bar" role="img" aria-label="완료 '+dn+', 진행 '+dg+', 전체 '+n+'"><i class="b-done" style="width:'+(dn/n*100)+'%"></i><i class="b-doing" style="width:'+(dg/n*100)+'%"></i></div></th>';
+    STAGES.forEach(function(s){ var cs=its.filter(function(x){return x.sg===s.k}); h+='<td data-stage="'+esc(s.n)+'"'+(cs.length?'':' class="none"')+'><div class="chips">'+cs.map(chip).join("")+'</div></td>'; });
+    h+='</tr>';
+  });
+  h+='</tbody></table></div><div class="legend">'+Object.keys(ST).map(function(k){return '<span><span class="sdot" style="--sc:'+ST[k].c+'"></span>'+ST[k].n+'</span>'}).join("")+'<span>빨간 테두리 = 마감 지남 · 항목을 누르면 상세로</span></div>';
+  $("view-flow").innerHTML=h;
+}
+function renderSched(){
+  var t=today(), m0=mon(t), groups={}, keys=[], late=[];
+  ITEMS.forEach(function(it){ var e=eff(it); if(!e.due) return; if(isLate(it)){ late.push(it); return; } if(e.st==="done"&&pd(e.due)<t) return;
+    var k=mon(pd(e.due)).getTime(); if(!groups[k]){ groups[k]=[]; keys.push(k);} groups[k].push(it); });
+  keys.sort(function(a,b){return a-b});
+  function row(it){ var e=eff(it), a=AC[it.a], l=isLate(it);
+    return '<li class="'+(l?'late':'')+'"><button type="button" data-open="'+it.id+'"><time class="num">'+md(e.due)+'</time><span class="sdot" style="--sc:'+ST[e.st].c+'"></span><span>'+esc(it.n)+'<span class="who">'+esc(e.ow)+'</span></span><span class="atag" style="--gc:'+a.c+'">'+esc(a.n)+'</span></button></li>'; }
+  function sortDue(a,b){ return eff(a).due.localeCompare(eff(b).due); }
+  var h='';
+  if(late.length) h+='<section class="week past"><h3>마감 지남 · 날짜를 바꾸거나 완료로 표시하세요<span>'+late.length+'개</span></h3><ul>'+late.sort(sortDue).map(row).join("")+'</ul></section>';
+  keys.forEach(function(k){ var s=new Date(k), e=new Date(k+6*864e5), now=k===m0.getTime();
+    h+='<section class="week'+(now?' now':'')+'"><h3>'+(now?'이번 주 · ':'')+(s.getMonth()+1)+'/'+s.getDate()+' ~ '+(e.getMonth()+1)+'/'+e.getDate()+'<span>'+groups[k].length+'개</span></h3><ul>'+groups[k].sort(sortDue).map(row).join("")+'</ul></section>'; });
+  $("view-sched").innerHTML='<div class="sched">'+(h||'<p class="empty">마감이 정해진 항목이 없어요.</p>')+'</div>';
+}
+function renderNav(){
+  var h='';
+  AREAS.forEach(function(a){ var its=ITEMS.filter(function(x){return x.a===a.k}), last=null;
+    h+='<section class="nav-sec" style="--gc:'+a.c+'"><div class="nav-head"><b>'+esc(a.n)+'</b><span>'+its.length+'개</span></div><div class="nav-list">';
+    its.forEach(function(it){ if(it.sub&&it.sub!==last){ h+='<div class="nav-sub">'+esc(it.sub)+'</div>'; last=it.sub; } var n=cntNotes(it.id), e=eff(it);
+      h+='<button type="button" class="nav-item" data-open="'+it.id+'"'+(state.item===it.id?' aria-current="true"':'')+'><span class="sdot" style="--sc:'+ST[e.st].c+'"></span><span class="nm">'+esc(it.n)+'</span>'+(n?'<span class="cnt has">'+n+'</span>':'')+'</button>'; });
+    h+='</div></section>'; });
+  $("side").innerHTML=h;
+  $("pick").innerHTML=AREAS.map(function(a){ return '<optgroup label="'+esc(a.n)+'">'+ITEMS.filter(function(x){return x.a===a.k}).map(function(it){ return '<option value="'+it.id+'"'+(state.item===it.id?' selected':'')+'>'+esc(it.n)+' · '+ST[eff(it).st].n+'</option>'; }).join("")+'</optgroup>'; }).join("");
+}
+function fmt(iso){ try{ var d=new Date(iso); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0"); }catch(e){ return ""; } }
+function renderDetail(){
+  var it=byId[state.item]; if(!it) return; var a=AC[it.a], e=eff(it), l=isLate(it), can=!!state.db&&state.canWrite;
+  var prevTa=$("noteText"), draft=prevTa&&prevTa.dataset.item===it.id?prevTa.value:"", hadFocus=prevTa&&document.activeElement===prevTa;
+  var fb=state.feedback.filter(function(x){return x.menu===it.id}).sort(function(x,y){return (y.date||"").localeCompare(x.date||"")});
+  var ns=state.notes.filter(function(x){return x.menu===it.id}).sort(function(x,y){return (y.at||"").localeCompare(x.at||"")});
+  var h='<section class="card head-card" style="--gc:'+a.c+'"><div class="crumb">'+esc(a.n)+(it.sub?' · '+esc(it.sub):'')+'</div><h2>'+esc(it.n)+'</h2>'+
+    '<div class="meta"><span class="pill" style="--sc:'+ST[e.st].c+'">'+ST[e.st].n+'</span><span class="pill" style="--sc:var(--muted)">'+esc(it.sg)+'</span>'+(e.due?'<span class="pill num" style="--sc:'+(l?'var(--late)':'var(--muted)')+'">마감 '+md(e.due)+(l?' · 지남':'')+'</span>':'')+(e.ow?'<span class="pill" style="--sc:var(--accent)">담당 '+esc(e.ow)+'</span>':'')+'</div>'+
+    '<p class="what">'+esc(it.what)+'</p>'+(it.out?'<p class="out">산출물 · <b>'+esc(it.out)+'</b></p>':'')+
+    (it.link?'<div class="lk"><a href="'+esc(it.link)+'" target="_blank" rel="noopener">관련 화면·자료 열기 ↗</a></div>':'')+'</section>';
+  h+='<section class="card"><h3>단계 관리</h3><div class="edit">'+
+    '<div class="row"><span class="lb">상태</span><div class="seg" role="group" aria-label="상태">'+Object.keys(ST).map(function(k){return '<button type="button" data-st="'+k+'" style="--sc:'+ST[k].c+'" aria-pressed="'+(e.st===k)+'"'+(can?'':' disabled')+'><span class="sdot"></span>'+ST[k].n+'</button>'}).join("")+'</div></div>'+
+    '<div class="row"><label for="dueIn">마감</label><input type="date" id="dueIn" value="'+esc(e.due)+'"'+(can?'':' disabled')+'></div>'+
+    '<div class="row"><label for="owIn">담당</label><select id="owIn"'+(can?'':' disabled')+'>'+(OWNERS.indexOf(e.ow)<0&&e.ow?'<option>'+esc(e.ow)+'</option>':'')+'<option value="">미정</option>'+OWNERS.map(function(o){return '<option'+(o===e.ow?' selected':'')+'>'+esc(o)+'</option>'}).join("")+'</select></div>'+
+    '<span class="msg" id="editMsg">'+(state.db?(state.canWrite?'바꾸면 바로 저장돼요. 흐름 지도·일정에도 반영돼요.':'이 링크에서는 읽기만 할 수 있어요.'):'저장소에 연결 중이에요. claude.ai에서 열면 바꿀 수 있어요.')+'</span></div></section>';
+  if(it.dev&&it.dev.length) h+='<section class="card"><h3>메모</h3><ul class="dev">'+it.dev.map(function(d){return '<li>'+esc(d)+'</li>'}).join("")+'</ul></section>';
+  h+='<section class="card"><h3>피드백 로그</h3>'+(fb.length?'<ul class="log">'+fb.map(function(x){return '<li><time class="num">'+esc(x.date||"")+'</time><div>'+esc(x.text||"")+(x.result?'<span class="res">→ '+esc(x.result)+'</span>':'')+'</div></li>'}).join("")+'</ul>':'<p class="empty">'+(state.db?'아직 기록된 피드백이 없어요.':'피드백 로그를 불러오는 중이거나, 이 화면에서는 저장소를 쓸 수 없어요.')+'</p>')+'</section>';
+  h+='<section class="card"><h3>주석 · '+esc(it.n)+'</h3><form class="note" id="noteForm"><textarea id="noteText" aria-label="주석 내용" placeholder="생각, 바꿀 점, 질문, 조회 결과를 남겨 주세요."></textarea><div class="form-row"><span class="status-msg" id="noteMsg">'+(state.db?(state.canWrite?'남긴 주석은 저장돼요.':'이 링크에서는 주석을 읽기만 할 수 있어요.'):'저장소에 연결 중이에요.')+'</span><button class="btn" id="noteBtn" type="submit"'+(can?'':' disabled')+'>주석 남기기</button></div></form>'+
+    (ns.length?'<ul class="notes">'+ns.map(function(n){return '<li><div class="nh"><span>'+esc(fmt(n.at))+'</span>'+(state.canWrite?'<button type="button" class="btn-ghost" data-del="'+esc(n._id)+'">지우기</button>':'')+'</div><div class="tx">'+esc(n.text)+'</div></li>'}).join("")+'</ul>':'<p class="empty" style="margin-top:12px">아직 주석이 없어요.</p>')+'</section>';
+  $("detail").innerHTML=h;
+  var ta=$("noteText"); ta.dataset.item=it.id; if(draft) ta.value=draft; if(hadFocus) ta.focus();
+  $("noteForm").onsubmit=function(ev){ ev.preventDefault(); addNote(); };
+  $("detail").querySelectorAll("[data-del]").forEach(function(b){ b.onclick=function(){ delNote(b.dataset.del); }; });
+  $("detail").querySelectorAll("[data-st]").forEach(function(b){ b.onclick=function(){ saveOver({st:b.dataset.st}); }; });
+  $("dueIn").onchange=function(){ saveOver({due:this.value}); };
+  $("owIn").onchange=function(){ saveOver({ow:this.value}); };
+}
+function renderAll(){ renderTop(); if(state.view==="flow") renderFlow(); else if(state.view==="sched") renderSched(); else { renderNav(); renderDetail(); } }
+function setView(v,focus){
+  state.view=v;
+  document.querySelectorAll(".views [data-view]").forEach(function(b){ var on=b.dataset.view===v; b.setAttribute("aria-selected",String(on)); b.tabIndex=on?0:-1; if(on&&focus) b.focus(); });
+  $("view-flow").hidden=v!=="flow"; $("view-sched").hidden=v!=="sched"; $("view-detail").hidden=v!=="detail";
+  var tok=v==="detail"?state.item:v; try{ if(location.hash!=="#"+tok) history.replaceState(null,"","#"+tok); }catch(e){}
+  renderAll();
+}
+function openItem(id){ if(!byId[id]) id=ITEMS[0].id; state.item=id; setView("detail"); window.scrollTo({top:document.querySelector(".views").offsetTop-8}); }
+document.addEventListener("click",function(e){ var b=e.target.closest&&e.target.closest("[data-open]"); if(b) openItem(b.dataset.open); });
+var vb=[].slice.call(document.querySelectorAll(".views [data-view]"));
+vb.forEach(function(b,i){ b.onclick=function(){ if(b.dataset.view==="detail"&&!state.item) state.item=ITEMS[0].id; setView(b.dataset.view); };
+  b.onkeydown=function(e){ var d={ArrowRight:1,ArrowLeft:-1}[e.key]; if(!d) return; e.preventDefault(); var n=vb[(i+d+vb.length)%vb.length]; if(n.dataset.view==="detail"&&!state.item) state.item=ITEMS[0].id; setView(n.dataset.view,true); }; });
+$("pick").onchange=function(){ openItem(this.value); };
+
+/* 저장소 쓰기 */
+async function saveOver(patch){
+  if(!state.db||!state.canWrite) return; var id=state.item, msg=$("editMsg");
+  var cur=state.over[id]||{}, nx=Object.assign({},cur,patch,{at:new Date().toISOString()});
+  state.over[id]=nx; renderAll(); msg=$("editMsg"); if(msg) msg.textContent="저장 중…";
+  try{ await state.db.collection("status").doc(id).set(nx); var m=$("editMsg"); if(m) m.textContent="저장했어요."; }
+  catch(e){ if(cur&&Object.keys(cur).length) state.over[id]=cur; else delete state.over[id]; if(e&&(e.code==="invalid_argument"||e.code==="permission_denied")) state.canWrite=false; renderAll(); var m2=$("editMsg"); if(m2) m2.textContent="저장하지 못했어요. 잠시 뒤 다시 해 주세요."; }
+}
+async function addNote(){
+  var ta=$("noteText"), msg=$("noteMsg"), btn=$("noteBtn"), text=(ta.value||"").trim();
+  if(!text){ msg.textContent="내용을 먼저 적어 주세요."; return; } if(!state.db) return;
+  btn.disabled=true; msg.textContent="저장 중…";
+  try{ await state.db.collection("notes").add({menu:state.item,text:text.slice(0,4000),at:new Date().toISOString()}); ta.value=""; msg.textContent="저장했어요."; }
+  catch(e){ if(e&&e.code==="invalid_argument"){ state.canWrite=false; msg.textContent="이 링크에서는 주석을 남길 수 없어요."; } else if(e&&e.code==="quota_exceeded"){ msg.textContent="저장 공간이 가득 찼어요. 오래된 주석을 지워 주세요."; } else msg.textContent="저장하지 못했어요. 잠시 뒤 다시 눌러 주세요."; }
+  finally{ btn.disabled=!state.canWrite; }
+}
+async function delNote(id){ if(!state.db) return; try{ await state.db.collection("notes").doc(id).delete(); }catch(e){} }
+
+/* 첫 화면: #flow / #sched / #항목id */
+var first=(location.hash||"").replace("#","");
+if(byId[first]){ state.item=first; setView("detail"); } else setView(first==="sched"?"sched":"flow");
+
+(async function(){
+  try{
+    var db=window.claude&&window.claude.use?await window.claude.use("db"):null;
+    if(!db){ renderAll(); return; }
+    state.db=db;
+    try{ var user=await window.claude.use("user"); if(user&&user.can){ var c=await user.can("data.write"); if(c===false) state.canWrite=false; } }catch(e){}
+    db.collection("status").onSnapshot(function(snap){ var o={}; snap.docs.forEach(function(d){ if(d.exists) o[d.id]=d.data(); }); state.over=o; renderAll(); },function(){});
+    db.collection("notes").onSnapshot(function(snap){ state.notes=snap.docs.map(function(d){ var x=Object.assign({},d.data()); x._id=d.id; return x; }); renderAll(); },function(){});
+    db.collection("feedback").onSnapshot(function(snap){ state.feedback=snap.docs.map(function(d){ return Object.assign({},d.data()); }); renderAll(); },function(){});
+  }catch(e){ renderAll(); }
+})();
+})();
+</script>
+
+</body></html>
