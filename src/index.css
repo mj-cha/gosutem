@@ -977,3 +977,9 @@ body {
   .view > .promo .sl-en { font-size: clamp(4rem, 8vw, 7.5rem); }
   .view > .promo .promo-dots { bottom: 40px; }
 }
+
+/* 코발트 구역 아코디언: 열린 항목도 구분되게 — 연한 흰 판 + 왼쪽 라임 줄 + 제목 라임 (10/25 MJ) */
+.pin-wrap .accordion__trigger:hover:not([aria-expanded=true]) { background: rgba(255, 255, 255, .1); }
+.pin-wrap .accordion__item:has([data-slot=accordion-trigger][aria-expanded=true]) { background: rgba(255, 255, 255, .1); box-shadow: inset 3px 0 0 var(--v-lime); }
+.pin-wrap .accordion__trigger[aria-expanded=true] { color: var(--v-lime); background: transparent; }
+.pin-wrap .accordion__trigger[aria-expanded=true] .accordion__indicator { color: var(--v-lime); }
