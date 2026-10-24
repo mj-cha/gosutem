@@ -3,7 +3,7 @@ import { useMemo, useRef } from "react";
 import { Accordion, Badge, Button, Separator, Tabs, Tag, TagGroup } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { DeckStrip, Pager, Photo, Promo, TBadge, Who } from "../components/common.jsx";
-import { BAGS, POP_FALLBACK, T, TORDER } from "../data/data.js";
+import { ART, BAGS, POP_FALLBACK, T, TORDER } from "../data/data.js";
 import { catName, costOf, countT, filterBags, minNew, pcCount, pGroups, relatedTerms, won } from "../lib/logic.js";
 import { regionLabel, useApp } from "../lib/store.jsx";
 import { topSearches, useHub } from "../lib/claude.js";
@@ -274,6 +274,50 @@ function HomeHero() {
   );
 }
 
+/* 많이 담긴 고수템: 공감 수 순 상위 4개 (숫자는 예시) */
+function firstLine(t) { const m = String(t || "").split(/(?<=[.!?。])\s|\n/)[0]; return m.length > 44 ? m.slice(0, 43) + "…" : m; }
+function BestItems() {
+  const { go } = useApp();
+  const top = useMemo(() => {
+    const all = [];
+    BAGS.forEach((b) => b.items.forEach((it) => { if (it.nw && it.nw.length) all.push({ b, it }); }));
+    return all.sort((x, y) => (y.it.emp || 0) - (x.it.emp || 0)).slice(0, 4);
+  }, []);
+  if (!top.length) return null;
+  return (
+    <section className="best pad" aria-labelledby="best-h">
+      <div className="best-head">
+        <h2 id="best-h">BEST 고수템</h2>
+        <span>이번 주 가장 많이 공감받은 물건 · 예시</span>
+      </div>
+      <ol className="best-grid">
+        {top.map(({ b, it }, i) => {
+          const nw = minNew(it), cost = costOf(it), off = nw > 0 ? Math.round((1 - cost / nw) * 100) : 0;
+          return (
+            <li key={b.id + i}>
+              <button type="button" className="best-card" onClick={() => go(b.id)} aria-label={(i + 1) + "위 " + (it.q || it.n) + ", " + b.name + "의 가방 열기"}>
+                <span className="best-rank num" aria-hidden="true">{i + 1}</span>
+                <span className="best-img" style={{ "--tc": T[it.t].c }}>
+                  <span className="best-badge">BEST</span>
+                  <svg viewBox="0 0 64 64" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ART[it.art] || "" }} />
+                </span>
+                <span className="best-name">{it.q || it.n}</span>
+                <span className="best-desc">{firstLine(it.tip)}</span>
+                <span className="best-price">
+                  {cost === 0 ? <em>나눔·교환</em> : off > 0 && <em className="num">{off}%</em>}
+                  <b className="num">{cost === 0 ? "₩0" : won(cost)}</b>
+                  {off > 0 && <s className="num">{won(nw)}</s>}
+                </span>
+                <span className="best-meta">{T[it.t].name} · 공감 {(it.emp || 0).toLocaleString("ko-KR")} · {b.name}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <div className="view">
@@ -284,6 +328,7 @@ export default function Home() {
         <Promo />
         <PreorderCta />
       </section>
+      <BestItems />
       <Feed />
       <div className="pad" style={{ paddingTop: 28 }}>
         <Pinned />
