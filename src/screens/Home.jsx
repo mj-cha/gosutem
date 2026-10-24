@@ -131,7 +131,7 @@ function BagCard({ b }) {
 }
 
 function Feed() {
-  const { nav, setNav, patchNav, region, openModal, commitSearch } = useApp();
+  const { go, nav, setNav, patchNav, region, openModal, commitSearch } = useApp();
   const feed = useRef(null);
   const { list, shown } = useMemo(() => filterBags(nav), [nav]);
   const pages = Math.max(1, Math.ceil(shown.length / PAGE)), page = Math.min(Math.max(1, nav.page), pages);
@@ -145,7 +145,8 @@ function Feed() {
   return (
     <div className="feed pad" ref={feed} aria-live="polite" style={{ scrollMarginTop: "calc(var(--stick) + 140px)" }}>
       <div className="feed-head">
-        <h2>{head} <span className="fh-n num">{shown.length}</span><span className="fh-reg">{region ? region.full : "전국"}</span></h2>
+        <h2>{head} <span className="fh-n num">{shown.length}</span><span className="fh-reg">{region ? region.full : "전국"}</span>
+          <button type="button" className="fh-switch" onClick={() => go("items")}>물건별로 보기 →</button></h2>
         {rel.length > 0 && (
           <div className="fh-rel surface surface--default" style={{ borderRadius: 16, padding: 12, display: "grid" }}>
             <span className="label-sm">연관 검색어</span>
@@ -295,7 +296,7 @@ function BestItems() {
       <div className="best-head">
         <h2 id="best-h">BEST 고수템</h2>
         <span>이번 주 가장 많이 공감받은 물건</span>
-        <button type="button" className="best-more" onClick={() => document.querySelector(".feed")?.scrollIntoView({ behavior: "smooth", block: "start" })}>더보기 →</button>
+        <button type="button" className="best-more" onClick={() => go("items")}>더보기 →</button>
       </div>
       <ol className="best-grid">
         {top.map(({ b, it }, i) => {
