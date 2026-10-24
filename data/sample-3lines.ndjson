@@ -1,0 +1,3 @@
+{"sid":"s1","n":"visit","t":1730000000000,"utm_source":"insta"}
+{"sid":"s1","n":"screen","route":"bag/b1","t":1730000005000,"utm_source":"insta"}
+{"sid":"s1","n":"channel_pick","bag":"b1","item":"item1","ch":"used","t":1730000010000}
