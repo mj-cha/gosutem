@@ -1150,3 +1150,11 @@ body {
 .swap-box .sw-k { font-weight: 800; color: var(--t-swap); display: flex; align-items: center; gap: 6px; }
 .swap-box .sw-row { display: grid; grid-template-columns: 5em 1fr; gap: 8px; line-height: 1.5; }
 .swap-box .sw-row b { font-weight: 700; color: var(--muted); }
+
+/* 유사템 칸에 어떤 물건인지 이름 표시 (10/25 MJ) */
+.pc-sim { display: block; margin-top: 2px; font-size: .68rem; font-weight: 600; color: var(--t-swap); line-height: 1.35; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.pick-sum { min-width: 0; }
+.pick-sum .pick-src { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pick-sum b, .pick-sum s, .pick-sum .pick-chip { flex: none; white-space: nowrap; }
+.pick-sum { flex-wrap: wrap; }
+.pick-sum .pick-src.full { order: 9; flex-basis: 100%; white-space: normal; color: var(--t-swap); font-weight: 600; }

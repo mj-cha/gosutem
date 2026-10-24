@@ -140,7 +140,7 @@ function ItemRow({ b, i, ctx }) {
     else if (sel == null) sum = <><span className="pick-chip skip">사지 마세요</span><span className="pick-why">고수가 안 사도 된대요</span></>;
     else {
       const pk = ctx.pickOf(i), pp = pk ? pk.p : 0;
-      sum = <><span className="pick-chip" data-ch={sel}>{PCH[sel]}</span><span className="pick-src">{pk ? pk.src : ""}</span><b className="num">{pp ? won(pp) : "무료"}</b>{sel !== "nw" && base > (pp || 0) ? <s className="num">{won(base)}</s> : null}</>;
+      sum = <><span className="pick-chip" data-ch={sel}>{PCH[sel]}</span><span className={"pick-src" + (sel === "sim" ? " full" : "")}>{pk ? (sel === "sim" ? pk.note : pk.src) : ""}</span><b className="num">{pp ? won(pp) : "무료"}</b>{sel !== "nw" && base > (pp || 0) ? <s className="num">{won(base)}</s> : null}</>;
     }
     return (
       <li className={cls(" compact" + (sel == null || sel === "skip" ? " off" : ""))} style={{ "--tc": T[it.t].c }} id={"it-" + i}>
@@ -185,7 +185,8 @@ function ItemRow({ b, i, ctx }) {
             else if (ch === "have") v = <span className="pc-v have">{it.sub ? "고수 추천 대신템 · " + it.sub : "비슷한 게 이미 있으면 안 사요"}</span>;
             else if (!c) v = <span className="pc-v none">없음</span>;
             else if (ch === "used" && !usedOK(it)) v = <span className="pc-v none warn">유통기한 미표시</span>;
-            else if (ch === "used" || ch === "sim") v = <span className="pc-v">{won(c.p)}<small>부터</small></span>;
+            else if (ch === "sim") { const sl = simList(it); v = <><span className="pc-v">{won(c.p)}<small>부터</small></span><span className="pc-sim">{sl[0].n}{sl.length > 1 ? " 외 " + (sl.length - 1) + "개" : ""}</span></>; }
+            else if (ch === "used") v = <span className="pc-v">{won(c.p)}<small>부터</small></span>;
             else if (ch === "nw") v = <span className="pc-v">{won(c.min)}{c.max > c.min ? "~" + c.max.toLocaleString("ko-KR") : ""}</span>;
             else v = <span className="pc-v">{c.p ? won(c.p) : "무료"}<s className="num">{won(base)}</s></span>;
             const tag = !ok || ch === "nw" || !c.p ? null : <em className="num">-{c.off}%</em>;
