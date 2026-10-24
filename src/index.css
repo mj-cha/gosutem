@@ -1233,3 +1233,9 @@ body {
 .lg-demo:hover { border-color: #F2F1EC; }
 .lg-back { justify-self: center; border: 0; background: none; color: var(--v-muted-dark); font: inherit; font-size: var(--fs-sm); cursor: pointer; padding: 6px; }
 .lg-back:hover { color: #F2F1EC; }
+
+/* 고수 데뷔: 제휴 링크 붙여넣기 예시 */
+.aff-demo { grid-column: 2; display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.aff-demo .aff-k { font-size: .72rem; color: var(--muted); flex: none; }
+.aff-demo input { flex: 1; min-width: 140px; font: inherit; font-size: .78rem; padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); }
+.aff-demo .src-tag { margin-left: 0; }

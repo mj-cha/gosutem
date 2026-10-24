@@ -93,7 +93,7 @@ function LabelLine({ it }) {
 }
 /* 출처 배지: 내돈내산은 흐리게, 협찬·제휴는 눈에 띄게 (숨기지 않고 표시) */
 function SrcBadge({ it }) {
-  const k = it.src || "own";
+  const k = it.aff ? "affiliate" : it.src || "own"; /* 제휴 링크를 붙인 물건은 자동으로 제휴 표시 */
   const tip = it.srcNote || SRC_DEF[k];
   return <Tip text={tip} className={"src-tag src-" + k}>{SRC[k]}</Tip>;
 }
@@ -644,7 +644,7 @@ export default function Bag({ b }) {
 
 /* 출처 요약: 협찬·제휴가 있으면 개수까지 먼저 밝힘 */
 function trustLine(b) {
-  const c = {}; b.items.forEach((it) => { const k = it.src || "own"; c[k] = (c[k] || 0) + 1; });
+  const c = {}; b.items.forEach((it) => { const k = it.aff ? "affiliate" : it.src || "own"; c[k] = (c[k] || 0) + 1; });
   const others = Object.keys(c).filter((k) => k !== "own");
   if (!others.length) return "출처 표시 · 전부 내돈내산이에요. 협찬·제휴가 있으면 물건마다 표시해요.";
   return "출처 표시 · " + others.map((k) => SRC[k] + " " + c[k] + "개").join(" · ") + " (물건에 표시) · 나머지 " + (c.own || 0) + "개는 내돈내산이에요.";

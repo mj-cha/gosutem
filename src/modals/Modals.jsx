@@ -4,7 +4,7 @@ import { Suggest } from "../screens/Home.jsx";
 import { Alert, Button, ListBox, Modal, Radio, RadioGroup, SearchField, Separator, Tabs, Tag, TagGroup } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { GosuAvatar, TBadge, Lines } from "../components/common.jsx";
-import { ART, BAGS, GU, PCATS, CATS, PCH, TORDER } from "../data/data.js";
+import { ART, BAGS, GU, PCATS, CATS, PCH, SRC, TORDER } from "../data/data.js";
 import {
   allRegions, catCount, filterBags, normQ, relatedTerms, isPouchPath, listingsOf, minNew, nearestGu, optionsOf, pcCount, pGroups, prodGroups, won,
 } from "../lib/logic.js";
@@ -52,6 +52,20 @@ function Install() {
     </Shell>
   );
 }
+/* 고수 데뷔 4단계 '링크, 선택': 제휴 링크를 붙이면 그 자리에서 '제휴 링크' 배지로 바뀌는 예시
+   (다른 세션이 미리보기에만 넣은 것을 소스로 옮김, 10/25) */
+function AffDemo() {
+  const [v, setV] = useState("");
+  const aff = /^\s*(https?:\/\/|www\.)\S+\.\S+/i.test(v) || /(coupang\.com|link\.coupang|naver\.me|smartstore|11st|ali\S*\.com)/i.test(v);
+  const k = aff ? "affiliate" : "own";
+  return (
+    <label className="aff-demo">
+      <span className="aff-k">예) 무보존제 인공눈물</span>
+      <input type="url" inputMode="url" autoComplete="off" placeholder="제휴 링크 붙여넣기 (선택)" value={v} onChange={(e) => setV(e.target.value)} aria-label="제휴 링크 붙여넣기" />
+      <span className={"src-tag src-" + k}>{SRC[k]}</span>
+    </label>
+  );
+}
 function Supply() {
   return (
     <Shell title="10분 만에 고수 데뷔" icon="spark" desc="글은 AI가 쓰고, 고수님은 말만 해 주세요.">
@@ -59,6 +73,7 @@ function Supply() {
         <li><b>찰칵, 1장 · 1분</b><span>가방 속 물건을 펼쳐 놓고 폰으로 한 장. 물건 이름은 AI가 사진에서 찾아요.</span></li>
         <li><b>수다, 5분</b><span>"이건 꼭 사, 이건 사지 마"를 말로만. 알짜템·비추천템·후회한 것, 질문 3개에 답하면 돼요.</span></li>
         <li><b>쓱, 확인 · 3분</b><span>AI가 라벨과 한 줄 팁까지 채운 초안을 보여 드려요. 틀린 것만 고치고 공개할지 정해요.</span></li>
+        <li><b>링크, 선택 · 10초</b><span>제휴 링크가 있으면 물건에 붙여만 주세요. 붙인 물건엔 '제휴 링크' 배지가 바로 달려요. 안 붙이면 내돈내산으로 표시돼요.</span><AffDemo /></li>
       </ol>
       <p className="join-plus"><Icon id="check" className="icon-xs" />안 쓰는 물건은 그 자리에서 중고·나눔으로 올려 드려요.</p>
       <Note status="accent">시범 화면이라 신청서는 아직 연결되지 않았어요.</Note>
