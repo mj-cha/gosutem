@@ -1053,3 +1053,12 @@ body {
 @media (min-width: 768px) {
   .detail .dg { width: 100vw; margin-left: calc(50% - 50vw); margin-right: 0; padding-inline: max(32px, calc((100vw - 1180px) / 2 + 20px)); padding-block: 48px 56px; }
 }
+
+/* 가방 상세 고수 카드: 컬렉션에 저장 · 팔로우 (인스타·프로필 버튼 대체, 10/25 MJ) */
+.gc-btn { display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 10px; border: 1px solid var(--v-ink); background: transparent; color: var(--v-ink); font: inherit; font-size: .72rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background-color 160ms ease, color 160ms ease; }
+.gc-btn.solid { background: var(--v-ink); color: #FFFFFF; }
+.gc-btn[aria-pressed="true"] { background: var(--v-lime); border-color: var(--v-lime); color: var(--v-ink); }
+.gc-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.gc-btn .icon { width: 13px; height: 13px; }
+@media (max-width: 400px) { .gc-long { display: none; } .gc-btn { padding: 0 8px; } }
+.d-card .who-btn { min-width: 0; }

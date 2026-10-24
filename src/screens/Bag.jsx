@@ -416,7 +416,7 @@ function SumCard({ n, done, need, mine, all, onCart, onReset }) {
 /* ---------- 상세 화면 ---------- */
 export default function Bag({ b }) {
   const app = useApp();
-  const { region, picks: allPicks, setPicks, emp: allEmp, setEmp, openModal, toast, setChosen } = app;
+  const { region, picks: allPicks, setPicks, emp: allEmp, setEmp, openModal, toast, setChosen, scrap, setScrap, follow, setFollow } = app;
   const picks = allPicks[b.id], empOn = allEmp[b.id];
   const scN = useScraps(b);
   const [tab, setTab] = useState("all");
@@ -517,8 +517,13 @@ export default function Bag({ b }) {
             <div className="flex items-center justify-between gap-2">
               <GosuPopover b={b} />
               <div className="flex flex-none items-center gap-1">
-                <Button size="sm" variant="outline" className="h-7 px-2 text-xs" aria-label="고수 인스타그램 (연동 예정)" onPress={() => toast("고수의 인스타 계정이 연결될 자리예요. (예시)")}><Icon id="insta" className="icon-xs" />인스타</Button>
-                <Button size="sm" variant="outline" className="h-7 px-2 text-xs" onPress={() => openModal("profile", { b })}><Icon id="user" className="icon-xs" />프로필</Button>
+                {/* 인스타·프로필 대신 '컬렉션에 저장'·'팔로우' (10/25 MJ) — 프로필은 이름을 누르면 열림 */}
+                <button type="button" className="gc-btn" aria-label="컬렉션에 저장" aria-pressed={!!scrap[b.id]} onClick={() => { const v = !scrap[b.id]; setScrap((x) => ({ ...x, [b.id]: v })); toast(v ? "컬렉션에 저장했어요. 저장 탭에 모여요." : "컬렉션에서 뺐어요."); }}>
+                  <Icon id="bookmark" className="icon-xs" />{scrap[b.id] ? "저장됨" : <><span className="gc-long">컬렉션에 </span>저장</>}
+                </button>
+                <button type="button" className="gc-btn solid" aria-pressed={!!follow[b.id]} onClick={() => { const v = !follow[b.id]; setFollow((x) => ({ ...x, [b.id]: v })); toast(v ? b.name + "님을 팔로우했어요. 새 가방이 올라오면 알려 드려요. (시범)" : "팔로우를 취소했어요."); }}>
+                  {follow[b.id] ? "팔로잉" : "팔로우"}
+                </button>
               </div>
             </div>
             <Separator />
