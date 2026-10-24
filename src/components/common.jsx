@@ -68,6 +68,13 @@ export function Photo({ b }) {
   );
 }
 
+/* 문장이 끝나면 줄바꿈 (10/25 MJ): ". ", "! ", "? " 뒤에서 나눠 <br/> 로 이어 붙임 */
+export function Lines({ t }) {
+  if (!t) return null;
+  const parts = String(t).split(/(?<=[.!?])\s+(?=\S)/);
+  return parts.map((x, k) => <span key={k}>{k > 0 && <br />}{x}</span>);
+}
+
 /* HeroUI Pagination (sm) */
 export function Pager({ page, total, onChange, label }) {
   if (total <= 1) return null;
@@ -133,7 +140,7 @@ export function Promo() {
               <div className="sl-txt">
                 <span className="sl-tag">{p.tag}</span>
                 <b className="sl-en" lang="en">{lines.map((l, k) => <span key={k} className={k === lines.length - 1 ? "hi" : undefined}>{l}</span>)}</b>
-                <span className="sl-ko">{p.ko}</span>
+                <span className="sl-ko"><Lines t={p.ko} /></span>
                 {p.act && <button type="button" className="sl-cta" onClick={(e) => { e.stopPropagation(); openModal("supply"); }}>고수로 신청하기 ↗</button>}
               </div>
             </div>

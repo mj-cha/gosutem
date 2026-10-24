@@ -3,7 +3,7 @@ import { useMemo, useRef, useState } from "react";
 import { Suggest } from "../screens/Home.jsx";
 import { Alert, Button, ListBox, Modal, Radio, RadioGroup, SearchField, Separator, Tabs, Tag, TagGroup } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
-import { GosuAvatar, TBadge } from "../components/common.jsx";
+import { GosuAvatar, TBadge, Lines } from "../components/common.jsx";
 import { ART, BAGS, GU, PCATS, CATS, PCH, TORDER } from "../data/data.js";
 import {
   allRegions, catCount, filterBags, normQ, relatedTerms, isPouchPath, listingsOf, minNew, nearestGu, optionsOf, pcCount, pGroups, prodGroups, won,
@@ -154,11 +154,11 @@ function Listing({ b, i, ch, k, region, finalize }) {
       <div className="who"><GosuAvatar av={sl.av} color={sl.c} size="md" /><span className="who-t"><span className="name">{sl.n} 고수 <span className="l-badge">고수템</span></span><span className="meta">@{sl.h} · 거래 {sl.deals}회 · {x.place}</span></span></div>
       <div className="ld-title"><span className="ld-cond">{x.cond}</span>{it.cons && ch === "used" && it.used.exp ? <span className="ld-cond ok">유통기한 확인</span> : null}<h4>{it.n}</h4></div>
       <div className="ld-price">{x.p ? <><em className="num">-{off}%</em><b className="num">{won(x.p)}</b></> : <b>무료 {ch === "swap" ? "교환" : "나눔"}</b>}<s className="num">{won(base)}</s></div>
-      <section className="ld-sec"><h5>어떻게 이 가격이죠?</h5><p>{why}</p></section>
+      <section className="ld-sec"><h5>어떻게 이 가격이죠?</h5><p><Lines t={why} /></p></section>
       {it.cons ? <section className="ld-sec"><h5>사용기한</h5><p>{it.used.exp && ch !== "share" ? <>유통기한 <b>{it.used.exp}</b>까지 · 고수가 직접 확인했어요</> : "개봉일과 남은 양은 채팅으로 꼭 물어보세요"}</p></section> : null}
       <section className="ld-sec"><h5>가격 비교</h5><div className="ld-cmp"><span>새상품 최저가</span><b className="num">{won(base)}</b></div>{others.length > 0 && <div className="ld-cmp"><span>다른 고수 매물 {others.length}개</span><b className="num">{won(Math.min(...others.map((y) => y.p)))}부터</b></div>}</section>
       <section className="ld-sec"><h5>거래 방식</h5><p>{x.deal === "택배" ? "택배 거래 · 배송비 ₩3,500 (예시) · 고수템 안전결제" : x.deal === "교환" ? "만나서 교환 또는 서로 택배" : "직거래 · " + x.place + " · 만나서 확인하고 거래"}</p></section>
-      <section className="ld-sec"><h5>물건 설명</h5><p>{it.tip}</p>{it.note && <p className="ld-warn">{it.note}</p>}</section>
+      <section className="ld-sec"><h5>물건 설명</h5><p><Lines t={it.tip} /></p>{it.note && <p className="ld-warn">{it.note}</p>}</section>
       <Note status="warning" title="거래 전에 확인해 주세요">고수 간 거래는 판매 고수에게 책임이 있어요. 고수템은 거래 장소를 이어 주고, 의약품·개봉한 입·눈 화장품은 거래를 막아요.</Note>
     </Shell>
   );

@@ -3,6 +3,7 @@
    시범 화면: 실제 가입은 되지 않고, 입력한 이메일·비밀번호는 저장하지 않음. 이름·가입 경로만 이 기기에 남김 */
 import { useState } from "react";
 import { Icon } from "../components/Icon.jsx";
+import { Lines } from "../components/common.jsx";
 import { useApp } from "../lib/store.jsx";
 
 export default function Login() {
@@ -47,7 +48,7 @@ export default function Login() {
             </div>
 
             <h2 className="lg-title">{join ? "고수템에 들어오세요" : "다시 오셨네요, 고수님"}</h2>
-            <p className="lg-sub">{why ? why + " 로그인하면 바로 이어서 할게요." : join ? "가입하면 가방 저장·고수 팔로우·내 가방을 쓸 수 있어요." : "저장한 가방과 팔로우한 고수를 이어서 볼게요."}</p>
+            <p className="lg-sub">{why ? <Lines t={why + " 로그인하면 바로 이어서 할게요."} /> : join ? "가입하면 가방 저장·고수 팔로우·내 가방을 쓸 수 있어요." : "저장한 가방과 팔로우한 고수를 이어서 볼게요."}</p>
 
             <form className="lg-form" noValidate onSubmit={submit}>
               {join && <label className="lg-field"><span>이름</span><input autoComplete="name" placeholder="홍길동" value={name} onChange={(e) => setName(e.target.value)} /></label>}

@@ -5,7 +5,7 @@ import {
   Surface, Tabs, Tag, TagGroup, TextArea, ToggleButton, Tooltip,
 } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
-import { DeckStrip, GosuAvatar, Pager, Photo, Who } from "../components/common.jsx";
+import { DeckStrip, GosuAvatar, Lines, Pager, Photo, Who } from "../components/common.jsx";
 import { ART, CH, CHORDER, PCH, SRC, SRC_DEF, T, TORDER } from "../data/data.js";
 import {
   ago, budgetPlan, chPrice, costOf, defaultPlan, kfmt, listingsOf, maxBudget, minNew, mk, nwOffers, optionsOf, optPrice, simList, usedOK, won,
@@ -166,9 +166,9 @@ function ItemRow({ b, i, ctx }) {
         <svg aria-hidden="true"><use href="#i-heart" /></svg>
       </ToggleButton>
       <div className="body">
-        <p className="tip">{it.tip}</p>
+        <p className="tip"><Lines t={it.tip} /></p>
         {it.sub && <p className="sub-for">대신 · {it.sub}</p>}
-        {it.note && <p className="sub-for">{it.note}</p>}
+        {it.note && <p className="sub-for"><Lines t={it.note} /></p>}
         {it.t === "swap" && (it.swapHave || it.swapWant) && (
           <div className="swap-box">
             <span className="sw-k">스왑 조건 <span className="ex-badge">예시</span></span>
@@ -527,7 +527,7 @@ export default function Bag({ b }) {
           <div className="d-info pad">
             <p className="o-kick">{b.deck ? "GOSU SELECTED · 인기 파우치 덱" : "GOSU SELECTED BAG"}</p>
             <TitleSplit t={b.title} as="h1" className="o-title" />
-            {b.sub && <p className="o-desc">{b.sub}</p>}
+            {b.sub && <p className="o-desc"><Lines t={b.sub} /></p>}
             <dl className="o-meta">
               <div><dt>GOSU</dt><dd><button type="button" className="o-gosu" onClick={() => openModal("profile", { b })}>{b.name}</button>
                 <span className="o-insta"><Icon id="insta" className="icon-xs" />@{b.handle || b.id}</span></dd></div>

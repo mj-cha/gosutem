@@ -2,7 +2,7 @@
 import { useMemo, useRef } from "react";
 import { Accordion, Badge, Button, Separator, Tabs, Tag, TagGroup } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
-import { DeckStrip, Pager, Photo, Promo, TBadge, Who } from "../components/common.jsx";
+import { DeckStrip, Lines, Pager, Photo, Promo, TBadge, Who } from "../components/common.jsx";
 import { ART, BAGS, POP_FALLBACK, T, TORDER } from "../data/data.js";
 import { catName, costOf, countT, filterBags, minNew, pcCount, pGroups, relatedTerms, won } from "../lib/logic.js";
 import { regionLabel, useApp } from "../lib/store.jsx";
@@ -121,7 +121,7 @@ function BagCard({ b }) {
         <Who b={b} />
         {b.deck && <p className="hook">{b.hook}</p>}
         <h3>{b.title}</h3>
-        {b.deck ? <p className="deck-sub">{b.sub}</p> : <p className="views num">조회수 {b.views} · 스크랩 {(b.scraps + (scrap[b.id] ? 1 : 0)).toLocaleString("ko-KR")}회</p>}
+        {b.deck ? <p className="deck-sub"><Lines t={b.sub} /></p> : <p className="views num">조회수 {b.views} · 스크랩 {(b.scraps + (scrap[b.id] ? 1 : 0)).toLocaleString("ko-KR")}회</p>}
         <Separator />
         <div className="tbadges">{TORDER.map((k) => <TBadge key={k} k={k} n={c[k]} />)}</div>
         <p className="save-line"><span>고수 추천대로 담으면</span><em className="num">-{Math.round((1 - combo / all) * 100)}%</em><span className="num">{won(combo)}</span><s className="num" aria-label={"전부 새로 사면 " + won(all)}>{won(all)}</s></p>
@@ -206,7 +206,7 @@ function Pinned() {
           </Accordion.Heading>
           <Accordion.Panel>
             <Accordion.Body className="join">
-              <p className="join-lead">거창한 리뷰는 필요 없어요. 매일 들고 다니는 가방이면 충분해요. 글은 AI가 쓰고, 고수님은 말만 해 주세요.</p>
+              <p className="join-lead"><Lines t="거창한 리뷰는 필요 없어요. 매일 들고 다니는 가방이면 충분해요. 글은 AI가 쓰고, 고수님은 말만 해 주세요." /></p>
               <ol className="join-steps">
                 {JOIN.map(([t, d], k) => <li key={k}><b>{t}</b><span>{d}</span></li>)}
               </ol>
@@ -220,7 +220,7 @@ function Pinned() {
             <Accordion.Heading>
               <Accordion.Trigger><span><span className="faq-q">Q</span>{q}</span><Accordion.Indicator /></Accordion.Trigger>
             </Accordion.Heading>
-            <Accordion.Panel><Accordion.Body>{a}</Accordion.Body></Accordion.Panel>
+            <Accordion.Panel><Accordion.Body><Lines t={a} /></Accordion.Body></Accordion.Panel>
           </Accordion.Item>
         ))}
       </Accordion>
