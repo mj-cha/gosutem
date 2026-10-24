@@ -335,7 +335,7 @@ export function TitleSplit({ t, as: Tag = "h3", className = "ed-name" }) {
   if (k < 0) return <Tag className={className + " tsplit"}><span className="ts-main">{t}</span></Tag>;
   return <Tag className={className + " tsplit"}><span className="ts-hook">{t.slice(0, k + 1)}</span><span className="ts-main">{t.slice(k + 2)}</span></Tag>;
 }
-const GB_TONES = ["#E9E8E2", "#E9E8E2", "#333FDF"];
+const GB_TONES = ["#E9E8E2", "#D9D7CF", "#E9E8E2"]; /* 오프화이트 톤만 (코발트 판은 촌스럽다는 피드백, 10/25) */
 function GoBags() {
   const { go, nav, region, scrap, setScrap, openModal, commitSearch } = useApp();
   const { shown } = useMemo(() => filterBags(nav), [nav]);

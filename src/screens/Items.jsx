@@ -8,7 +8,7 @@ import { BestItems } from "./Home.jsx";
 
 const ALL = BAGS.flatMap((b) => b.items.map((it, i) => ({ b, it, i, key: b.id + ":" + i })))
   .sort((x, y) => (y.it.emp || 0) - (x.it.emp || 0));
-const TONES = ["#E9E8E2", "#E9E8E2", "#333FDF"]; /* 사진 자리 바탕: 오프화이트 2 : 코발트 1 */
+const TONES = ["#E9E8E2", "#D9D7CF", "#E9E8E2"]; /* 오프화이트 톤만 (10/25) */
 
 function status(it) {
   if (it.t === "no") return { txt: "비추천 · 사지 마세요", dark: true };

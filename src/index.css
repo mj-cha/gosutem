@@ -1166,3 +1166,9 @@ body {
 .lst .nw-note { white-space: normal; overflow: visible; text-overflow: clip; }
 .lst-h .lst-sort { flex-basis: 100%; order: 3; }
 .lst-h { flex-wrap: wrap; }
+
+/* 어두운 화면 라벨 배지: 알록달록 대신 무채색 + 라벨색 점 하나 (컬러 촌스럽다는 피드백, 10/25 MJ) */
+.is-dark .tb, .gb-foot .tb { color: #D6D5CF; background: transparent; border: 1px solid var(--v-line-dark); display: inline-flex; align-items: center; gap: 5px; }
+.is-dark .tb::before, .gb-foot .tb::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: color-mix(in srgb, var(--tc) 70%, #FFFFFF); flex: none; }
+.gb-save em { color: var(--v-lime); }
+.gb-react > span { background: rgba(17, 17, 15, .72); }
