@@ -1124,3 +1124,23 @@ body {
   .detail .o-title .ts-main { font-size: clamp(1.6rem, 2.6vw, 2.2rem); }
 }
 @media (min-width: 768px) and (min-height: 900px) { .detail .d-hero { position: sticky; top: 56px; } }
+
+/* 가방 상세 오른쪽(물건 목록): 왼쪽 검정과 대비되는 밝은 오프화이트 판 + 밝은 화면 글씨색 (10/25 MJ) */
+.detail .d-right { background: var(--v-paper); color: var(--v-ink);
+  --background: var(--v-paper); --ground: var(--v-paper); --foreground: var(--v-ink); --ink: var(--v-ink); --surface: #FFFFFF; --surface-foreground: var(--v-ink);
+  --surface-2: #F4F3EF; --surface-3: #EDECE7; --surface-secondary: #F4F3EF; --surface-tertiary: #EDECE7;
+  --muted: #5E5E58; --border: #D9D7CF; --separator: #D9D7CF; --line: #D9D7CF;
+  --default: #F1F0EB; --default-foreground: #3A3A36; --accent: var(--v-cobalt); --accent-foreground: #FFFFFF; --focus: var(--v-cobalt);
+  --segment: #FFFFFF; --segment-foreground: var(--v-ink); --field-background: #FFFFFF; --field-foreground: var(--v-ink); --t-used: #17744B; }
+.detail .d-right .themes { background: #FFFFFF; }
+.detail .d-right .filters { background: color-mix(in srgb, var(--v-paper) 94%, transparent); }
+.detail .d-right .tb { color: var(--tc); background: color-mix(in srgb, var(--tc) 12%, #FFFFFF); border-color: color-mix(in srgb, var(--tc) 35%, transparent); }
+.detail .d-right .section { padding-bottom: 24px; }
+@media (min-width: 768px) {
+  .detail .d-grid { gap: 0; }
+  .detail .d-right { margin-top: 16px; padding-bottom: 24px; }
+  .detail .d-right .d-items { padding-left: 28px; padding-right: 28px; }
+  .detail .d-aside { padding-left: 28px; padding-right: 28px; }
+}
+.detail .sumcard { --muted: var(--v-muted-dark); }
+.detail .d-right .themes { border-radius: 0; }
