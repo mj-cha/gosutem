@@ -966,3 +966,14 @@ body {
   .pin-wrap { width: 100vw; margin-left: calc(50% - 50vw); padding-inline: max(32px, calc((100vw - 1180px) / 2 + 32px)); padding-block: 56px; }
 }
 .gb-react .icon { width: 13px; height: 13px; }
+
+/* 홈 배너 = 첫 화면: 스크롤 전에는 상단 바 아래부터 화면 맨 아래까지 꽉 참 (10/25 MJ) */
+.view > .promo .slide { aspect-ratio: auto; height: calc(100svh - var(--stick) - var(--tabh, 46px)); min-height: 420px; }
+.view > .promo .sl-txt { padding-bottom: 48px; }
+.view > .promo .sl-en { font-size: clamp(2.6rem, 13vw, 3.6rem); }
+@media (min-width: 768px) {
+  .view > .promo .slide { height: calc(100svh - 56px); min-height: 520px; }
+  .view > .promo .sl-txt { padding-bottom: 88px; }
+  .view > .promo .sl-en { font-size: clamp(4rem, 8vw, 7.5rem); }
+  .view > .promo .promo-dots { bottom: 40px; }
+}
