@@ -1062,3 +1062,52 @@ body {
 .gc-btn .icon { width: 13px; height: 13px; }
 @media (max-width: 400px) { .gc-long { display: none; } .gc-btn { padding: 0 8px; } }
 .d-card .who-btn { min-width: 0; }
+
+/* ---------- 가방 상세 머리: Orbit 양식 (10/25 MJ) ---------- */
+.d-hero { display: grid; gap: 0; padding-top: 16px; }
+.d-info { display: grid; gap: 16px; align-content: center; padding-top: 28px; color: #F2F1EC; }
+.o-kick { margin: 0; font-size: .68rem; font-weight: 800; letter-spacing: .16em; color: var(--v-lime); }
+.o-title { margin: 0; }
+.o-title .ts-main { font-size: clamp(1.6rem, 6.6vw, 2.6rem); font-weight: 900; line-height: 1.18; letter-spacing: -.03em; color: #F2F1EC; }
+.o-title .ts-hook { font-size: var(--fs-sm); color: var(--v-muted-dark); margin-bottom: 4px; }
+.o-desc { margin: 0; font-size: var(--fs-sm); line-height: 1.75; color: var(--v-muted-dark); }
+.o-meta { margin: 4px 0 0; padding-top: 20px; border-top: 1px solid var(--v-line-dark); display: flex; flex-wrap: wrap; gap: 14px 32px; }
+.o-meta dt { font-size: .7rem; letter-spacing: .04em; color: var(--v-muted-dark); margin-bottom: 4px; }
+.o-meta dd { margin: 0; font-size: var(--fs-sm); font-weight: 700; color: #F2F1EC; display: grid; gap: 2px; }
+.o-gosu { justify-self: start; border: 0; background: none; padding: 0; font: inherit; color: inherit; cursor: pointer; text-underline-offset: 3px; }
+.o-gosu:hover { text-decoration: underline; }
+.o-insta { display: inline-flex; align-items: center; gap: 3px; font-size: .7rem; font-weight: 500; color: var(--v-muted-dark); }
+.o-insta .icon { width: 11px; height: 11px; }
+.o-acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.o-btn { height: 48px; padding: 0 22px; border-radius: 999px; font: inherit; font-size: .88rem; font-weight: 800; cursor: pointer; white-space: nowrap; transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms var(--ease); }
+.o-btn:active { transform: scale(.97); }
+.o-btn:focus-visible { outline: 2px solid var(--v-lime); outline-offset: 3px; }
+.o-btn.lime { background: var(--v-lime); color: var(--v-ink); border: 1px solid var(--v-lime); }
+.o-btn.lime[aria-pressed="true"] { background: #F2F1EC; border-color: #F2F1EC; }
+.o-btn.line { background: transparent; color: #F2F1EC; border: 1px solid var(--v-line-dark); }
+.o-btn.line:hover { border-color: #F2F1EC; }
+.o-btn.line[aria-pressed="true"] { border-color: var(--v-lime); color: var(--v-lime); }
+.o-stat { margin: -4px 0 0; font-size: .76rem; font-weight: 600; color: var(--v-lime); }
+.o-trust { margin: 0; display: flex; align-items: flex-start; gap: 6px; font-size: .72rem; line-height: 1.6; color: var(--v-muted-dark); }
+.o-trust .icon { margin-top: 3px; flex: none; }
+.d-aside { display: none; }
+.detail .sumcard { background: #1A1A18; border: 1px solid var(--v-line-dark); color: #F2F1EC; box-shadow: none; }
+.detail .sumcard .sc-cta { background: var(--v-lime); color: var(--v-ink); border-radius: 999px; }
+.detail .sumcard .sc-reset { color: #F2F1EC; }
+.detail .sumcard .sc-note b { color: var(--v-lime); }
+@media (min-width: 768px) {
+  .d-hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; padding-top: 40px; padding-bottom: 32px; border-bottom: 1px solid var(--v-line-dark); }
+  .d-photo { padding-right: 20px; }
+  .d-info { padding-top: 0; padding-left: 20px; }
+  .d-grid { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); align-items: start; }
+  .d-items { padding-right: 16px; }
+  .d-aside { display: block; position: sticky; top: 72px; padding-top: 32px; padding-left: 16px; }
+  .d-aside .sumcard { position: static; display: grid; margin-top: 0; }
+}
+.app.is-dark { color: #F2F1EC; }
+.is-dark .themes { background: #1A1A18; }
+.is-dark .deck-strip { background: #1A1A18; color: var(--v-muted-dark); border-color: var(--v-line-dark); }
+.is-dark .deck-strip .deck-stat b { color: #F2F1EC; }
+.is-dark .deck-wrap { border-color: var(--v-line-dark); }
+.is-dark .deck-badge { background: var(--v-lime); color: var(--v-ink); }
+.o-trust .ex-badge { white-space: nowrap; }

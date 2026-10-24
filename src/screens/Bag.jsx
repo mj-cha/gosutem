@@ -419,6 +419,7 @@ export default function Bag({ b }) {
   const { region, picks: allPicks, setPicks, emp: allEmp, setEmp, openModal, toast, setChosen, scrap, setScrap, follow, setFollow } = app;
   const picks = allPicks[b.id], empOn = allEmp[b.id];
   const scN = useScraps(b);
+  const fol = (b.followers || Math.round((b.likes || 100) * 1.7)) + (follow[b.id] ? 1 : 0);
   const [tab, setTab] = useState("all");
   const [ch, setCh] = useState(null);
   const [theme, setTheme] = useState("all");
@@ -507,36 +508,35 @@ export default function Bag({ b }) {
   return (
     <>
       <div className="view detail">
-        <div className="d-grid">
-        <div className="d-left">
-        <div className="pad" style={{ paddingTop: 16 }}>
-          <ViewTabs b={b} />
-        </div>
-        <div className="d-head pad">
-          <Surface variant="default" className="d-card">
-            <div className="flex items-center justify-between gap-2">
-              <GosuPopover b={b} />
-              <div className="flex flex-none items-center gap-1">
-                {/* 인스타·프로필 대신 '컬렉션에 저장'·'팔로우' (10/25 MJ) — 프로필은 이름을 누르면 열림 */}
-                <button type="button" className="gc-btn" aria-label="컬렉션에 저장" aria-pressed={!!scrap[b.id]} onClick={() => { const v = !scrap[b.id]; setScrap((x) => ({ ...x, [b.id]: v })); toast(v ? "컬렉션에 저장했어요. 저장 탭에 모여요." : "컬렉션에서 뺐어요."); }}>
-                  <Icon id="bookmark" className="icon-xs" />{scrap[b.id] ? "저장됨" : <><span className="gc-long">컬렉션에 </span>저장</>}
-                </button>
-                <button type="button" className="gc-btn solid" aria-pressed={!!follow[b.id]} onClick={() => { const v = !follow[b.id]; setFollow((x) => ({ ...x, [b.id]: v })); toast(v ? b.name + "님을 팔로우했어요. 새 가방이 올라오면 알려 드려요. (시범)" : "팔로우를 취소했어요."); }}>
-                  {follow[b.id] ? "팔로잉" : "팔로우"}
-                </button>
-              </div>
+        {/* 머리: 벤치마킹 Orbit 양식 — 사진(왼쪽) · 정보(오른쪽), 폰은 위아래 (10/25 MJ) */}
+        <div className="d-hero">
+          <div className="d-photo pad"><ViewTabs b={b} /></div>
+          <div className="d-info pad">
+            <p className="o-kick">{b.deck ? "GOSU SELECTED · 인기 파우치 덱" : "GOSU SELECTED BAG"}</p>
+            <TitleSplit t={b.title} as="h1" className="o-title" />
+            {b.sub && <p className="o-desc">{b.sub}</p>}
+            <dl className="o-meta">
+              <div><dt>GOSU</dt><dd><button type="button" className="o-gosu" onClick={() => openModal("profile", { b })}>{b.name}</button>
+                <span className="o-insta"><Icon id="insta" className="icon-xs" />@{b.handle || b.id}</span></dd></div>
+              <div><dt>SITUATION</dt><dd>{b.meta}</dd></div>
+              <div><dt>ITEMS</dt><dd className="num">{b.items.length}개</dd></div>
+              <div><dt>VIEWS</dt><dd className="num">{b.views}</dd></div>
+            </dl>
+            <div className="o-acts">
+              <button type="button" className="o-btn lime" aria-pressed={!!scrap[b.id]} onClick={() => { const v = !scrap[b.id]; setScrap((x) => ({ ...x, [b.id]: v })); toast(v ? "컬렉션에 저장했어요. 저장 탭에 모여요." : "컬렉션에서 뺐어요."); }}>
+                {scrap[b.id] ? "저장됨 ✓" : "컬렉션에 저장 +"}
+              </button>
+              <button type="button" className="o-btn line" aria-pressed={!!follow[b.id]} onClick={() => { const v = !follow[b.id]; setFollow((x) => ({ ...x, [b.id]: v })); toast(v ? b.name + "님을 팔로우했어요. 새 가방이 올라오면 알려 드려요. (시범)" : "팔로우를 취소했어요."); }}>
+                {follow[b.id] ? "팔로잉 ✓" : "고수 팔로우 +"}
+              </button>
             </div>
-            <Separator />
-            {b.deck ? <p className="hook">{b.hook}</p> : <p className="views num">조회수 {b.views} · 스크랩 {scN}회</p>}
-            <TitleSplit t={b.title} as="h1" className="" />
-            {b.sub && <p className="deck-sub">{b.sub}</p>}
-            <Surface variant="secondary" className="trust"><Icon id="shield" /><span>{trustLine(b)} <span className="ex-badge">예시</span></span></Surface>
-          </Surface>
-        </div>
+            <p className="o-stat num">♡ {scN}명이 저장 · {b.name} 팔로워 {fol.toLocaleString("ko-KR")}명</p>
+            <p className="o-trust"><Icon id="shield" className="icon-xs" />{trustLine(b)} <span className="ex-badge">예시</span></p>
+          </div>
         </div>
 
-        <div className="d-right">
-        <section className="section pad" aria-labelledby="h-items">
+        <div className="d-grid">
+        <section className="section pad d-items" aria-labelledby="h-items">
           <h2 id="h-items">물건마다 담을지 골라 보세요</h2>
           <p className="sub">{b.howto || "하트를 누르면 담겨요. 라벨을 누르면 새상품·중고·유사템·나눔 중 어디서 구할 수 있는지 볼 수 있어요."}</p>
           {b.themes && (
@@ -557,9 +557,8 @@ export default function Bag({ b }) {
             {idx.length ? <ul className="items">{idx.map((i) => <ItemRow key={i} b={b} i={i} ctx={ctx} />)}</ul>
               : <div className="empty"><p>{tab === "all" ? "이 테마에는 물건이 없어요." : "이 가방에는 " + T[tab].name + "이 없어요."}</p></div>}
           </div>
-          <SumCard n={n} done={done} need={need} mine={mine} all={allP} onCart={onCart} onReset={onReset} />
         </section>
-        </div>
+        <aside className="d-aside pad" aria-label="내 구성 합계"><SumCard n={n} done={done} need={need} mine={mine} all={allP} onCart={onCart} onReset={onReset} /></aside>
         </div>
 
         <Surface variant="default" className="dg">
