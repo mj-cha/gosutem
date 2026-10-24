@@ -11,6 +11,7 @@ import {
   ago, budgetPlan, chPrice, costOf, defaultPlan, kfmt, listingsOf, maxBudget, minNew, mk, optionsOf, optPrice, simList, usedOK, won,
 } from "../lib/logic.js";
 import { regionLabel, useApp } from "../lib/store.jsx";
+import { TitleSplit } from "./Home.jsx";
 import { TAGS, talkAdd, talkDelete, talkItems, useHub, useProfiles } from "../lib/claude.js";
 
 const reduceMotion = () => typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -521,7 +522,7 @@ export default function Bag({ b }) {
             </div>
             <Separator />
             {b.deck ? <p className="hook">{b.hook}</p> : <p className="views num">조회수 {b.views} · 스크랩 {b.scraps.toLocaleString("ko-KR")}회</p>}
-            <h1>{b.title}</h1>
+            <TitleSplit t={b.title} as="h1" className="" />
             {b.sub && <p className="deck-sub">{b.sub}</p>}
             <Surface variant="secondary" className="trust"><Icon id="shield" /><span>{trustLine(b)} <span className="ex-badge">예시</span></span></Surface>
           </Surface>

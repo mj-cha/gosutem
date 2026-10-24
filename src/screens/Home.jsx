@@ -329,6 +329,12 @@ export function BestItems() {
 
 /* 홈 '고수의 가방' (10/25): THE EDIT 양식 — 어두운 바탕, 가방마다 큰 사진 카드, PC 2열 지그재그
    카드에는 예전처럼 좋아요·싫어요·조회·스크랩, 라벨 개수, 고수 추천대로 담으면 얼마인지 보여 줌 */
+/* 제목을 첫 쉼표에서 나눔: 앞(후킹 멘트)은 작게, 뒤(무슨 가방인지)는 다음 줄에 크게 (10/25 MJ) */
+export function TitleSplit({ t, as: Tag = "h3", className = "ed-name" }) {
+  const k = t.indexOf(", ");
+  if (k < 0) return <Tag className={className + " tsplit"}><span className="ts-main">{t}</span></Tag>;
+  return <Tag className={className + " tsplit"}><span className="ts-hook">{t.slice(0, k + 1)}</span><span className="ts-main">{t.slice(k + 2)}</span></Tag>;
+}
 const GB_TONES = ["#E9E8E2", "#E9E8E2", "#333FDF"];
 function GoBags() {
   const { go, nav, region, scrap, setScrap, openModal, commitSearch } = useApp();
@@ -363,7 +369,7 @@ function GoBags() {
                 <div className="ed-cap">
                   <div className="gb-cap">
                     <p className="ed-meta">{b.name} / {b.meta}</p>
-                    <h3 className="ed-name">{b.title}</h3>
+                    <TitleSplit t={b.title} />
                     <p className="gb-stats num"><span><Icon id="eye" className="icon-xs" />조회 {b.views}</span><span><Icon id="bookmark" className="icon-xs" />스크랩 {b.scraps.toLocaleString("ko-KR")}</span></p>
                   </div>
                   <button type="button" className="ed-heart" aria-pressed={on} aria-label={b.title + " 스크랩"} onClick={() => setScrap((s) => ({ ...s, [b.id]: !s[b.id] }))}>

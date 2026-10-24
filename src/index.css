@@ -1001,3 +1001,9 @@ body {
 .gb-foot { display: grid; gap: 8px; margin-top: -6px; }
 .gb-foot .tbadges { flex-wrap: nowrap; gap: 4px; }
 .gb-foot .tb { flex: none; font-size: .64rem; padding: .2em .5em; }
+
+/* 가방 제목: 후킹 멘트 작게 + 본 제목 다음 줄, 줄바꿈은 단어 단위로 고르게 (10/25 MJ) */
+.tsplit { display: grid; gap: 2px; }
+.ts-hook { font-size: var(--fs-xs); font-weight: 600; color: var(--v-muted-dark); letter-spacing: 0; text-wrap: balance; }
+.ts-main { text-wrap: balance; word-break: keep-all; }
+.d-head .ts-hook { color: var(--muted); font-size: var(--fs-sm); }
