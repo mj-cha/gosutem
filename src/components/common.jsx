@@ -96,8 +96,10 @@ export function Pager({ page, total, onChange, label }) {
 /* 메인 배너: 포스터가 옆으로 넘어감 (4.2초마다, 손대면 멈춤) */
 export function Promo() {
   const { openModal } = useApp();
-  const track = useRef(null), paused = useRef(false);
+  const track = useRef(null);
   const [idx, setIdx] = useState(0);
+  const [hold, setHold] = useState(false); /* 마우스·포커스·터치 중이면 게이지 멈춤 */
+  const [hidden, setHidden] = useState(false);
   /* 방문할 때마다 문구 순서를 섞음 (이벤트는 마지막) */
   const list = useMemo(() => {
     const a = PROMOS.filter((p) => !p.last), z = PROMOS.filter((p) => p.last);
@@ -107,19 +109,18 @@ export function Promo() {
   const reduce = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
   const goTo = (i) => { const t = track.current; if (!t) return; t.scrollTo({ left: i * t.clientWidth, behavior: reduce ? "auto" : "smooth" }); setIdx(i); };
   useEffect(() => {
-    if (reduce) return;
-    const id = setInterval(() => {
-      if (paused.current || document.visibilityState === "hidden") return;
-      setIdx((i) => { const n = (i + 1) % list.length; const t = track.current; if (t) t.scrollTo({ left: n * t.clientWidth, behavior: "smooth" }); return n; });
-    }, 3800);
-    return () => clearInterval(id);
-  }, [reduce, list.length]);
+    const f = () => setHidden(document.visibilityState === "hidden");
+    document.addEventListener("visibilitychange", f); return () => document.removeEventListener("visibilitychange", f);
+  }, []);
+  /* 게이지가 끝까지 차면 다음 배너로 (01 → 08 → 01) */
+  const next = () => goTo((idx + 1) % list.length);
+  const pad = (n) => String(n).padStart(2, "0");
   const onScroll = useRef(null);
   const cur = list[idx] || list[0];
   return (
     <div className="promo" aria-roledescription="carousel" style={{ "--dot": cur.fg }}
-      onPointerEnter={() => (paused.current = true)} onPointerLeave={() => (paused.current = false)}
-      onFocus={() => (paused.current = true)} onBlur={() => (paused.current = false)} onTouchStart={() => (paused.current = true)}>
+      onPointerEnter={(e) => { if (e.pointerType === "mouse") setHold(true); }} onPointerLeave={() => setHold(false)}
+      onFocus={() => setHold(true)} onBlur={() => setHold(false)} onTouchStart={() => setHold(true)} onTouchEnd={() => setHold(false)}>
       <div className="promo-track" tabIndex={0} ref={track}
         onScroll={(e) => { clearTimeout(onScroll.current); const t = e.currentTarget; onScroll.current = setTimeout(() => setIdx(Math.round(t.scrollLeft / Math.max(1, t.clientWidth))), 80); }}>
         {list.map((p, i) => {
@@ -139,7 +140,14 @@ export function Promo() {
         })}
       </div>
       <div className="promo-dots">
-        {list.map((_, i) => <button key={i} type="button" className={"dot" + (i === idx ? " on" : "")} aria-label={i + 1 + "번째 배너"} onClick={() => goTo(i)} />)}
+        <span className="pp-n num" aria-hidden="true">{pad(idx + 1)}</span>
+        <span className="pp-bar" aria-hidden="true">
+          <i key={idx} className={reduce ? "full" : ""} style={{ animationPlayState: hold || hidden ? "paused" : "running" }} onAnimationEnd={next} />
+        </span>
+        <span className="pp-n num" aria-hidden="true">{pad(list.length)}</span>
+        <span className="pp-dots">
+          {list.map((_, i) => <button key={i} type="button" className={"dot" + (i === idx ? " on" : "")} aria-label={i + 1 + "번째 배너"} aria-current={i === idx ? "true" : undefined} onClick={() => goTo(i)} />)}
+        </span>
       </div>
     </div>
   );

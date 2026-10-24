@@ -983,3 +983,16 @@ body {
 .pin-wrap .accordion__item:has([data-slot=accordion-trigger][aria-expanded=true]) { background: rgba(255, 255, 255, .1); box-shadow: inset 3px 0 0 var(--v-lime); }
 .pin-wrap .accordion__trigger[aria-expanded=true] { color: var(--v-lime); background: transparent; }
 .pin-wrap .accordion__trigger[aria-expanded=true] .accordion__indicator { color: var(--v-lime); }
+
+/* 배너 진행 게이지: 01 ─── 08 · 점 (결 사이트처럼 게이지가 차면 다음 장, 10/25 MJ) */
+.promo-dots { align-items: center; gap: 12px; color: var(--dot); }
+.pp-n { flex: none; white-space: nowrap; font-size: .74rem; font-weight: 600; letter-spacing: .04em; opacity: .75; }
+.pp-bar { position: relative; flex: 1 1 auto; max-width: 180px; min-width: 48px; height: 2px; background: color-mix(in srgb, var(--dot) 25%, transparent); overflow: hidden; }
+.pp-bar i { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--dot); animation: pp-fill 3800ms linear forwards; }
+.pp-bar i.full { animation: none; width: 100%; }
+@keyframes pp-fill { from { width: 0; } to { width: 100%; } }
+.pp-dots { display: flex; align-items: center; gap: 6px; margin-left: 6px; }
+.promo-dots .pp-dots .dot { width: 7px; height: 7px; border-radius: 999px; padding: 0; background-clip: border-box; box-sizing: border-box; opacity: .3; }
+.promo-dots .pp-dots .dot.on { width: 14px; opacity: 1; }
+.pp-dots { flex: none; }
+@media (min-width: 768px) { .pp-bar { max-width: 320px; } }
