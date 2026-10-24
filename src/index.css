@@ -1007,3 +1007,7 @@ body {
 .ts-hook { font-size: var(--fs-xs); font-weight: 600; color: var(--v-muted-dark); letter-spacing: 0; text-wrap: balance; }
 .ts-main { text-wrap: balance; word-break: keep-all; }
 .d-head .ts-hook { color: var(--muted); font-size: var(--fs-sm); }
+
+/* 내비 세부 분류 칩: 글자가 세로로 쪼개지지 않게 한 줄 고정·옆으로 넘기기 (10/25 MJ) */
+.nx-sub .tag { flex: none; white-space: nowrap; }
+.nx-sub .tag-group__list, .nx-sub [role="grid"] { flex-wrap: nowrap; width: max-content; }
