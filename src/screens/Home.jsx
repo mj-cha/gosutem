@@ -368,9 +368,8 @@ function GoBags() {
                 </button>
                 <div className="ed-cap">
                   <div className="gb-cap">
-                    <p className="ed-meta">{b.name} / {b.meta}</p>
                     <TitleSplit t={b.title} />
-                    <p className="gb-stats num"><span><Icon id="eye" className="icon-xs" />조회 {b.views}</span><span><Icon id="bookmark" className="icon-xs" />스크랩 {b.scraps.toLocaleString("ko-KR")}</span></p>
+                    <p className="ed-meta num">{b.name} · 조회 {b.views} · 스크랩 {b.scraps.toLocaleString("ko-KR")}</p>
                   </div>
                   <button type="button" className="ed-heart" aria-pressed={on} aria-label={b.title + " 스크랩"} onClick={() => setScrap((s) => ({ ...s, [b.id]: !s[b.id] }))}>
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.4C1.5 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 2.9 1.4-1.8 3-2.9 5-2.9 3.4 0 5.5 3.3 4.3 6.6-1.8 4.8-9.3 9.4-9.3 9.4z" /></svg>

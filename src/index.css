@@ -1011,3 +1011,8 @@ body {
 /* 내비 세부 분류 칩: 글자가 세로로 쪼개지지 않게 한 줄 고정·옆으로 넘기기 (10/25 MJ) */
 .nx-sub .tag { flex: none; white-space: nowrap; }
 .nx-sub .tag-group__list, .nx-sub [role="grid"] { flex-wrap: nowrap; width: max-content; }
+
+/* THE BAGS 카드 글 정리: 제목(후킹+본 제목) → 한 줄 메타 → 라벨 → 절약액, 간격 넉넉히 (10/25 MJ) */
+.gb-cap { gap: 6px; }
+.gb-cap .ed-name { margin-top: 0; }
+.gb-foot { margin-top: 2px; gap: 10px; }
