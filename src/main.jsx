@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "@fontsource/anton/400.css"; /* 배너 영문: 굵고 각진 글꼴 (앱에 같이 묶음) */
 import "./index.css";
 import App from "./App.jsx";
 

@@ -329,11 +329,11 @@ function BestItems() {
 export default function Home() {
   return (
     <div className="view">
+      <Promo />
       <NavBar />
       <div className="pad" style={{ paddingTop: 16 }}><HomeHero /></div>
       <section className="pad" style={{ paddingTop: 16 }} aria-label="고수템 소식">
-        <h2 className="vh">고수는 이건 사지 마도 알려줘요</h2>
-        <Promo />
+        <h2 className="vh">고수템 소식</h2>
         <PreorderCta />
       </section>
       <BestItems />

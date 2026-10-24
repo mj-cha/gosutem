@@ -1,5 +1,5 @@
 /* 여러 화면에서 같이 쓰는 작은 조각들 */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Avatar, Badge, Pagination } from "@heroui/react";
 import { Icon } from "./Icon.jsx";
 import { PROMOS, T } from "../data/data.js";
@@ -95,42 +95,51 @@ export function Pager({ page, total, onChange, label }) {
 
 /* 메인 배너: 포스터가 옆으로 넘어감 (4.2초마다, 손대면 멈춤) */
 export function Promo() {
-  const { go, openModal } = useApp();
+  const { openModal } = useApp();
   const track = useRef(null), paused = useRef(false);
   const [idx, setIdx] = useState(0);
+  /* 방문할 때마다 문구 순서를 섞음 (이벤트는 마지막) */
+  const list = useMemo(() => {
+    const a = PROMOS.filter((p) => !p.last), z = PROMOS.filter((p) => p.last);
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a.concat(z);
+  }, []);
   const reduce = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
   const goTo = (i) => { const t = track.current; if (!t) return; t.scrollTo({ left: i * t.clientWidth, behavior: reduce ? "auto" : "smooth" }); setIdx(i); };
   useEffect(() => {
     if (reduce) return;
     const id = setInterval(() => {
       if (paused.current || document.visibilityState === "hidden") return;
-      setIdx((i) => { const n = (i + 1) % PROMOS.length; const t = track.current; if (t) t.scrollTo({ left: n * t.clientWidth, behavior: "smooth" }); return n; });
-    }, 4200);
+      setIdx((i) => { const n = (i + 1) % list.length; const t = track.current; if (t) t.scrollTo({ left: n * t.clientWidth, behavior: "smooth" }); return n; });
+    }, 3800);
     return () => clearInterval(id);
-  }, [reduce]);
+  }, [reduce, list.length]);
   const onScroll = useRef(null);
+  const cur = list[idx] || list[0];
   return (
-    <div className="promo" aria-roledescription="carousel"
+    <div className="promo" aria-roledescription="carousel" style={{ "--dot": cur.fg }}
       onPointerEnter={() => (paused.current = true)} onPointerLeave={() => (paused.current = false)}
       onFocus={() => (paused.current = true)} onBlur={() => (paused.current = false)} onTouchStart={() => (paused.current = true)}>
       <div className="promo-track" tabIndex={0} ref={track}
         onScroll={(e) => { clearTimeout(onScroll.current); const t = e.currentTarget; onScroll.current = setTimeout(() => setIdx(Math.round(t.scrollLeft / Math.max(1, t.clientWidth))), 80); }}>
-        {PROMOS.map((p, i) => (
-          <div key={i} className={"slide" + (p.img ? " has-img" : "") + (i === idx ? " on" : "")} style={{ "--bg": p.bg, "--fg": p.fg }}
-            role="group" aria-roledescription="slide" aria-label={i + 1 + " / " + PROMOS.length}
-            data-open={p.open || undefined} onClick={p.open ? () => go(p.open) : undefined}>
-            {p.img ? <img src={p.img} alt="" decoding="async" /> : <span className="sl-bgword" aria-hidden="true">GOSU</span>}
-            <div className="sl-txt">
-              <span className="sl-tag">{p.tag}</span>
-              <b>{p.big.split("<br>").map((l, k) => <span key={k}>{k > 0 && <br />}{l}</span>)}</b>
-              <span className="sl-small">{p.small}</span>
-              {p.act && <button type="button" className="sl-cta" onClick={(e) => { e.stopPropagation(); openModal("supply"); }}>고수로 신청하기</button>}
+        {list.map((p, i) => {
+          const lines = p.en.split("|");
+          return (
+            <div key={p.en} className={"slide" + (i === idx ? " on" : "")} style={{ "--bg": p.bg, "--fg": p.fg, "--hi": p.hi }}
+              role="group" aria-roledescription="slide" aria-label={i + 1 + " / " + list.length}>
+              <span className="sl-bgword" aria-hidden="true">GOSU</span>
+              <div className="sl-txt">
+                <span className="sl-tag">{p.tag}</span>
+                <b className="sl-en" lang="en">{lines.map((l, k) => <span key={k} className={k === lines.length - 1 ? "hi" : undefined}>{l}</span>)}</b>
+                <span className="sl-ko">{p.ko}</span>
+                {p.act && <button type="button" className="sl-cta" onClick={(e) => { e.stopPropagation(); openModal("supply"); }}>고수로 신청하기 ↗</button>}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       <div className="promo-dots">
-        {PROMOS.map((_, i) => <button key={i} type="button" className={"dot" + (i === idx ? " on" : "")} aria-label={i + 1 + "번째 배너"} onClick={() => goTo(i)} />)}
+        {list.map((_, i) => <button key={i} type="button" className={"dot" + (i === idx ? " on" : "")} aria-label={i + 1 + "번째 배너"} onClick={() => goTo(i)} />)}
       </div>
     </div>
   );

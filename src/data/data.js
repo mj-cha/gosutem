@@ -157,12 +157,17 @@ export const ART = {
   wrist:'<rect x="6" y="28" width="52" height="16" rx="8" fill="#4A5568"/><rect x="10" y="20" width="44" height="10" rx="3" fill="#C9CFD8"/>'
 };
 
+/* 홈 맨 위 배너 (10/25 MJ): 영문은 굵고 각지게, 국문은 작게. 핑크 금지 → 벤치마킹 4색만.
+   방문할 때마다 순서를 섞어 보여 줌 (이벤트는 항상 마지막) */
 export const PROMOS = [
- {bg:"#FF3D7F",fg:"#FFFFFF",big:"내 시간도,<br>내 돈도 아까우니까",small:"검색은 짧게, 선택은 똑똑하게. 고수의 가방을 열어 보세요.",tag:"#고수템"},
- {bg:"#16243A",fg:"#FFFFFF",big:"더 사라고 만들지 않아요.<br>덜 헤매라고 만들어요",small:"새상품·중고·나눔, 집에 있는 걸로까지. 제일 덜 번거로운 길을 같이 찾아요.",tag:"#합리적소비"},
- {img:"img/intern-kits.webp",bg:"#F3C9DB",fg:"#FFFFFF",big:"4개월 차 인턴의<br>영업비밀 파우치",small:"인기 파우치 덱 · 조회수 31.2K",tag:"#인기덱",open:"intern"},
- {bg:"#C6F432",fg:"#16243A",big:"쇼핑몰은 사라고만 해.<br>고수는 ‘사지 마’도 알려줘.",small:"비추천템까지 솔직하게.",tag:"#사지마"},
- {bg:"#FFD23F",fg:"#16243A",big:"내 가방 공개하고<br>첫 고수 되기",small:"11월 시드 고수 모집 · 사진 1장 + 말 5분이면 끝 (이벤트 예시)",tag:"EVENT",act:"supply"}
+ {bg:"#11110F",fg:"#F2F1EC",hi:"#D4FF34",en:"STOP SEARCHING.|START STEALING|THE PRO'S BAG.",ko:"시간도 돈도 아까우니까, 검색은 그만. 고수의 가방을 훔쳐봐.",tag:"BOLD & DIRECT"},
+ {bg:"#D4FF34",fg:"#11110F",hi:"#11110F",en:"NO SEARCH.|JUST PRO-PACK.",ko:"서칭은 뚝, 고수 가방 복붙.",tag:"#고수템"},
+ {bg:"#333FDF",fg:"#FFFFFF",hi:"#D4FF34",en:"SAVE TIME, SAVE CASH.|COPY THE EXPERT.",ko:"낭비는 줄이고, 고수의 세팅만 복사해.",tag:"#합리적소비"},
+ {bg:"#E9E8E2",fg:"#11110F",hi:"#333FDF",en:"NO FLUFF.|PURE PRO ESSENTIALS.",ko:"겉멋은 빼고 알짜만, 고수의 서랍.",tag:"MINIMAL"},
+ {bg:"#11110F",fg:"#F2F1EC",hi:"#D4FF34",en:"WHY GUESS?|THE PRO ALREADY|TESTED IT.",ko:"왜 돌아가? 고수가 이미 검증했는데.",tag:"#사지마도_알려줌"},
+ {bg:"#333FDF",fg:"#FFFFFF",hi:"#D4FF34",en:"SKIP THE DOUBT.|GRAB THE GEAR.",ko:"고민할 시간에 고수 템을 담아.",tag:"#고수템"},
+ {bg:"#D4FF34",fg:"#11110F",hi:"#333FDF",en:"THE ULTIMATE|SHOPPING|CHEAT CODE.",ko:"실패 없는 쇼핑의 치트키.",tag:"GEN Z"},
+ {bg:"#E9E8E2",fg:"#11110F",hi:"#333FDF",en:"BE THE|FIRST GOSU.",ko:"내 가방 공개하고 첫 고수 되기 · 11월 시드 고수 모집 (이벤트 예시)",tag:"EVENT",act:"supply",last:true}
 ];
 
 export const PCATS = [
