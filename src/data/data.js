@@ -16,7 +16,7 @@ export const CHORDER = ["nw","used","sim","share"];
 
 export const BAGS = [
  {id:"intern", pc:["work/intern","work/office"], handle:"seoyeon.intern", tags:["인턴","직장인"], deck:true, img:"img/intern-kits.webp", imgAlt:"신입 인턴 생존 & 멘탈 케어 파우치: 인공눈물, 립글로스, 사탕, 실내화, 거울과 인턴 샘플 인물 사진", views:"31.2K", scraps:4890, likes:2140, dislikes:18,
-  title:"부장님 급습에도 3초 만에 표정 관리, 4개월 차 인턴의 영업비밀 파우치",
+  title:"부장님 급습에도 3초 만에 표정 관리, 4개월 차 인턴의 생존·멘탈 케어 파우치",
   hook:"“히터 바람에 눈 건조할 때 & ‘넵!’ 연발할 때”",
   sub:"히터 바람에 뻑뻑한 눈, 회의실 호출 3초 전 안색, 오후 2시 반 식곤증까지. 넉 달 동안 시행착오 끝에 서랍에 남은 것만 골랐어요.",
   name:"서연(가명)", meta:"사무직 인턴 4개월 차", av:"서", avc:"#2E7D6B",
