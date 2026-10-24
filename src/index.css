@@ -32,7 +32,7 @@
   --link: #2F6DB5;
 
   --brand: #1F3A5F;
-  --photo: #DCE8F5;
+  --photo: #F4F3F0; /* 사진 자리도 흰 바탕에 맞춘 중립 회색 */
   --t-must: #2F6DB5;
   --t-used: #17744B; /* 흰 바탕 대비 4.5:1 이상 (1주차 모바일 점검) */
   --t-share: #915708; /* 흰 바탕 대비 4.5:1 이상 */
@@ -91,7 +91,6 @@
   --sel: #E6EEF8;
   --sel-fg: #0E1520;
 }
-@media (min-width: 960px) { :root { --stick: 0px; } }
 
 html, body { background: var(--ground); }
 body {
@@ -115,18 +114,11 @@ body {
 .link-btn:focus-visible, .plain-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
 .plain-btn { border: 0; background: none; padding: 0; color: inherit; text-align: left; cursor: pointer; }
 
-/* ---------- 무대: 폰 한 줄(최대 430px) · PC는 왼쪽 소개 + 오른쪽 앱 ---------- */
-.stage { min-height: 100%; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; }
-.intro { display: none; }
-.app { width: 100%; min-width: 0; max-width: 430px; min-height: 100vh; background: var(--ground); position: relative; display: flex; flex-direction: column; }
+/* ---------- 무대: 폰은 한 줄(최대 430px), 태블릿·PC(768px~)는 화면 폭만큼 넓게 다시 짬 (10/24) ---------- */
+.stage { min-height: 100%; display: block; }
+.intro { display: none; } /* 예전 PC 왼쪽 소개 패널: 넓은 화면도 앱이 직접 넓어지므로 숨김 */
+.app { width: 100%; min-width: 0; max-width: 430px; margin-inline: auto; min-height: 100vh; background: var(--ground); position: relative; display: flex; flex-direction: column; }
 .scroller { flex: 1; min-height: 0; }
-@media (min-width: 960px) {
-  html, body, #root { height: 100%; }
-  .stage { height: 100vh; grid-template-columns: minmax(0, 1fr) 430px minmax(24px, .45fr); align-items: stretch; justify-items: stretch; }
-  .intro { display: flex; flex-direction: column; gap: 24px; justify-content: center; justify-self: end; width: 100%; max-width: 440px; margin-right: 64px; padding-block: 32px; padding-left: max(24px, env(safe-area-inset-left, 0px)); overflow-y: auto; max-height: 100vh; }
-  .app { height: 100vh; min-height: 0; max-width: none; border-left: 1px solid var(--line); border-right: 1px solid var(--line); box-shadow: 0 0 40px rgba(16, 32, 56, .08); overflow: hidden; }
-  .scroller { overflow-y: auto; }
-}
 
 /* 소개 패널 */
 .wordmark { font-family: var(--f-display); font-size: 2.2rem; line-height: 1; color: var(--brand); display: flex; align-items: baseline; gap: 10px; }
@@ -749,3 +741,82 @@ body {
 .policy-table { width: 100%; border-collapse: collapse; font-size: .86rem; display: block; overflow-x: auto; }
 .policy-table th, .policy-table td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; min-width: 90px; }
 .policy-table th { background: var(--surface); font-weight: 700; }
+
+/* ---------- 사진 아래 보기 탭 (01 가방 사진 / 02 물건 펼쳐 보기) ---------- */
+.vt { display: grid; gap: 0; }
+.vt-stage { min-width: 0; }
+.vt-tabs { position: relative; display: flex; gap: 24px; border-bottom: 1px solid var(--line); margin-top: 10px; }
+.vt-tab { border: 0; background: none; padding: 12px 0 11px; min-height: 44px; font: inherit; font-size: .74rem; font-weight: 600; letter-spacing: .06em; color: var(--muted); cursor: pointer; transition: color 200ms ease; }
+.vt-tab[aria-selected="true"] { color: var(--ink); }
+.vt-tab:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+.vt-bar { position: absolute; left: 0; bottom: -1px; height: 2px; background: var(--accent); transition: transform 320ms var(--ease), width 320ms var(--ease); }
+@media (prefers-reduced-motion: reduce) { .vt-bar { transition: none; } }
+.flatlay { position: relative; aspect-ratio: 1 / 1; border-radius: 18px; background: #F4F3F0; padding: 44px 18px 18px; overflow: hidden; display: grid; align-content: center; }
+.fl-cap { position: absolute; top: 16px; left: 18px; font-size: .66rem; font-weight: 700; letter-spacing: .14em; color: #8A8780; }
+.fl-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 10px; }
+.fl-grid li { position: relative; display: grid; justify-items: center; gap: 4px; min-width: 0; }
+.fl-grid svg { width: 100%; max-width: 76px; aspect-ratio: 1 / 1; }
+.fl-no { position: absolute; top: 0; left: 4px; font-size: .64rem; font-weight: 800; color: #8A8780; }
+.fl-n { font-size: .7rem; color: var(--muted); text-align: center; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+
+/* ---------- 오른쪽 합계 카드 ---------- */
+.sumcard { display: none; }
+.hero-side { display: contents; }
+.hs-kick, .hs-title, .hs-meta, .hero-side > .tbadges { display: none; }
+.sumcard { margin-top: 24px; padding: 18px 20px; border-radius: 8px; background: #EFEDE8; gap: 10px; }
+.sc-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.sc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.sc-k { display: block; font-size: .95rem; font-weight: 800; }
+.sc-s { display: block; font-size: .72rem; color: var(--muted); margin-top: 2px; }
+.sc-big { font-size: 1.6rem; font-weight: 900; letter-spacing: -.02em; line-height: 1.1; white-space: nowrap; }
+.sc-note { margin: 0; font-size: .76rem; color: var(--muted); }
+.sc-note b { color: var(--accent); }
+.sc-cta { border: 0; border-radius: 4px; background: var(--accent); color: #fff; font: inherit; font-weight: 800; font-size: .95rem; text-align: left; padding: 15px 20px; min-height: 52px; cursor: pointer; transition: transform 160ms var(--ease), filter 160ms ease; }
+.sc-cta:hover { filter: brightness(1.06); }
+.sc-cta:active { transform: scale(.985); }
+.sc-cta:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.sc-reset { flex: none; border: 0; background: none; font: inherit; font-size: .74rem; font-weight: 700; color: var(--ink); padding: 4px 0; min-height: 32px; border-bottom: 1px solid currentColor; cursor: pointer; }
+
+/* ---------- 태블릿·PC (768px~): 폭에 맞춰 다시 짜기 ---------- */
+@media (min-width: 768px) {
+  .pad { padding-left: 32px; padding-right: 32px; }
+  /* 앱 틀: 상단 바(왼쪽) + 메뉴(오른쪽) 한 줄, 아래가 본문 */
+  .app { max-width: none; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto 1fr; }
+  .topbar { grid-column: 1; grid-row: 1; top: 0; padding-left: max(24px, calc((100vw - 1180px) / 2 + 20px)); }
+  .tabbar { grid-column: 2; grid-row: 1; position: sticky; top: 0; bottom: auto; align-self: stretch; display: flex; align-items: center; gap: 2px; border-top: 0; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: saturate(1.4) blur(8px); padding: 0 max(16px, calc((100vw - 1180px) / 2 + 12px)) 0 8px; }
+  .tab { flex-direction: row; gap: 4px; font-size: .84rem; padding: 6px 10px; border-radius: 999px; }
+  .tab .icon { width: 18px; height: 18px; padding: 0; background: none !important; }
+  .tab[aria-current="page"] { color: var(--accent); }
+  .scroller { grid-column: 1 / -1; grid-row: 2; }
+  .view { max-width: 1180px; margin-inline: auto; width: 100%; }
+  .cartbar { display: none; } /* 넓은 화면은 오른쪽 합계 카드가 대신함 */
+  .filters { margin-inline: -32px; padding-inline: 32px; }
+
+  /* 가방 상세: 왼쪽 사진·고수 카드 / 오른쪽 물건·합계 */
+  .d-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .d-left { padding-top: 16px; }
+  .d-right .section { padding-top: 32px; }
+  .sumcard { display: grid; position: sticky; bottom: 16px; z-index: 5; box-shadow: 0 12px 32px rgba(20, 20, 16, .12); } /* 물건 목록을 내려도 오른쪽 아래에 붙어 있음 */
+  .d-left .pad { padding-right: 16px; }
+  .d-left .d-card { padding-inline: 4px; }
+  .dg { margin: 48px 32px 0; }
+
+  /* 홈: 대표 가방은 사진 왼쪽 · 요약 오른쪽, 가방 목록은 2열 */
+  .hero-v1 { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; gap: 48px; }
+  .hero-v1 .hero-card { display: none; } /* 넓은 화면은 오른쪽에 크게 */
+  .hero-side { display: grid; gap: 14px; align-content: center; }
+  .hs-kick { display: block; font-size: .7rem; font-weight: 800; letter-spacing: .16em; color: var(--accent); }
+  .hs-title { display: block; margin: 0; font-size: clamp(1.8rem, 3.2vw, 2.6rem); font-weight: 900; line-height: 1.22; letter-spacing: -.03em; text-wrap: balance; }
+  .hs-meta { display: block; margin: 0; color: var(--muted); }
+  .hero-side > .tbadges { display: flex; margin-bottom: 12px; }
+  .save-v1 { flex-direction: column; align-items: flex-start; padding: 28px; gap: 18px; }
+  .save-v1-big { font-size: 2.4rem; }
+  .feed { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .feed > .feed-head, .feed > .empty, .feed > .pager { grid-column: 1 / -1; }
+  .best-img { aspect-ratio: 4 / 3; }
+
+  /* 하단 정보: 가운데 1180px 안으로 */
+  .site-foot { padding-block: 40px 48px; padding-inline: max(32px, calc((100vw - 1180px) / 2 + 32px)); }
+}
+/* 화면 높이가 충분하면 왼쪽 사진·고수 카드를 고정 → 오른쪽 물건만 스크롤 */
+@media (min-width: 768px) and (min-height: 840px) { .d-left { position: sticky; top: 56px; } }

@@ -260,6 +260,11 @@ function HomeHero() {
           <span className="tbadges">{TORDER.filter((k) => c[k]).map((k) => <TBadge key={k} k={k} n={c[k]} />)}</span>
         </span>
       </button>
+      <div className="hero-side">
+        <span className="hs-kick">THIS WEEK'S GOSU · 예시</span>
+        <h2 className="hs-title">{b.title}</h2>
+        <p className="hs-meta">{b.meta} · 물건 {b.items.length}개</p>
+        <span className="tbadges">{TORDER.filter((k) => c[k]).map((k) => <TBadge key={k} k={k} n={c[k]} />)}</span>
       {all > 0 && (
         <div className="save-v1">
           <div className="save-v1-t">
@@ -270,6 +275,7 @@ function HomeHero() {
           <Button onPress={() => go(b.id)}>예산으로 담기</Button>
         </div>
       )}
+      </div>
     </section>
   );
 }

@@ -354,6 +354,64 @@ function Talk({ b }) {
   );
 }
 
+/* ---------- 사진 아래 보기 탭: 01 가방 사진 / 02 물건 펼쳐 보기 (밑줄이 눌린 탭을 따라감) ---------- */
+function FlatLay({ b }) {
+  return (
+    <div className="flatlay" role="img" aria-label={b.title + " 물건 " + b.items.length + "개를 펼쳐 놓은 모습"}>
+      <span className="fl-cap">THE FULL BAG · {b.items.length}</span>
+      <ol className="fl-grid">
+        {b.items.map((it, i) => (
+          <li key={i} style={{ "--tc": T[it.t].c }}>
+            <span className="fl-no num">{i + 1}</span>
+            <svg viewBox="0 0 64 64" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ART[it.art] }} />
+            <span className="fl-n">{it.n}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+function ViewTabs({ b }) {
+  const [v, setV] = useState(0);
+  const refs = [useRef(null), useRef(null)];
+  const [bar, setBar] = useState({ x: 0, w: 0 });
+  useEffect(() => {
+    const f = () => { const el = refs[v].current; if (el) setBar({ x: el.offsetLeft, w: el.offsetWidth }); };
+    f(); addEventListener("resize", f); return () => removeEventListener("resize", f);
+  }, [v]); // eslint-disable-line react-hooks/exhaustive-deps
+  const tabs = ["01 / 고수의 가방", "02 / 물건 펼쳐 보기"];
+  return (
+    <div className="vt">
+      <div className="vt-stage">
+        {v === 0 ? (b.deck ? <div className="deck-wrap"><DeckStrip b={b} /><Photo b={b} /></div> : <Photo b={b} />) : <FlatLay b={b} />}
+      </div>
+      <div className="vt-tabs" role="tablist" aria-label="가방 보기 방식">
+        {tabs.map((t, i) => (
+          <button key={t} ref={refs[i]} type="button" role="tab" aria-selected={v === i} className="vt-tab" onClick={() => setV(i)}>{t}</button>
+        ))}
+        <span className="vt-bar" aria-hidden="true" style={{ transform: "translateX(" + bar.x + "px)", width: bar.w }} />
+      </div>
+    </div>
+  );
+}
+
+/* ---------- 오른쪽 합계 카드 (넓은 화면): 내 구성 확인하기 ---------- */
+function SumCard({ n, done, need, mine, all, onCart, onReset }) {
+  return (
+    <div className="sumcard">
+      <div className="sc-top">
+        <div><b className="sc-k">내 구성 합계</b><span className="sc-s num">담은 물건 {n}개 · 구할 곳 {done}/{need} 골랐어요</span></div>
+        <span className="sc-big num">{won(mine)}</span>
+      </div>
+      <div className="sc-row">
+        <p className="sc-note num">담은 물건을 전부 새로 사면 {won(all)} · 아끼는 돈 <b>{won(Math.max(0, all - mine))}</b></p>
+        <button type="button" className="sc-reset" onClick={onReset}>기본 구성으로 초기화</button>
+      </div>
+      <button type="button" className="sc-cta" onClick={onCart}>{done ? "내 구성 확인하기 ↗" : "고수 추천대로 고르기 ↗"}</button>
+    </div>
+  );
+}
+
 /* ---------- 상세 화면 ---------- */
 export default function Bag({ b }) {
   const app = useApp();
@@ -426,8 +484,8 @@ export default function Bag({ b }) {
   };
 
   /* 합계 */
-  let all = 0, mine = 0, n = 0;
-  b.items.forEach((it, i) => { all += minNew(it); if (picks[i]) { mine += itemCost(i); n++; } });
+  let all = 0, allP = 0, mine = 0, n = 0;
+  b.items.forEach((it, i) => { all += minNew(it); if (picks[i]) { allP += minNew(it); mine += itemCost(i); n++; } });
   const need = b.items.filter((_, i) => picks[i]).length, done = b.items.filter((_, i) => picks[i] && plan[i] && plan[i] !== "skip").length;
   const rg = b.items[b.regretItem];
   useEffect(() => { setChosen((s) => (s[b.id] === done ? s : { ...s, [b.id]: done })); }, [done, b.id, setChosen]);
@@ -441,13 +499,16 @@ export default function Bag({ b }) {
     });
   };
 
+  const onReset = () => { setPicksB(() => b.items.map((it) => T[it.t].pick)); setPlan({}); setExp({}); setStage({}); setLpick({}); setOpen({}); setBudget(null); setLastPlan(null); toast("기본 구성으로 되돌렸어요."); };
   const spent = Object.keys(plan).reduce((s, i) => (plan[i] !== "skip" ? s + (optPrice(b.items[i], plan[i], region) || 0) : s), 0);
 
   return (
     <>
       <div className="view detail">
+        <div className="d-grid">
+        <div className="d-left">
         <div className="pad" style={{ paddingTop: 16 }}>
-          {b.deck ? <div className="deck-wrap"><DeckStrip b={b} /><Photo b={b} /></div> : <Photo b={b} />}
+          <ViewTabs b={b} />
         </div>
         <div className="d-head pad">
           <Surface variant="default" className="d-card">
@@ -465,7 +526,9 @@ export default function Bag({ b }) {
             <Surface variant="secondary" className="trust"><Icon id="shield" /><span>{trustLine(b)} <span className="ex-badge">예시</span></span></Surface>
           </Surface>
         </div>
+        </div>
 
+        <div className="d-right">
         <section className="section pad" aria-labelledby="h-items">
           <h2 id="h-items">물건마다 담을지 골라 보세요</h2>
           <p className="sub">{b.howto || "하트를 누르면 담겨요. 라벨을 누르면 새상품·중고·유사템·나눔 중 어디서 구할 수 있는지 볼 수 있어요."}</p>
@@ -487,7 +550,10 @@ export default function Bag({ b }) {
             {idx.length ? <ul className="items">{idx.map((i) => <ItemRow key={i} b={b} i={i} ctx={ctx} />)}</ul>
               : <div className="empty"><p>{tab === "all" ? "이 테마에는 물건이 없어요." : "이 가방에는 " + T[tab].name + "이 없어요."}</p></div>}
           </div>
+          <SumCard n={n} done={done} need={need} mine={mine} all={allP} onCart={onCart} onReset={onReset} />
         </section>
+        </div>
+        </div>
 
         <Surface variant="default" className="dg">
           <DisclosureGroup expandedKeys={dc ? [dc] : []} onExpandedChange={(keys) => setDc([...keys].find((k) => k !== dc) || null)}>
