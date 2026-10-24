@@ -3,7 +3,7 @@ import { useMemo, useRef } from "react";
 import { Accordion, Badge, Button, Separator, Tabs, Tag, TagGroup } from "@heroui/react";
 import { Icon } from "../components/Icon.jsx";
 import { DeckStrip, Pager, Photo, Promo, TBadge, Who } from "../components/common.jsx";
-import { BAGS, POP_FALLBACK, T, TORDER } from "../data/data.js";
+import { ART, BAGS, POP_FALLBACK, T, TORDER } from "../data/data.js";
 import { catName, costOf, countT, filterBags, minNew, pcCount, pGroups, relatedTerms, won } from "../lib/logic.js";
 import { regionLabel, useApp } from "../lib/store.jsx";
 import { topSearches, useHub } from "../lib/claude.js";
@@ -131,7 +131,7 @@ function BagCard({ b }) {
 }
 
 function Feed() {
-  const { nav, setNav, patchNav, region, openModal, commitSearch } = useApp();
+  const { go, nav, setNav, patchNav, region, openModal, commitSearch } = useApp();
   const feed = useRef(null);
   const { list, shown } = useMemo(() => filterBags(nav), [nav]);
   const pages = Math.max(1, Math.ceil(shown.length / PAGE)), page = Math.min(Math.max(1, nav.page), pages);
@@ -145,7 +145,8 @@ function Feed() {
   return (
     <div className="feed pad" ref={feed} aria-live="polite" style={{ scrollMarginTop: "calc(var(--stick) + 140px)" }}>
       <div className="feed-head">
-        <h2>{head} <span className="fh-n num">{shown.length}</span><span className="fh-reg">{region ? region.full : "전국"}</span></h2>
+        <h2>{head} <span className="fh-n num">{shown.length}</span><span className="fh-reg">{region ? region.full : "전국"}</span>
+          <button type="button" className="fh-switch" onClick={() => go("items")}>물건별로 보기 →</button></h2>
         {rel.length > 0 && (
           <div className="fh-rel surface surface--default" style={{ borderRadius: 16, padding: 12, display: "grid" }}>
             <span className="label-sm">연관 검색어</span>
@@ -260,6 +261,11 @@ function HomeHero() {
           <span className="tbadges">{TORDER.filter((k) => c[k]).map((k) => <TBadge key={k} k={k} n={c[k]} />)}</span>
         </span>
       </button>
+      <div className="hero-side">
+        <span className="hs-kick">THIS WEEK'S GOSU · 예시</span>
+        <h2 className="hs-title">{b.title}</h2>
+        <p className="hs-meta">{b.meta} · 물건 {b.items.length}개</p>
+        <span className="tbadges">{TORDER.filter((k) => c[k]).map((k) => <TBadge key={k} k={k} n={c[k]} />)}</span>
       {all > 0 && (
         <div className="save-v1">
           <div className="save-v1-t">
@@ -270,6 +276,117 @@ function HomeHero() {
           <Button onPress={() => go(b.id)}>예산으로 담기</Button>
         </div>
       )}
+      </div>
+    </section>
+  );
+}
+
+/* 많이 담긴 고수템: 공감 수 순 상위 4개 (숫자는 예시) */
+function firstLine(t) { const m = String(t || "").split(/(?<=[.!?。])\s|\n/)[0]; return m.length > 44 ? m.slice(0, 43) + "…" : m; }
+export function BestItems() {
+  const { go } = useApp();
+  const top = useMemo(() => {
+    const all = [];
+    BAGS.forEach((b) => b.items.forEach((it) => { if (it.nw && it.nw.length) all.push({ b, it }); }));
+    return all.sort((x, y) => (y.it.emp || 0) - (x.it.emp || 0)).slice(0, 4);
+  }, []);
+  if (!top.length) return null;
+  return (
+    <section className="best pad" aria-labelledby="best-h">
+      <div className="best-head">
+        <h2 id="best-h">BEST 고수템</h2>
+        <span>이번 주 가장 많이 공감받은 물건</span>
+        <button type="button" className="best-more" onClick={() => go("items")}>더보기 →</button>
+      </div>
+      <ol className="best-grid">
+        {top.map(({ b, it }, i) => {
+          const nw = minNew(it), cost = costOf(it), off = nw > 0 ? Math.round((1 - cost / nw) * 100) : 0;
+          return (
+            <li key={b.id + i}>
+              <button type="button" className="best-card" onClick={() => go(b.id)} aria-label={(i + 1) + "위 " + (it.q || it.n) + ", " + b.name + "의 가방 열기"}>
+                <span className="best-rank num" aria-hidden="true">{i + 1}</span>
+                <span className="best-img">
+                  <span className="best-badge">BEST</span>
+                  <svg viewBox="0 0 64 64" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ART[it.art] || "" }} />
+                </span>
+                <span className="best-name">{it.q || it.n}</span>
+                <span className="best-desc">{firstLine(it.tip)}</span>
+                <span className="best-price">
+                  {cost === 0 ? <em>나눔·교환</em> : off > 0 && <em className="num">{off}%</em>}
+                  <b className="num">{cost === 0 ? "₩0" : won(cost)}</b>
+                  {off > 0 && <s className="num">{won(nw)}</s>}
+                </span>
+                <span className="best-meta">{T[it.t].name} · 공감 {(it.emp || 0).toLocaleString("ko-KR")} · {b.name}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
+
+/* 홈 '고수의 가방' (10/25): THE EDIT 양식 — 어두운 바탕, 가방마다 큰 사진 카드, PC 2열 지그재그
+   카드에는 예전처럼 좋아요·싫어요·조회·스크랩, 라벨 개수, 고수 추천대로 담으면 얼마인지 보여 줌 */
+/* 제목을 첫 쉼표에서 나눔: 앞(후킹 멘트)은 작게, 뒤(무슨 가방인지)는 다음 줄에 크게 (10/25 MJ) */
+export function TitleSplit({ t, as: Tag = "h3", className = "ed-name" }) {
+  const k = t.indexOf(", ");
+  if (k < 0) return <Tag className={className + " tsplit"}><span className="ts-main">{t}</span></Tag>;
+  return <Tag className={className + " tsplit"}><span className="ts-hook">{t.slice(0, k + 1)}</span><span className="ts-main">{t.slice(k + 2)}</span></Tag>;
+}
+const GB_TONES = ["#E9E8E2", "#E9E8E2", "#333FDF"];
+function GoBags() {
+  const { go, nav, region, scrap, setScrap, openModal, commitSearch } = useApp();
+  const { shown } = useMemo(() => filterBags(nav), [nav]);
+  const qq = nav.q.trim();
+  const head = qq ? "“" + qq + "” 검색 결과"
+    : nav.pc || nav.cat ? [nav.pc ? catName(nav.pc) : "", nav.cat ? catName(nav.cat) + " 물건" : ""].filter(Boolean).join(" · ") : "Every bag. Every gosu.";
+  return (
+    <section className="edit gb-ed pad" aria-labelledby="gb-h">
+      <p className="ed-kick">THE GOSU SELECTION / VOL. 01</p>
+      <h2 className="ed-h" id="gb-h"><span>THE</span> <em>BAGS.</em><sup>{String(shown.length).padStart(2, "0")}</sup></h2>
+      <div className="ed-sub"><span>{head}</span><span>고수의 가방 · {region ? region.full : "전국"} <button type="button" className="gb-switch" onClick={() => go("items")}>물건별로 보기 →</button></span></div>
+      {shown.length ? (
+        <ul className="ed-grid">
+          {shown.map((b, i) => {
+            const on = !!scrap[b.id], c = countT(b), cover = b.items.find((it) => it.t === "must") || b.items[0];
+            let all = 0, combo = 0;
+            b.items.forEach((it) => { all += minNew(it); if (T[it.t].pick) combo += costOf(it); });
+            const open = () => { if (nav.q) commitSearch(nav.q); go(b.id); };
+            return (
+              <li key={b.id} className="ed-card">
+                <button type="button" className="ed-img" style={{ background: b.img ? "#E9E8E2" : GB_TONES[i % GB_TONES.length] }} onClick={open} aria-label={b.title + " 가방 열기"}>
+                  {b.img ? <img src={b.img} alt="" decoding="async" className="gb-photo" />
+                    : cover && <svg viewBox="0 0 64 64" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ART[cover.art] || "" }} />}
+                  <span className="ed-tag lime">BAG {String(i + 1).padStart(2, "0")}</span>
+                  {b.deck && <span className="ed-tag right dark">인기 파우치 덱</span>}
+                  <span className="gb-react num" aria-label={"좋아요 " + b.likes + ", 싫어요 " + b.dislikes}>
+                    <span><Icon id="up" className="icon-xs" />{b.likes.toLocaleString("ko-KR")}</span>
+                    <span><Icon id="down" className="icon-xs" />{b.dislikes.toLocaleString("ko-KR")}</span>
+                  </span>
+                </button>
+                <div className="ed-cap">
+                  <div className="gb-cap">
+                    <p className="ed-meta">{b.name} / {b.meta}</p>
+                    <TitleSplit t={b.title} />
+                    <p className="gb-stats num"><span><Icon id="eye" className="icon-xs" />조회 {b.views}</span><span><Icon id="bookmark" className="icon-xs" />스크랩 {b.scraps.toLocaleString("ko-KR")}</span></p>
+                  </div>
+                  <button type="button" className="ed-heart" aria-pressed={on} aria-label={b.title + " 스크랩"} onClick={() => setScrap((s) => ({ ...s, [b.id]: !s[b.id] }))}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.4C1.5 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 2.9 1.4-1.8 3-2.9 5-2.9 3.4 0 5.5 3.3 4.3 6.6-1.8 4.8-9.3 9.4-9.3 9.4z" /></svg>
+                  </button>
+                </div>
+                <div className="gb-foot">
+                  <div className="tbadges">{TORDER.filter((k) => c[k]).map((k) => <TBadge key={k} k={k} n={c[k]} />)}</div>
+                  {all > 0 && <p className="gb-save num">고수 추천대로 담으면 <em>-{Math.round((1 - combo / all) * 100)}%</em> <b>{won(combo)}</b> <s>{won(all)}</s></p>}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <div className="ed-empty"><p>이 조건의 가방은 아직 없어요. 고수를 모시는 중이에요.</p><Button onPress={() => openModal("supply")}>내 가방 보여 주기</Button></div>
+      )}
     </section>
   );
 }
@@ -277,15 +394,14 @@ function HomeHero() {
 export default function Home() {
   return (
     <div className="view">
+      <Promo />
       <NavBar />
-      <div className="pad" style={{ paddingTop: 16 }}><HomeHero /></div>
-      <section className="pad" style={{ paddingTop: 16 }} aria-label="고수템 소식">
-        <h2 className="vh">고수는 이건 사지 마도 알려줘요</h2>
-        <Promo />
+      <section className="pad" aria-label="고수템 소식">
+        <h2 className="vh">고수템 소식</h2>
         <PreorderCta />
       </section>
-      <Feed />
-      <div className="pad" style={{ paddingTop: 28 }}>
+      <GoBags />
+      <div className="pin-wrap pad">
         <Pinned />
         <p className="foot-note">모든 가방·인물·가격·재고·좋아요 수는 예시예요.</p>
       </div>

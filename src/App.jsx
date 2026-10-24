@@ -7,6 +7,8 @@ import Home, { HomeTop } from "./screens/Home.jsx";
 import Bag, { BagTop } from "./screens/Bag.jsx";
 import ModalHost from "./modals/Modals.jsx";
 import Preorder, { Missing, SimpleTop } from "./screens/Preorder.jsx";
+import { Privacy, SiteFooter, Terms } from "./screens/Policy.jsx";
+import Items from "./screens/Items.jsx"; /* 물건별 보기 (#items) */
 import BaliSurfPouchScreen from "./screens/BaliSurfPouchScreen.jsx"; /* Gemini 화면 (#bali-surf) */
 import { BAGS, SRC, SRC_DEF, T, TORDER } from "./data/data.js";
 import { AppProvider, useApp } from "./lib/store.jsx";
@@ -84,20 +86,20 @@ function Shell() {
   const { route } = useApp();
   const b = BAGS.find((x) => x.id === route);
   /* 화면: 가방 상세 / 사전신청 / 없는 주소 안내 / 홈 */
-  const screen = b ? "bag" : route === "preorder" ? "preorder" : route === "bali-surf" ? "bali-surf" : route && route !== "home" ? "missing" : "home";
+  const screen = b ? "bag" : route === "preorder" ? "preorder" : route === "bali-surf" ? "bali-surf" : route === "terms" ? "terms" : route === "privacy" ? "privacy" : route === "items" ? "items" : route && route !== "home" ? "missing" : "home";
   useEffect(() => {
     const s = document.querySelector(".scroller");
     if (s) s.scrollTop = 0;
     window.scrollTo(0, 0);
   }, [route]);
-  const top = screen === "bag" ? <BagTop b={b} /> : screen === "preorder" ? <SimpleTop title="사전신청" /> : screen === "missing" ? <SimpleTop title="고수의 가방" /> : screen === "bali-surf" ? <SimpleTop title="발리 서핑 파우치" /> : <HomeTop />;
-  const body = screen === "bag" ? <Bag key={b.id} b={b} /> : screen === "preorder" ? <Preorder /> : screen === "missing" ? <Missing /> : screen === "bali-surf" ? <BaliSurfPouchScreen /> : <Home />;
+  const top = screen === "bag" ? <BagTop b={b} /> : screen === "preorder" ? <SimpleTop title="사전신청" /> : screen === "missing" ? <SimpleTop title="고수의 가방" /> : screen === "bali-surf" ? <SimpleTop title="발리 서핑 파우치" /> : screen === "terms" ? <SimpleTop title="이용약관" /> : screen === "privacy" ? <SimpleTop title="개인정보처리방침" /> : screen === "items" ? <SimpleTop title="물건별로 보기" /> : <HomeTop />;
+  const body = screen === "bag" ? <Bag key={b.id} b={b} /> : screen === "preorder" ? <Preorder /> : screen === "missing" ? <Missing /> : screen === "bali-surf" ? <BaliSurfPouchScreen /> : screen === "terms" ? <Terms /> : screen === "privacy" ? <Privacy /> : screen === "items" ? <Items /> : <Home />;
   return (
     <div className="stage">
       <Intro />
-      <div className="app">
+      <div className={"app" + (screen === "items" || screen === "home" ? " is-dark" : "")}>
         <header className="topbar">{top}</header>
-        <div className="scroller"><main>{body}</main></div>
+        <div className="scroller"><main>{body}</main><SiteFooter /></div>
         <TabBar active={screen === "home" ? "home" : null} />
       </div>
     </div>
