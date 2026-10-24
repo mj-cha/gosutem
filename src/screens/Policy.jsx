@@ -1,28 +1,31 @@
 /* 사이트 하단 정보 + 이용약관·개인정보처리방침 (시범 서비스용 초안 — 정식 공개 전 법률 검토 필요) */
 import { useApp } from "../lib/store.jsx";
 
-const OWNER = "차명진";
+const OWNER = "OOO"; // 사업자등록 후 실명으로 교체
 const MAIL = "awethings.cha@gmail.com";
 
 export function SiteFooter() {
   const { go } = useApp();
+  const link = (id) => (e) => { e.preventDefault(); go(id); };
   return (
     <footer className="site-foot pad" aria-label="사이트 정보">
-      <div className="sf-brand"><b>고수템</b><span>GOSUTEM</span></div>
+      <div className="sf-top">
+        <div className="sf-brand"><b>고수템</b><span>GOSUTEM</span></div>
+        <div className="sf-cs"><b className="num">0000-0000</b><span>평일 00:00 – 00:00</span><span>점심 00:00 – 00:00</span><span>주말·공휴일 휴무</span></div>
+      </div>
+      <div className="sf-info">
+        <p>상호 : 고수템<span className="sep" />대표 : OOO</p>
+        <p>주소 : OO시 OO구 OO로 00, 0층</p>
+        <p>사업자등록번호 : 000-00-00000<span className="sep" />통신판매업신고 : 0000-OOOO-0000</p>
+        <p>개인정보관리책임자 : OOO<span className="sep" />이메일 : {MAIL}</p>
+      </div>
       <nav className="sf-links" aria-label="약관과 정책">
-        <a href="#terms" onClick={(e) => { e.preventDefault(); go("terms"); }}>이용약관</a>
-        <a href="#privacy" onClick={(e) => { e.preventDefault(); go("privacy"); }}><b>개인정보처리방침</b></a>
-        <a href="#preorder" onClick={(e) => { e.preventDefault(); go("preorder"); }}>출시 알림 신청</a>
+        <a href="#terms" onClick={link("terms")}>이용약관</a>
+        <a href="#privacy" className="strong" onClick={link("privacy")}>개인정보처리방침</a>
+        <a href="#home" onClick={link("home")}>이용안내</a>
       </nav>
-      <dl className="sf-info">
-        <dt>상호</dt><dd>고수템 (사업자등록 준비 중)</dd>
-        <dt>대표</dt><dd>{OWNER}</dd>
-        <dt>문의</dt><dd>{MAIL}</dd>
-        <dt>개인정보 책임자</dt><dd>{OWNER}</dd>
-        <dt>사업자 정보</dt><dd>사업자등록번호·통신판매업 신고번호·주소는 사업자등록 후 표시해요</dd>
-      </dl>
-      <p className="sf-note">고수템은 물건을 직접 팔지 않는 정보 제공·연결 서비스예요. 구매 링크로 사면 판매처에서 고수템이 수수료를 받을 수 있어요. 지금은 시범 서비스라 가방·인물·가격·재고는 모두 예시예요.</p>
-      <p className="sf-copy">© 2026 GOSUTEM</p>
+      <p className="sf-note">고수템은 물건을 직접 팔지 않는 정보 제공·연결 서비스입니다. 구매 링크로 사면 판매처에서 고수템이 수수료를 받을 수 있습니다. 지금은 시범 서비스로, 가방·인물·가격·재고는 모두 예시입니다.</p>
+      <p className="sf-copy">Copyright © GOSUTEM. All rights reserved.</p>
     </footer>
   );
 }

@@ -288,7 +288,8 @@ function BestItems() {
     <section className="best pad" aria-labelledby="best-h">
       <div className="best-head">
         <h2 id="best-h">BEST 고수템</h2>
-        <span>이번 주 가장 많이 공감받은 물건 · 예시</span>
+        <span>이번 주 가장 많이 공감받은 물건</span>
+        <button type="button" className="best-more" onClick={() => document.querySelector(".feed")?.scrollIntoView({ behavior: "smooth", block: "start" })}>더보기 →</button>
       </div>
       <ol className="best-grid">
         {top.map(({ b, it }, i) => {
@@ -297,7 +298,7 @@ function BestItems() {
             <li key={b.id + i}>
               <button type="button" className="best-card" onClick={() => go(b.id)} aria-label={(i + 1) + "위 " + (it.q || it.n) + ", " + b.name + "의 가방 열기"}>
                 <span className="best-rank num" aria-hidden="true">{i + 1}</span>
-                <span className="best-img" style={{ "--tc": T[it.t].c }}>
+                <span className="best-img">
                   <span className="best-badge">BEST</span>
                   <svg viewBox="0 0 64 64" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ART[it.art] || "" }} />
                 </span>
