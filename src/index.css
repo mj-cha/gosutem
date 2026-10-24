@@ -1029,3 +1029,6 @@ body {
 .tabbar .tab { color: var(--v-muted-dark); }
 .tabbar .tab[aria-current="page"] { color: var(--v-lime); }
 .tabbar .tab[aria-current="page"] .icon { background: none; color: var(--v-lime); }
+
+/* 가방 상세도 메인처럼 네모(모서리 둥글기 없음) (10/25 MJ) */
+.detail .photo, .detail .deck-wrap, .detail .flatlay, .detail .d-card, .detail .items, .detail .dg, .detail .sumcard, .detail .trust { border-radius: 0; }
