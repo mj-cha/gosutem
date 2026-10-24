@@ -1,0 +1,7 @@
+# Netlify 설정: 저장소를 연결하면 이 값대로 빌드·배포해요
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
