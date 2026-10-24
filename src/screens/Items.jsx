@@ -44,6 +44,7 @@ function Card({ row, n, saved, onSave }) {
 }
 
 export default function Items() {
+  const { needMember } = useApp();
   const [f, setF] = useState("all");
   const [saved, setSaved] = useState({});
   const list = useMemo(() => ALL.filter((r) => (f === "all" ? true : f === "saved" ? saved[r.key] : r.it.t === f)), [f, saved]);
@@ -63,7 +64,7 @@ export default function Items() {
       </div>
       {list.length ? (
         <ul className="ed-grid">
-          {list.map((r, n) => <Card key={r.key} row={r} n={n} saved={!!saved[r.key]} onSave={() => setSaved((s) => ({ ...s, [r.key]: !s[r.key] }))} />)}
+          {list.map((r, n) => <Card key={r.key} row={r} n={n} saved={!!saved[r.key]} onSave={() => needMember(() => setSaved((s) => ({ ...s, [r.key]: !s[r.key] })), "물건을 저장하려면 회원이어야 해요.")} />)}
         </ul>
       ) : <p className="ed-empty">{f === "saved" ? "하트를 누른 물건이 여기 모여요." : "이 라벨의 물건이 아직 없어요."}</p>}
     </div>

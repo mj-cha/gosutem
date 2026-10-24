@@ -337,7 +337,7 @@ export function TitleSplit({ t, as: Tag = "h3", className = "ed-name" }) {
 }
 const GB_TONES = ["#E9E8E2", "#D9D7CF", "#E9E8E2"]; /* 오프화이트 톤만 (코발트 판은 촌스럽다는 피드백, 10/25) */
 function GoBags() {
-  const { go, nav, region, scrap, setScrap, openModal, commitSearch } = useApp();
+  const { go, nav, region, scrap, setScrap, openModal, commitSearch, needMember } = useApp();
   const { shown } = useMemo(() => filterBags(nav), [nav]);
   const qq = nav.q.trim();
   const head = qq ? "“" + qq + "” 검색 결과"
@@ -371,7 +371,7 @@ function GoBags() {
                     <TitleSplit t={b.title} />
                     <p className="ed-meta num">{b.name} · 조회 {b.views} · 스크랩 {(b.scraps + (on ? 1 : 0)).toLocaleString("ko-KR")}</p>
                   </div>
-                  <button type="button" className="ed-heart" aria-pressed={on} aria-label={b.title + " 스크랩"} onClick={() => setScrap((s) => ({ ...s, [b.id]: !s[b.id] }))}>
+                  <button type="button" className="ed-heart" aria-pressed={on} aria-label={b.title + " 스크랩"} onClick={() => needMember(() => setScrap((s) => ({ ...s, [b.id]: !s[b.id] })), "가방을 저장하려면 회원이어야 해요.")}>
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.4C1.5 7.8 3.6 4.5 7 4.5c2 0 3.6 1.1 5 2.9 1.4-1.8 3-2.9 5-2.9 3.4 0 5.5 3.3 4.3 6.6-1.8 4.8-9.3 9.4-9.3 9.4z" /></svg>
                   </button>
                 </div>

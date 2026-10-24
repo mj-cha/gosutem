@@ -20,7 +20,7 @@ const stockOf = (it, ch) => (ch === "nw" ? it.nw.length : ch === "used" ? (usedO
 
 /* ---------- 상단 바 ---------- */
 export function BagTop({ b }) {
-  const { go, scrap, setScrap, toast } = useApp();
+  const { go, scrap, setScrap, toast, needMember } = useApp();
   const on = !!scrap[b.id];
   const share = () => {
     const u = location.href.split("#")[0] + "#" + b.id;
@@ -32,7 +32,7 @@ export function BagTop({ b }) {
       <Button isIconOnly variant="ghost" className="icon-btn" aria-label="뒤로" onPress={() => go("home")}><Icon id="back" /></Button>
       <h1 className="bar-title">고수의 가방</h1>
       <ToggleButton isIconOnly variant="ghost" className="icon-btn" aria-label="스크랩" isSelected={on}
-        onChange={(v) => { setScrap((s) => ({ ...s, [b.id]: v })); toast(v ? "스크랩했어요. 저장 탭에 모여요." : "스크랩을 취소했어요."); }}>
+        onChange={(v) => needMember(() => { setScrap((s) => ({ ...s, [b.id]: v })); toast(v ? "컬렉션에 저장했어요. 저장 탭에 모여요." : "컬렉션에서 뺐어요."); }, "컬렉션에 저장하려면 회원이어야 해요.")}>
         <Icon id="bookmark" />
       </ToggleButton>
       <Button isIconOnly variant="ghost" className="icon-btn" aria-label="공유하기" onPress={share}><Icon id="share" /></Button>
@@ -42,7 +42,7 @@ export function BagTop({ b }) {
 
 /* ---------- 고수 이름 → 작은 프로필 카드 (HeroUI Popover) ---------- */
 function GosuPopover({ b }) {
-  const { follow, setFollow, openModal, toast } = useApp();
+  const { follow, setFollow, openModal, toast, needMember } = useApp();
   const [open, setOpen] = useState(false);
   const f = !!follow[b.id], base = b.followers || Math.round((b.likes || 100) * 1.7), emp = b.items.reduce((s, it) => s + it.emp, 0);
   return (
@@ -56,7 +56,7 @@ function GosuPopover({ b }) {
           <div className="pop-head">
             <Who b={b} sub={"@" + (b.handle || b.id)} size="md" />
             <ToggleButton size="sm" isSelected={f} variant={f ? "default" : "default"} className={f ? "" : "bg-[var(--ink)] text-[var(--surface)]"}
-              onChange={(v) => { setFollow((s) => ({ ...s, [b.id]: v })); followNotify(v, b.name).then(toast); }}>
+              onChange={(v) => needMember(() => { setFollow((s) => ({ ...s, [b.id]: v })); followNotify(v, b.name).then(toast); }, b.name + "님을 팔로우하려면 회원이어야 해요.")}>
               {f ? "팔로잉" : "팔로우"}
             </ToggleButton>
           </div>
@@ -428,7 +428,7 @@ function SumCard({ n, done, need, mine, all, onCart, onReset }) {
 /* ---------- 상세 화면 ---------- */
 export default function Bag({ b }) {
   const app = useApp();
-  const { region, picks: allPicks, setPicks, emp: allEmp, setEmp, openModal, toast, setChosen, scrap, setScrap, follow, setFollow } = app;
+  const { region, picks: allPicks, setPicks, emp: allEmp, setEmp, openModal, toast, setChosen, scrap, setScrap, follow, setFollow, needMember } = app;
   const picks = allPicks[b.id], empOn = allEmp[b.id];
   const scN = useScraps(b);
   const fol = (b.followers || Math.round((b.likes || 100) * 1.7)) + (follow[b.id] ? 1 : 0);
@@ -536,10 +536,10 @@ export default function Bag({ b }) {
               <div><dt>VIEWS</dt><dd className="num">{b.views}</dd></div>
             </dl>
             <div className="o-acts">
-              <button type="button" className="o-btn lime" aria-pressed={!!scrap[b.id]} onClick={() => { const v = !scrap[b.id]; setScrap((x) => ({ ...x, [b.id]: v })); toast(v ? "컬렉션에 저장했어요. 저장 탭에 모여요." : "컬렉션에서 뺐어요."); }}>
+              <button type="button" className="o-btn lime" aria-pressed={!!scrap[b.id]} onClick={() => needMember(() => { setScrap((x) => { const v = !x[b.id]; toast(v ? "컬렉션에 저장했어요. 저장 탭에 모여요." : "컬렉션에서 뺐어요."); return { ...x, [b.id]: v }; }); }, "컬렉션에 저장하려면 회원이어야 해요.")}>
                 {scrap[b.id] ? "저장됨 ✓" : "컬렉션에 저장 +"}
               </button>
-              <button type="button" className="o-btn line" aria-pressed={!!follow[b.id]} onClick={() => { const v = !follow[b.id]; setFollow((x) => ({ ...x, [b.id]: v })); followNotify(v, b.name).then(toast); }}>
+              <button type="button" className="o-btn line" aria-pressed={!!follow[b.id]} onClick={() => needMember(() => { const v = !follow[b.id]; setFollow((x) => ({ ...x, [b.id]: v })); followNotify(v, b.name).then(toast); }, b.name + "님을 팔로우하려면 회원이어야 해요.")}>
                 {follow[b.id] ? "팔로잉 · 알림 켜짐" : "고수 팔로우 +"}
               </button>
             </div>

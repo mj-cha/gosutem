@@ -8,7 +8,8 @@ import Bag, { BagTop } from "./screens/Bag.jsx";
 import ModalHost from "./modals/Modals.jsx";
 import Preorder, { Missing, SimpleTop } from "./screens/Preorder.jsx";
 import { Privacy, SiteFooter, Terms } from "./screens/Policy.jsx";
-import Items from "./screens/Items.jsx"; /* 물건별 보기 (#items) */
+import Items from "./screens/Items.jsx";
+import Login from "./screens/Login.jsx"; /* 로그인·회원가입 (#login) */ /* 물건별 보기 (#items) */
 import BaliSurfPouchScreen from "./screens/BaliSurfPouchScreen.jsx"; /* Gemini 화면 (#bali-surf) */
 import { BAGS, SRC, SRC_DEF, T, TORDER } from "./data/data.js";
 import { AppProvider, useApp } from "./lib/store.jsx";
@@ -48,8 +49,8 @@ function Intro() {
 }
 
 function TabBar({ active }) {
-  const { go, toast, scrap, chosen, openModal, modal } = useApp();
-  const cur = modal.open && modal.type === "search" ? "search" : active;
+  const { go, toast, scrap, chosen, openModal, modal, member, needMember } = useApp();
+  const cur = modal.open && modal.type === "search" ? "search" : active === "login" ? "me" : active;
   const nScrap = Object.values(scrap).filter(Boolean).length;
   const nChosen = Object.values(chosen).reduce((s, n) => s + n, 0);
   const ref = useRef(null);
@@ -62,6 +63,7 @@ function TabBar({ active }) {
   const press = (k) => {
     if (k === "home") go("home");
     else if (k === "search") openModal("search");
+    else if (!member) needMember(null, k === "saved" ? "저장한 가방은 회원만 볼 수 있어요." : "내 가방은 회원만 볼 수 있어요.");
     else toast(k === "saved" ? "저장한 가방이 여기 모여요. 시범 화면이라 비어 있어요." : "담은 물건이 여기 모여요. 시범 화면이라 비어 있어요.");
   };
   return (
@@ -86,21 +88,21 @@ function Shell() {
   const { route } = useApp();
   const b = BAGS.find((x) => x.id === route);
   /* 화면: 가방 상세 / 사전신청 / 없는 주소 안내 / 홈 */
-  const screen = b ? "bag" : route === "preorder" ? "preorder" : route === "bali-surf" ? "bali-surf" : route === "terms" ? "terms" : route === "privacy" ? "privacy" : route === "items" ? "items" : route && route !== "home" ? "missing" : "home";
+  const screen = b ? "bag" : route === "preorder" ? "preorder" : route === "bali-surf" ? "bali-surf" : route === "terms" ? "terms" : route === "privacy" ? "privacy" : route === "items" ? "items" : route === "login" ? "login" : route && route !== "home" ? "missing" : "home";
   useEffect(() => {
     const s = document.querySelector(".scroller");
     if (s) s.scrollTop = 0;
     window.scrollTo(0, 0);
   }, [route]);
-  const top = screen === "bag" ? <BagTop b={b} /> : screen === "preorder" ? <SimpleTop title="사전신청" /> : screen === "missing" ? <SimpleTop title="고수의 가방" /> : screen === "bali-surf" ? <SimpleTop title="발리 서핑 파우치" /> : screen === "terms" ? <SimpleTop title="이용약관" /> : screen === "privacy" ? <SimpleTop title="개인정보처리방침" /> : screen === "items" ? <SimpleTop title="물건별로 보기" /> : <HomeTop />;
-  const body = screen === "bag" ? <Bag key={b.id} b={b} /> : screen === "preorder" ? <Preorder /> : screen === "missing" ? <Missing /> : screen === "bali-surf" ? <BaliSurfPouchScreen /> : screen === "terms" ? <Terms /> : screen === "privacy" ? <Privacy /> : screen === "items" ? <Items /> : <Home />;
+  const top = screen === "bag" ? <BagTop b={b} /> : screen === "preorder" ? <SimpleTop title="사전신청" /> : screen === "missing" ? <SimpleTop title="고수의 가방" /> : screen === "bali-surf" ? <SimpleTop title="발리 서핑 파우치" /> : screen === "terms" ? <SimpleTop title="이용약관" /> : screen === "privacy" ? <SimpleTop title="개인정보처리방침" /> : screen === "items" ? <SimpleTop title="물건별로 보기" /> : screen === "login" ? <SimpleTop title="로그인 · 회원가입" /> : <HomeTop />;
+  const body = screen === "bag" ? <Bag key={b.id} b={b} /> : screen === "preorder" ? <Preorder /> : screen === "missing" ? <Missing /> : screen === "bali-surf" ? <BaliSurfPouchScreen /> : screen === "terms" ? <Terms /> : screen === "privacy" ? <Privacy /> : screen === "items" ? <Items /> : screen === "login" ? <Login /> : <Home />;
   return (
     <div className="stage">
       <Intro />
-      <div className={"app" + (screen === "items" || screen === "home" || screen === "bag" ? " is-dark" : "")}>
+      <div className={"app" + (["items", "home", "bag", "login"].includes(screen) ? " is-dark" : "")}>
         <header className="topbar">{top}</header>
         <div className="scroller"><main>{body}</main><SiteFooter /></div>
-        <TabBar active={screen === "home" ? "home" : null} />
+        <TabBar active={screen === "home" ? "home" : screen === "login" ? "login" : null} />
       </div>
     </div>
   );

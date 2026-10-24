@@ -1172,3 +1172,64 @@ body {
 .is-dark .tb::before, .gb-foot .tb::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: color-mix(in srgb, var(--tc) 70%, #FFFFFF); flex: none; }
 .gb-save em { color: var(--v-lime); }
 .gb-react > span { background: rgba(17, 17, 15, .72); }
+
+/* ---------- 로그인·회원가입: 메인 기준(어두운 바탕·라임·Anton 제목·글자 배율) (10/25 MJ) ---------- */
+.login { max-width: 520px !important; padding-top: 40px; padding-bottom: 64px; display: grid; gap: 18px; color: #F2F1EC; }
+.lg-kick { margin: 0; font-size: .68rem; font-weight: 800; letter-spacing: .16em; color: var(--v-lime); }
+.lg-h { margin: 0; display: grid; font-family: "Anton", Impact, sans-serif; font-weight: 400; font-size: clamp(2.6rem, 12vw, 3.6rem); line-height: .98; text-transform: uppercase; color: #F2F1EC; }
+.lg-h .hi { color: var(--v-lime); }
+.lg-sub { margin: 0; font-size: var(--fs-sm); color: var(--v-muted-dark); line-height: 1.6; }
+.lg-perks { list-style: none; margin: 4px 0 0; padding: 16px 0; display: grid; gap: 12px; border-block: 1px solid var(--v-line-dark); }
+.lg-perks li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; align-items: start; }
+.lg-perks .icon { color: var(--v-lime); margin-top: 2px; }
+.lg-perks b { display: block; font-size: var(--fs-sm); }
+.lg-perks span span { font-size: var(--fs-xs); color: var(--v-muted-dark); }
+.lg-social { display: grid; gap: 8px; }
+.lg-sbtn { height: 50px; border-radius: 999px; border: 0; font: inherit; font-size: .9rem; font-weight: 800; cursor: pointer; transition: transform 160ms var(--ease), filter 160ms ease; }
+.lg-sbtn:active { transform: scale(.98); }
+.lg-sbtn:hover { filter: brightness(1.05); }
+.lg-sbtn:focus-visible { outline: 2px solid var(--v-lime); outline-offset: 3px; }
+.lg-sbtn.kakao { background: #FEE500; color: #191919; }
+.lg-sbtn.naver { background: #03C75A; color: #FFFFFF; }
+.lg-sbtn.apple { background: #F2F1EC; color: var(--v-ink); }
+.lg-or { display: flex; align-items: center; gap: 12px; font-size: var(--fs-xs); color: var(--v-muted-dark); }
+.lg-or::before, .lg-or::after { content: ""; flex: 1; height: 1px; background: var(--v-line-dark); }
+.lg-form { display: grid; gap: 12px; }
+.lg-field { display: grid; gap: 6px; font-size: var(--fs-xs); color: var(--v-muted-dark); }
+.lg-field input { height: 48px; padding: 0 14px; border: 1px solid var(--v-line-dark); border-radius: 0; background: #1A1A18; color: #F2F1EC; font: inherit; font-size: var(--fs-md); }
+.lg-field input::placeholder { color: #6E6E68; }
+.lg-field input:focus { outline: none; border-color: var(--v-lime); }
+.lg-agree { display: flex; align-items: flex-start; gap: 8px; font-size: var(--fs-xs); color: #D6D5CF; line-height: 1.5; cursor: pointer; }
+.lg-agree input { width: 18px; height: 18px; accent-color: var(--v-lime); margin-top: 1px; flex: none; }
+.lg-agree a { color: #F2F1EC; text-decoration: underline; text-underline-offset: 3px; }
+.lg-agree em { font-style: normal; color: var(--v-lime); font-weight: 700; margin-left: 4px; }
+.lg-err { margin: 0; min-height: 1.2em; font-size: var(--fs-xs); color: #FF8A80; }
+.lg-submit { width: 100%; }
+.lg-switch { margin: 0; text-align: center; font-size: var(--fs-sm); color: var(--v-muted-dark); }
+.lg-switch button { border: 0; background: none; padding: 4px 6px; font: inherit; font-weight: 800; color: var(--v-lime); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.lg-note { margin: 0; text-align: center; font-size: .7rem; color: #6E6E68; }
+.lg-acts { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* 로그인 v2: 회원가입.png 배치(가운데 로고·카드·탭) + 메인 색·글꼴 (10/25 MJ) */
+.login { max-width: 560px !important; padding-top: 56px; gap: 22px; justify-items: stretch; }
+.lg-logo { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.lg-logo .lg-mark { width: 44px; height: 44px; border-radius: 50%; background: var(--v-lime); color: var(--v-ink); display: grid; place-items: center; }
+.lg-logo .lg-mark .icon { width: 22px; height: 22px; }
+.lg-logo b { font-family: var(--f-display); font-size: 1.6rem; font-weight: 400; color: #F2F1EC; }
+.lg-logo small { font-size: .62rem; letter-spacing: .14em; color: var(--v-muted-dark); font-weight: 700; }
+.lg-card { display: grid; gap: 16px; padding: 28px 24px; background: #1A1A18; border: 1px solid var(--v-line-dark); }
+.lg-tabs { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border: 1px solid var(--v-line-dark); border-radius: 999px; background: var(--v-ink); }
+.lg-tabs button { height: 44px; border: 0; border-radius: 999px; background: transparent; color: var(--v-muted-dark); font: inherit; font-size: var(--fs-sm); font-weight: 800; cursor: pointer; transition: background-color 200ms var(--ease), color 200ms ease; }
+.lg-tabs button[aria-selected="true"] { background: var(--v-lime); color: var(--v-ink); }
+.lg-tabs button:focus-visible { outline: 2px solid var(--v-lime); outline-offset: 2px; }
+.lg-title { margin: 6px 0 0; font-size: var(--fs-xl); font-weight: 900; letter-spacing: -.02em; color: #F2F1EC; }
+.lg-card .lg-sub { margin-top: -8px; }
+.lg-wide { width: 100%; }
+.lg-social { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.lg-social .lg-sbtn { height: 44px; font-size: var(--fs-sm); }
+.lg-line { height: 1px; background: var(--v-line-dark); margin-top: 4px; }
+.lg-demo-k { margin: 0; font-size: var(--fs-xs); color: var(--v-muted-dark); }
+.lg-demo { height: 48px; border: 1px solid var(--v-line-dark); border-radius: 999px; background: transparent; color: #F2F1EC; font: inherit; font-size: var(--fs-sm); font-weight: 700; cursor: pointer; }
+.lg-demo:hover { border-color: #F2F1EC; }
+.lg-back { justify-self: center; border: 0; background: none; color: var(--v-muted-dark); font: inherit; font-size: var(--fs-sm); cursor: pointer; padding: 6px; }
+.lg-back:hover { color: #F2F1EC; }
